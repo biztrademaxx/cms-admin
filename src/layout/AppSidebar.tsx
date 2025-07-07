@@ -20,6 +20,8 @@ import {
 import Logo from "@/../public/images/logo/logo.png";
 import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
+import { useQuery } from "@apollo/client";
+import { GET_PROJECT_BY_SLUG } from "@/graphql/queries/getProjectBySlug";
 
 type NavItem = {
   name: string;
@@ -27,42 +29,6 @@ type NavItem = {
   path?: string;
   subItems?: { name: string; path: string; draft?: boolean; new?: boolean }[];
 };
-
-const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Projects", path: "/", draft: false }],
-  },
-  // {
-  //   icon: <UserCircleIcon />,
-  //   name: "User Profile",
-  //   path: "/profile",
-  // },
-
-  {
-    name: "RevolutionEv",
-    icon: <ListIcon />,
-    subItems: [
-      { name: "Agenda", path: "/agenda", draft: false },
-      { name: "Delegates", path: "/delegates", draft: false },
-      {name:"UTM Builder",path:"/utm",draft:false},
-    ],
-  },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", draft: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/blank", draft: false },
-  //     { name: "404 Error", path: "/error-404", draft: false },
-  //   ],
-  // },
-];
 
 const othersItems: NavItem[] = [
   // {
@@ -73,18 +39,11 @@ const othersItems: NavItem[] = [
   //     { name: "Bar Chart", path: "/bar-chart", pro: false },
   //   ],
   // },
-  // {
-  //   icon: <BoxCubeIcon />,
-  //   name: "UI Elements",
-  //   subItems: [
-  //     { name: "Alerts", path: "/alerts", pro: false },
-  //     { name: "Avatar", path: "/avatars", pro: false },
-  //     { name: "Badge", path: "/badge", pro: false },
-  //     { name: "Buttons", path: "/buttons", pro: false },
-  //     { name: "Images", path: "/images", pro: false },
-  //     { name: "Videos", path: "/videos", pro: false },
-  //   ],
-  // },
+  {
+    icon: <BoxCubeIcon />,
+    name: "CRM",
+    path:"https://crm.maxpo.ae",
+  },
   // {
   //   icon: <PlugInIcon />,
   //   name: "Authentication",
@@ -98,6 +57,38 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+  const isProjectsRoute=pathname.startsWith('/projects/');
+  const project= isProjectsRoute ? pathname.split("/")[2] : ""
+
+  console.log("project",project)
+const defaultItems: NavItem[] = 
+[
+  {
+    icon: <GridIcon />,
+    name: "Dashboard",
+    subItems: [{ name: "Projects", path: "/", draft: false }],
+  },
+]
+
+  const ProjectsItems: NavItem[] = [
+    {
+      icon: <ListIcon />,
+      name: "Agenda",
+      path: `/projects/${project}/agenda`,
+    },
+    {
+      icon: <UserCircleIcon />,
+      name: "Delegates",
+      path:  `/projects/${project}/delegates`,
+    },
+    {
+      icon: <CalenderIcon />,
+      name: "UTM Builder",
+      path: `/projects/${project}/utm`,
+    }
+  ];
+
+const navItems= isProjectsRoute ? ProjectsItems : defaultItems;
 
   const renderMenuItems = (
     navItems: NavItem[],

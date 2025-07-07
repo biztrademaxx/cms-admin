@@ -1,5 +1,7 @@
 "use client";
 
+import client from "@/lib/apollo-client";
+import { ApolloProvider } from "@apollo/client";
 import type React from "react";
 import { createContext, useState, useContext, useEffect } from "react";
 
@@ -43,9 +45,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
+    <ApolloProvider client={client}>
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
+    </ApolloProvider>
   );
 };
 

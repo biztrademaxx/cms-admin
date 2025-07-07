@@ -11,10 +11,7 @@ const agendaDays = [
 ];
 
 const AgendaComponent = () => {
-     const [selectedDate, setSelectedDate] = useState<string>(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0]; // YYYY-MM-DD
-  });
+     const [selectedDate, setSelectedDate] = useState<string>(agendaDays[0].date);
 
 const uniqueDates = Array.from(new Set(agendaDays.map(item => item.date))).sort();
 
