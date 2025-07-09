@@ -21,7 +21,6 @@ import Logo from "@/../public/images/logo/logo.png";
 import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
 import { useQuery } from "@apollo/client";
-import { GET_PROJECT_BY_SLUG } from "@/graphql/queries/getProjectBySlug";
 
 type NavItem = {
   name: string;

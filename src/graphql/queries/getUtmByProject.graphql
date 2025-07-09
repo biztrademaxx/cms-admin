@@ -1,0 +1,12 @@
+
+  query GetUtmBySlug($slug: String!) {
+    getUtmByProject(slug: $slug) {
+      id
+      source
+      medium
+      campaign
+      term
+      content
+      url
+    }
+  }

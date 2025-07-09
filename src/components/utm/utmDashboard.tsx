@@ -13,6 +13,9 @@ import Button from "../ui/button/Button";
 import Badge from "../ui/badge/Badge";
 import UtmModal from "./utmModal";
 import { useModal } from "@/hooks/useModal";
+import { useQuery } from "@apollo/client";
+import { usePathname } from "next/navigation";
+import { GetUtmBySlugDocument } from "@/gql_generated/graphql";
 
 const utmMetrics = [
   {
@@ -44,33 +47,41 @@ interface UTMEntry {
   fullURL: string;
 }
 
-const utmData: UTMEntry[] = [
-  {
-    id: 1,
-    campaign: "Summer_Sale",
-    source: "Google",
-    medium: "CPC",
-    visits: 1200,
-    uniqueClicks: 900,
-    status: "Active",
-    fullURL:
-      "https://yourdomain.com/?utm_source=google&utm_medium=cpc&utm_campaign=Summer_Sale",
-  },
-  {
-    id: 2,
-    campaign: "B2B_Launch",
-    source: "LinkedIn",
-    medium: "Social",
-    visits: 540,
-    uniqueClicks: 490,
-    status: "Paused",
-    fullURL:
-      "https://yourdomain.com/?utm_source=linkedin&utm_medium=social&utm_campaign=B2B_Launch",
-  },
-];
+// const utmData: UTMEntry[] = [
+//   {
+//     id: 1,
+//     campaign: "Summer_Sale",
+//     source: "Google",
+//     medium: "CPC",
+//     visits: 1200,
+//     uniqueClicks: 900,
+//     status: "Active",
+//     fullURL:
+//       "https://yourdomain.com/?utm_source=google&utm_medium=cpc&utm_campaign=Summer_Sale",
+//   },
+//   {
+//     id: 2,
+//     campaign: "B2B_Launch",
+//     source: "LinkedIn",
+//     medium: "Social",
+//     visits: 540,
+//     uniqueClicks: 490,
+//     status: "Paused",
+//     fullURL:
+//       "https://yourdomain.com/?utm_source=linkedin&utm_medium=social&utm_campaign=B2B_Launch",
+//   },
+// ];
 
 export default function UTMDashboard() {
   const { isOpen, openModal, closeModal } = useModal();
+  const pathname = usePathname();
+  const projectSlug = pathname.split("/")[2] || ""; // Assuming the slug is the second segment in the path
+  const {data:utmData, loading, error} = useQuery(GetUtmBySlugDocument,{
+    skip: !projectSlug,
+    variables: {
+      slug: projectSlug
+    }
+  });
   const handleCopy = async (text: string) => {
     await navigator.clipboard.writeText(text);
     alert("Copied to clipboard");
@@ -160,7 +171,7 @@ export default function UTMDashboard() {
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {utmData.map((entry) => (
+                {utmData?.getUtmByProject?.map((entry) => (
                   <TableRow key={entry.id}>
                     <TableCell className="px-5 py-4 text-start">
                       <div>
@@ -168,7 +179,7 @@ export default function UTMDashboard() {
                           {entry.campaign}
                         </span>
                         <span className="block text-theme-xs text-gray-500 dark:text-gray-400 truncate max-w-[240px]">
-                          {entry.fullURL}
+                          {entry.url}
                         </span>
                       </div>
                     </TableCell>
@@ -181,25 +192,25 @@ export default function UTMDashboard() {
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      {entry.visits}
+                      {entry.visits ?? "-"}
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      {entry.uniqueClicks}
+                      {entry.uniqueClicks ?? "-"}
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-theme-sm text-gray-600 dark:text-gray-400">
                       <Badge
                         size="sm"
                         color={
-                          entry.status === "Active"
+                          entry?.status === "Active"
                             ? "success"
-                            : entry.status === "Paused"
+                            : entry?.status === "Paused"
                             ? "warning"
                             : "error"
                         }
                       >
-                        {entry.status}
+                        {entry.status ?? "Active"} 
                       </Badge>
                     </TableCell>
 
@@ -208,7 +219,7 @@ export default function UTMDashboard() {
                         size="sm"
                         variant="outline"
                         className="text-theme-xs"
-                        onClick={() => handleCopy(entry.fullURL)}
+                        onClick={() => handleCopy(entry.url)}
                       >
                         <ClipboardCopy className="h-4 w-4 mr-1" />
                         Copy

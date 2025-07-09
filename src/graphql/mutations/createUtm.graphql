@@ -1,0 +1,11 @@
+
+mutation CreateUtm($input: CreateUTMInput!) {
+    createUtm(input: $input) {
+        id
+        source
+        medium
+        campaign
+        term
+        content
+    }
+}
