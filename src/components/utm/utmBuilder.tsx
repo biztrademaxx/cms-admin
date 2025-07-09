@@ -7,6 +7,10 @@ import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import TextArea from "@/components/form/input/TextArea";
+import { useMutation } from "@apollo/client";
+import { CreateUtmDocument } from "@/gql_generated/graphql";
+import { usePathname } from "next/navigation";
+import { useModal } from "@/hooks/useModal";
 
 // Yup Validation Schema
 const validationSchema = Yup.object().shape({
@@ -19,6 +23,22 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function UTMBuilder() {
+  const pathname = usePathname();
+  const{closeModal}=useModal();
+    const projectSlug = pathname.split("/")[2] || "";
+  const [SaveUTM]=useMutation(CreateUtmDocument,{
+    onCompleted: (data) => {
+      console.log("UTM saved successfully:", data);
+      alert("UTM saved successfully!");
+      closeModal(); 
+    },
+    refetchQueries: ["getUtmByProject"], // Adjust this based on your query name
+    onError: (error) => {
+      console.error("Error saving UTM:", error);
+      alert("Failed to save UTM. Please try again.");
+    },
+  })
+
   const formik = useFormik({
     initialValues: {
       url: "",
@@ -29,7 +49,28 @@ export default function UTMBuilder() {
       content: "",
     },
     validationSchema,
-    onSubmit: () => {},
+    onSubmit: async() => {
+try{
+  if(!projectSlug){
+    alert("Project slug is required to save UTM.");
+    return;
+  }
+  await SaveUTM({
+    variables: {
+      input: {
+       ...formik.values,
+       projectSlug, 
+      },
+    },
+  });
+    formik.resetForm();
+
+    } catch (error) {
+      console.error("Error saving UTM:", error);
+      alert("Failed to save UTM. Please try again.");
+    }
+
+  }
   });
 
   const generateUTM = () => {
@@ -91,9 +132,12 @@ export default function UTMBuilder() {
           value={generateUTM()}
           
         />
-        <div className="mt-3 flex justify-end">
-          <Button type="button" onClick={handleCopy}>
+        <div className="mt-3 flex justify-end gap-2">
+          <Button type="button"  variant="outline" onClick={handleCopy}>
             Copy to Clipboard
+          </Button>
+               <Button type="submit" >
+            Save UTM
           </Button>
         </div>
       </div>

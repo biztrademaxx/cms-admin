@@ -1,0 +1,9 @@
+
+  query Project($slug: String!) {
+    project(slug: $slug) {
+      id
+      name
+      description
+    }
+  }
+

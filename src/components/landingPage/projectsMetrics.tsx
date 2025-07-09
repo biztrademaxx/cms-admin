@@ -3,13 +3,13 @@
 import React from 'react';
 import { BoxIconLine, GroupIcon } from '@/icons';
 import { useQuery } from '@apollo/client';
-import { GET_PROJECTS } from '@/graphql/queries/getProjects';
 import { Project } from '@/types/projects';
 import { useRouter } from 'next/navigation';
+import { ProjectsDocument } from '@/gql_generated/graphql';
 
 export const ProjectsMetrics = () => {
   const router=useRouter()
-  const { loading, data } = useQuery<{ projects: Project[] }>(GET_PROJECTS, {
+  const { loading, data } = useQuery(ProjectsDocument, {
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-first',
   });
