@@ -16,6 +16,8 @@ import { useModal } from "@/hooks/useModal";
 import { useQuery } from "@apollo/client";
 import { usePathname } from "next/navigation";
 import { GetUtmBySlugDocument } from "@/gql_generated/graphql";
+import { UTMEntry } from "./utm.types";
+import { generateUTM } from "./common";
 
 const utmMetrics = [
   {
@@ -35,17 +37,6 @@ const utmMetrics = [
     icon: Eye,
   },
 ];
-
-interface UTMEntry {
-  id: number;
-  campaign: string;
-  source: string;
-  medium: string;
-  visits: number;
-  uniqueClicks: number;
-  status: string;
-  fullURL: string;
-}
 
 // const utmData: UTMEntry[] = [
 //   {
@@ -73,16 +64,28 @@ interface UTMEntry {
 // ];
 
 export default function UTMDashboard() {
+  const [selectedEntry, setSelectedEntry] = React.useState<UTMEntry | null>(
+    null
+  );
   const { isOpen, openModal, closeModal } = useModal();
   const pathname = usePathname();
   const projectSlug = pathname.split("/")[2] || ""; // Assuming the slug is the second segment in the path
-  const {data:utmData, loading, error} = useQuery(GetUtmBySlugDocument,{
+  const { data: utmData } = useQuery(GetUtmBySlugDocument, {
     skip: !projectSlug,
     variables: {
-      slug: projectSlug
-    }
+      slug: projectSlug,
+    },
   });
-  const handleCopy = async (text: string) => {
+  const handleCopy = async (entry: UTMEntry) => {
+    const {source,medium,campaign,term,content,url}=entry;
+    const text=generateUTM({
+      url,
+      source,
+      medium,
+      campaign,
+      term,
+      content
+    });
     await navigator.clipboard.writeText(text);
     alert("Copied to clipboard");
   };
@@ -90,6 +93,10 @@ export default function UTMDashboard() {
     openModal();
   };
 
+  const handleEdit = (entry: UTMEntry) => {
+    openModal();
+    setSelectedEntry(entry);
+  };
   return (
     <div className="space-y-8">
       <div className="flex justify-end">
@@ -210,7 +217,7 @@ export default function UTMDashboard() {
                             : "error"
                         }
                       >
-                        {entry.status ?? "Active"} 
+                        {entry.status ?? "Active"}
                       </Badge>
                     </TableCell>
 
@@ -219,7 +226,7 @@ export default function UTMDashboard() {
                         size="sm"
                         variant="outline"
                         className="text-theme-xs"
-                        onClick={() => handleCopy(entry.url)}
+                        onClick={() => handleCopy(entry)}
                       >
                         <ClipboardCopy className="h-4 w-4 mr-1" />
                         Copy
@@ -228,6 +235,7 @@ export default function UTMDashboard() {
                         size="sm"
                         variant="outline"
                         className="text-theme-xs"
+                        onClick={()=>handleEdit(entry)}
                       >
                         <Eye className="h-4 w-4 mr-1" />
                         Preview
@@ -240,7 +248,7 @@ export default function UTMDashboard() {
           </div>
         </div>
       </div>
-      <UtmModal isOpen={isOpen} closeModal={closeModal} />
+      <UtmModal isOpen={isOpen} closeModal={closeModal} data={selectedEntry} />
     </div>
   );
 }

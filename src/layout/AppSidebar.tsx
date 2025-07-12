@@ -71,6 +71,11 @@ const defaultItems: NavItem[] =
 
   const ProjectsItems: NavItem[] = [
     {
+      icon: <PageIcon />,
+      name: "overview",
+      path: `/projects/${project}`,
+    },
+    {
       icon: <ListIcon />,
       name: "Agenda",
       path: `/projects/${project}/agenda`,

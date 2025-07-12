@@ -18,12 +18,70 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type AgendaDay = {
+  __typename?: 'AgendaDay';
+  createdAt: Scalars['DateTime']['output'];
+  date: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  items: Array<AgendaItem>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AgendaItem = {
+  __typename?: 'AgendaItem';
+  createdAt: Scalars['DateTime']['output'];
+  dayId: Scalars['String']['output'];
+  endTime: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  startTime: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type CreateAgendaDayInput = {
+  date: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type CreateAgendaItemInput = {
+  dayId: Scalars['String']['input'];
+  endTime: Scalars['String']['input'];
+  startTime: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
+export type CreateMediaPartnerInput = {
+  description: Scalars['String']['input'];
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  projectId: Scalars['String']['input'];
+  website: Scalars['String']['input'];
+};
+
 export type CreateProjectInput = {
+  currency?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   endDate?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   slug: Scalars['String']['input'];
   startDate?: InputMaybe<Scalars['String']['input']>;
+  venue?: InputMaybe<Scalars['String']['input']>;
+  website?: InputMaybe<Scalars['String']['input']>;
+  year: Scalars['Float']['input'];
+};
+
+export type CreateSpeakerInput = {
+  companyLogo: Scalars['String']['input'];
+  companyName: Scalars['String']['input'];
+  designation: Scalars['String']['input'];
+  image: Scalars['String']['input'];
+  linkedinUrl?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  projectId: Scalars['String']['input'];
 };
 
 export type CreateUtmInput = {
@@ -36,15 +94,50 @@ export type CreateUtmInput = {
   url: Scalars['String']['input'];
 };
 
+export type MediaPartner = {
+  __typename?: 'MediaPartner';
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  website: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createAgendaDay: AgendaDay;
+  createAgendaItem: AgendaItem;
+  createMediaPartner: MediaPartner;
   createProject: Project;
+  createSpeaker: Speaker;
   createUtm: Utm;
+};
+
+
+export type MutationCreateAgendaDayArgs = {
+  input: CreateAgendaDayInput;
+};
+
+
+export type MutationCreateAgendaItemArgs = {
+  input: CreateAgendaItemInput;
+};
+
+
+export type MutationCreateMediaPartnerArgs = {
+  input: CreateMediaPartnerInput;
 };
 
 
 export type MutationCreateProjectArgs = {
   input: CreateProjectInput;
+};
+
+
+export type MutationCreateSpeakerArgs = {
+  input: CreateSpeakerInput;
 };
 
 
@@ -55,20 +148,35 @@ export type MutationCreateUtmArgs = {
 export type Project = {
   __typename?: 'Project';
   createdAt: Scalars['DateTime']['output'];
+  currency?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  endDate?: Maybe<Scalars['DateTime']['output']>;
+  endDate: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   slug: Scalars['String']['output'];
-  startDate?: Maybe<Scalars['DateTime']['output']>;
+  startDate: Scalars['DateTime']['output'];
+  venue?: Maybe<Scalars['String']['output']>;
+  website?: Maybe<Scalars['String']['output']>;
+  year: Scalars['Float']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
+  getAgendaDay?: Maybe<AgendaDay>;
+  getAllAgendaDays: Array<AgendaDay>;
   getUtm: Array<Utm>;
   getUtmByProject: Array<Utm>;
+  mediaPartners: Array<MediaPartner>;
+  mediaPartnersByProject: Array<MediaPartner>;
   project: Project;
   projects: Array<Project>;
+  speakers: Array<Speaker>;
+  speakersByProject: Array<Speaker>;
+};
+
+
+export type QueryGetAgendaDayArgs = {
+  date: Scalars['DateTime']['input'];
 };
 
 
@@ -77,8 +185,32 @@ export type QueryGetUtmByProjectArgs = {
 };
 
 
+export type QueryMediaPartnersByProjectArgs = {
+  projectId: Scalars['String']['input'];
+};
+
+
 export type QueryProjectArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QuerySpeakersByProjectArgs = {
+  projectId: Scalars['String']['input'];
+};
+
+export type Speaker = {
+  __typename?: 'Speaker';
+  companyLogo: Scalars['String']['output'];
+  companyName: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  designation: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  image: Scalars['String']['output'];
+  linkedinUrl?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  projectId: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Utm = {
@@ -94,6 +226,13 @@ export type Utm = {
   term?: Maybe<Scalars['String']['output']>;
   url: Scalars['String']['output'];
 };
+
+export type CreateProjectMutationVariables = Exact<{
+  input: CreateProjectInput;
+}>;
+
+
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', id: string, slug: string, name: string, description?: string | null } };
 
 export type CreateUtmMutationVariables = Exact<{
   input: CreateUtmInput;
@@ -119,9 +258,10 @@ export type ProjectQuery = { __typename?: 'Query', project: { __typename?: 'Proj
 export type ProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: string, name: string, slug: string, description?: string | null, startDate?: any | null, endDate?: any | null }> };
+export type ProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: string, name: string, slug: string, description?: string | null, startDate: any, endDate: any }> };
 
 
+export const CreateProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateProjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<CreateProjectMutation, CreateProjectMutationVariables>;
 export const CreateUtmDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUtm"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUTMInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUtm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"campaign"}},{"kind":"Field","name":{"kind":"Name","value":"term"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<CreateUtmMutation, CreateUtmMutationVariables>;
 export const GetUtmBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUtmBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUtmByProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"campaign"}},{"kind":"Field","name":{"kind":"Name","value":"term"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<GetUtmBySlugQuery, GetUtmBySlugQueryVariables>;
 export const ProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Project"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<ProjectQuery, ProjectQueryVariables>;
