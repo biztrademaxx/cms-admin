@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { BoxIconLine, GroupIcon } from '@/icons';
-import { useQuery } from '@apollo/client';
-import { Project } from '@/types/projects';
-import { useRouter } from 'next/navigation';
-import { ProjectsDocument } from '@/gql_generated/graphql';
+import React from "react";
+import { BoxIconLine, GroupIcon } from "@/icons";
+import { useQuery } from "@apollo/client";
+import { Project } from "@/types/projects";
+import { useRouter } from "next/navigation";
+import { ProjectsDocument } from "@/gql_generated/graphql";
 
 export const ProjectsMetrics = () => {
-  const router=useRouter()
+  const router = useRouter();
   const { loading, data } = useQuery(ProjectsDocument, {
-    fetchPolicy: 'cache-and-network',
-    nextFetchPolicy: 'cache-first',
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-first",
   });
 
   if (loading) return <div>Loading...</div>;
@@ -28,7 +28,10 @@ export const ProjectsMetrics = () => {
             className={
               "rounded-2xl border bg-white cursor-pointer p-5 hover:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
             }
-            onClick={()=>router.push(`/projects/${item.slug}`)}
+            onClick={() => {
+              router.push(`/projects/${item.slug}`);
+              localStorage.setItem("projectId", item.id);
+            }}
           >
             <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
               <Icon className="text-gray-800 size-6 dark:text-white/90" />
@@ -40,7 +43,7 @@ export const ProjectsMetrics = () => {
                   {item.name}
                 </h4>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {item.description || 'No description'}
+                  {item.description || "No description"}
                 </span>
               </div>
             </div>

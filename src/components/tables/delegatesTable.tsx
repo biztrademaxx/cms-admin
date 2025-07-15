@@ -61,6 +61,11 @@ export default function DelegatesTable() {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
+        <div className="flex justify-end p-4">
+          <Button size="sm" onClick={() => {}}>
+            + Add Delegate
+          </Button>
+        </div>
         <div className="min-w-[1102px]">
           <Table>
             {/* Table Header */}
@@ -133,7 +138,7 @@ export default function DelegatesTable() {
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {delegate.user.email}
                   </TableCell>
-                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {delegate.user.booth}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">

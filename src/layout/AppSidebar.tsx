@@ -41,7 +41,7 @@ const othersItems: NavItem[] = [
   {
     icon: <BoxCubeIcon />,
     name: "CRM",
-    path:"https://crm.maxpo.ae",
+    path: "https://crm.maxpo.ae",
   },
   // {
   //   icon: <PlugInIcon />,
@@ -56,18 +56,17 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
-  const isProjectsRoute=pathname.startsWith('/projects/');
-  const project= isProjectsRoute ? pathname.split("/")[2] : ""
+  const isProjectsRoute = pathname.startsWith("/projects/");
+  const project = isProjectsRoute ? pathname.split("/")[2] : "";
 
-  console.log("project",project)
-const defaultItems: NavItem[] = 
-[
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Projects", path: "/", draft: false }],
-  },
-]
+  console.log("project", project);
+  const defaultItems: NavItem[] = [
+    {
+      icon: <GridIcon />,
+      name: "Dashboard",
+      subItems: [{ name: "Projects", path: "/", draft: false }],
+    },
+  ];
 
   const ProjectsItems: NavItem[] = [
     {
@@ -82,17 +81,32 @@ const defaultItems: NavItem[] =
     },
     {
       icon: <UserCircleIcon />,
-      name: "Delegates",
-      path:  `/projects/${project}/delegates`,
+      name: "Participants",
+      subItems: [
+        {
+          name: "Exhibitors",
+          path: `/projects/${project}/exhibitors`,
+          draft: false,
+        },
+        {
+          name: "Media Partners",
+          path: `/projects/${project}/speakers`,
+          draft: true,
+        },
+        {
+          name: "Delegates",
+          path: `/projects/${project}/delegates`,
+        },
+      ],
     },
     {
       icon: <CalenderIcon />,
       name: "UTM Builder",
       path: `/projects/${project}/utm`,
-    }
+    },
   ];
 
-const navItems= isProjectsRoute ? ProjectsItems : defaultItems;
+  const navItems = isProjectsRoute ? ProjectsItems : defaultItems;
 
   const renderMenuItems = (
     navItems: NavItem[],

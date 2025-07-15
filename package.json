@@ -15,6 +15,7 @@
     "@tailwindcss/postcss": "^4.0.9",
     "apexcharts": "^4.3.0",
     "autoprefixer": "^10.4.20",
+    "codegen": "^0.1.0",
     "flatpickr": "^4.6.13",
     "formik": "^2.4.6",
     "graphql": "^16.11.0",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@graphql-codegen/cli": "5.0.7",
+    "@graphql-codegen/client-preset": "4.8.3",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -42,7 +44,6 @@
     "eslint-config-next": "15.1.3",
     "postcss": "^8",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5",
-    "@graphql-codegen/client-preset": "4.8.3"
+    "typescript": "^5"
   }
 }

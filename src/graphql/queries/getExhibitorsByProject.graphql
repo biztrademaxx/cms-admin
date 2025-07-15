@@ -1,0 +1,13 @@
+query GetExhibitorsByProject($projectId: String!) {
+  getExhibitorsByProject(projectId: $projectId) {
+    companyName
+    createdAt
+    description
+    id
+    linkedin
+    logoUrl
+    projectId
+    updatedAt
+    website
+  }
+}

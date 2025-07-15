@@ -22,20 +22,23 @@ const validationSchema = Yup.object().shape({
 
 export default function CreateProjectForm() {
   const router = useRouter();
-  const [CreateProject] = useMutation(CreateProjectDocument,{
-    onCompleted: (data) => {
-      console.log("Project created:", data);
-      alert("Project created successfully!");
-    },
-    onError: (error) => {
-      console.error("Error creating project:", error);
-    },
-  });
+  const [CreateProject, { loading, error, data }] = useMutation(
+    CreateProjectDocument,
+    {
+      onCompleted: (data) => {
+        console.log("Project created:", data);
+        router.push("/");
+      },
+      onError: (error) => {
+        console.error("Error creating project:", error);
+      },
+    }
+  );
   const formik = useFormik({
     initialValues: {
       name: "",
       slug: "",
-      year: 2025,
+      year: 2026,
       startDate: "",
       endDate: "",
       venue: "",
@@ -45,14 +48,17 @@ export default function CreateProjectForm() {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Form Submitted:", values);
-      const startDateIso = new Date(formik.values.startDate).toISOString();
-      const endDateIso = new Date(formik.values.endDate).toISOString();
-      await CreateProject({
-        variables: {
-          input: { ...values, startDate: startDateIso, endDate: endDateIso },
-        },
-      });
+      try {
+        const startDateIso = convertD24HrToISO(values.startDate);
+        const endDateIso = convertD24HrToISO(values.endDate);
+        await CreateProject({
+          variables: {
+            input: { ...values, startDate: startDateIso, endDate: endDateIso },
+          },
+        });
+      } catch (error) {
+        console.error("Error creating project:", error);
+      }
     },
   });
 
@@ -70,6 +76,7 @@ export default function CreateProjectForm() {
   return (
     <div className="space-y-8">
       <form
+        onSubmit={formik.handleSubmit}
         className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03] lg:p-10"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -216,10 +223,16 @@ export default function CreateProjectForm() {
 
         {/* Footer buttons */}
         <div className="flex justify-end gap-2 mt-8">
-          <Button type="button" variant="outline">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/")}
+          >
             Cancel
           </Button>
-          <Button type="submit" onClick={() => formik.submitForm()}>Create Project</Button>
+          <Button type="submit" disabled={!formik.isValid || loading}>
+            Create Project
+          </Button>
         </div>
       </form>
     </div>
