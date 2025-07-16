@@ -14,20 +14,24 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "mutation CreateExhibitor($input: CreateExhibitorInput!) {\n  createExhibitor(input: $input) {\n    id\n    companyName\n  }\n}": typeof types.CreateExhibitorDocument,
     "mutation CreateProject($input: CreateProjectInput!) {\n  createProject(input: $input) {\n    id\n    slug\n    name\n    description\n  }\n}": typeof types.CreateProjectDocument,
     "mutation CreateUtm($input: CreateUTMInput!) {\n  createUtm(input: $input) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n  }\n}": typeof types.CreateUtmDocument,
+    "mutation DeleteExhibitor($id: String!) {\n  deleteExhibitor(id: $id) {\n    id\n    companyName\n  }\n}": typeof types.DeleteExhibitorDocument,
+    "query GetAllProjects {\n  getAllProjects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}": typeof types.GetAllProjectsDocument,
     "query GetExhibitorsByProject($projectId: String!) {\n  getExhibitorsByProject(projectId: $projectId) {\n    companyName\n    createdAt\n    description\n    id\n    linkedin\n    logoUrl\n    projectId\n    updatedAt\n    website\n  }\n}": typeof types.GetExhibitorsByProjectDocument,
     "query GetUtmBySlug($slug: String!) {\n  getUtmByProject(slug: $slug) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": typeof types.GetUtmBySlugDocument,
-    "query Project($slug: String!) {\n  project(slug: $slug) {\n    id\n    name\n    description\n  }\n}": typeof types.ProjectDocument,
-    "query Projects {\n  projects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}": typeof types.ProjectsDocument,
+    "query GetProjectBySlug($slug: String!) {\n  getProjectBySlug(slug: $slug) {\n    id\n    name\n    description\n  }\n}": typeof types.GetProjectBySlugDocument,
 };
 const documents: Documents = {
+    "mutation CreateExhibitor($input: CreateExhibitorInput!) {\n  createExhibitor(input: $input) {\n    id\n    companyName\n  }\n}": types.CreateExhibitorDocument,
     "mutation CreateProject($input: CreateProjectInput!) {\n  createProject(input: $input) {\n    id\n    slug\n    name\n    description\n  }\n}": types.CreateProjectDocument,
     "mutation CreateUtm($input: CreateUTMInput!) {\n  createUtm(input: $input) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n  }\n}": types.CreateUtmDocument,
+    "mutation DeleteExhibitor($id: String!) {\n  deleteExhibitor(id: $id) {\n    id\n    companyName\n  }\n}": types.DeleteExhibitorDocument,
+    "query GetAllProjects {\n  getAllProjects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}": types.GetAllProjectsDocument,
     "query GetExhibitorsByProject($projectId: String!) {\n  getExhibitorsByProject(projectId: $projectId) {\n    companyName\n    createdAt\n    description\n    id\n    linkedin\n    logoUrl\n    projectId\n    updatedAt\n    website\n  }\n}": types.GetExhibitorsByProjectDocument,
     "query GetUtmBySlug($slug: String!) {\n  getUtmByProject(slug: $slug) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": types.GetUtmBySlugDocument,
-    "query Project($slug: String!) {\n  project(slug: $slug) {\n    id\n    name\n    description\n  }\n}": types.ProjectDocument,
-    "query Projects {\n  projects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}": types.ProjectsDocument,
+    "query GetProjectBySlug($slug: String!) {\n  getProjectBySlug(slug: $slug) {\n    id\n    name\n    description\n  }\n}": types.GetProjectBySlugDocument,
 };
 
 /**
@@ -47,11 +51,23 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "mutation CreateExhibitor($input: CreateExhibitorInput!) {\n  createExhibitor(input: $input) {\n    id\n    companyName\n  }\n}"): (typeof documents)["mutation CreateExhibitor($input: CreateExhibitorInput!) {\n  createExhibitor(input: $input) {\n    id\n    companyName\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "mutation CreateProject($input: CreateProjectInput!) {\n  createProject(input: $input) {\n    id\n    slug\n    name\n    description\n  }\n}"): (typeof documents)["mutation CreateProject($input: CreateProjectInput!) {\n  createProject(input: $input) {\n    id\n    slug\n    name\n    description\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "mutation CreateUtm($input: CreateUTMInput!) {\n  createUtm(input: $input) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n  }\n}"): (typeof documents)["mutation CreateUtm($input: CreateUTMInput!) {\n  createUtm(input: $input) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation DeleteExhibitor($id: String!) {\n  deleteExhibitor(id: $id) {\n    id\n    companyName\n  }\n}"): (typeof documents)["mutation DeleteExhibitor($id: String!) {\n  deleteExhibitor(id: $id) {\n    id\n    companyName\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query GetAllProjects {\n  getAllProjects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}"): (typeof documents)["query GetAllProjects {\n  getAllProjects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -63,11 +79,7 @@ export function gql(source: "query GetUtmBySlug($slug: String!) {\n  getUtmByPro
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query Project($slug: String!) {\n  project(slug: $slug) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query Project($slug: String!) {\n  project(slug: $slug) {\n    id\n    name\n    description\n  }\n}"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "query Projects {\n  projects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}"): (typeof documents)["query Projects {\n  projects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n  }\n}"];
+export function gql(source: "query GetProjectBySlug($slug: String!) {\n  getProjectBySlug(slug: $slug) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query GetProjectBySlug($slug: String!) {\n  getProjectBySlug(slug: $slug) {\n    id\n    name\n    description\n  }\n}"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

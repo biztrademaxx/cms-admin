@@ -1,0 +1,9 @@
+
+  query GetProjectBySlug($slug: String!) {
+    getProjectBySlug(slug: $slug) {
+      id
+      name
+      description
+    }
+  }
+

@@ -1,0 +1,11 @@
+import ProjectsPage from "@/components/landingPage/projectsPage";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Maxpo CMS ",
+  description: "Projects",
+};
+
+export default function ProjectPage() {
+  return <ProjectsPage />;
+}

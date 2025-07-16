@@ -1,6 +1,6 @@
 
-  query Projects{
-    projects {
+  query GetAllProjects{
+    getAllProjects {
       id
       name
       slug

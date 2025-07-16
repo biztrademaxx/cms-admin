@@ -3,20 +3,33 @@
 import React from "react";
 import { BoxIconLine, GroupIcon } from "@/icons";
 import { useQuery } from "@apollo/client";
-import { Project } from "@/types/projects";
 import { useRouter } from "next/navigation";
-import { ProjectsDocument } from "@/gql_generated/graphql";
+import { GetAllProjectsDocument } from "@/gql_generated/graphql";
+import { useDispatch } from "react-redux";
+import { setProject } from "@/store/projectSlice";
 
 export const ProjectsMetrics = () => {
   const router = useRouter();
-  const { loading, data } = useQuery(ProjectsDocument, {
+  const dispatch = useDispatch();
+  const { loading, data } = useQuery(GetAllProjectsDocument, {
     fetchPolicy: "cache-and-network",
     nextFetchPolicy: "cache-first",
   });
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="p-4 text-sm text-gray-500 text-center  dark:text-white">
+        Loading...
+      </div>
+    );
 
-  const projects = data?.projects || [];
+  const handleProjectClick = (projectId: string,projectName:string) => {
+    router.push(`/projects`);
+    dispatch(setProject({ projectId, projectName }));
+    localStorage.setItem("projectId", projectId);
+  };
+
+  const projects = data?.getAllProjects || [];
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {projects.map((item, index) => {
@@ -26,12 +39,9 @@ export const ProjectsMetrics = () => {
           <div
             key={item.id}
             className={
-              "rounded-2xl border bg-white cursor-pointer p-5 hover:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+              "rounded-2xl border bg-white cursor-pointer p-5 hover:border-brand-500 hover:dark:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
             }
-            onClick={() => {
-              router.push(`/projects/${item.slug}`);
-              localStorage.setItem("projectId", item.id);
-            }}
+            onClick={() => handleProjectClick(item.id,item.name)}
           >
             <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
               <Icon className="text-gray-800 size-6 dark:text-white/90" />

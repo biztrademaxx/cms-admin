@@ -9,20 +9,17 @@ import {
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
-import { useQuery } from "@apollo/client";
-import { GetExhibitorsByProjectDocument } from "@/gql_generated/graphql";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  DeleteExhibitorDocument,
+  GetExhibitorsByProjectDocument,
+} from "@/gql_generated/graphql";
 import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import ExhibitorsModal from "../modals/exhibitorsModal";
+import WarningModal from "../modals/warningModal";
+import { useSelector } from "react-redux";
 
-type ExhibitorsTableProps = {
-  formik: any;
-  modal: {
-    isOpen: boolean;
-    openModal: () => void;
-    closeModal: () => void;
-  };
-};
 export default function ExhibitorsTable({
   formik,
   modal,
@@ -30,16 +27,23 @@ export default function ExhibitorsTable({
   formik: any;
   modal: any;
 }) {
-  const { openModal, closeModal } = modal;
-  const [projectId, setProjectId] = useState("");
+  const { openModal } = modal;
+  const router = useRouter();
+  const projectId = useSelector((state: any) => state.project.projectId);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
-  const [currentExhibitor, setCurrentExhibitor] = useState<any | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setProjectId(localStorage.getItem("projectId") || "");
-    }
-  }, []);
+  const [deleteExhibitor] = useMutation(DeleteExhibitorDocument, {
+    onCompleted: (data) => {
+      console.log("Exhibitor deleted:", data);
+      setDeleteModalOpen(false);
+    },
+    refetchQueries: [
+      {
+        query: GetExhibitorsByProjectDocument,
+        variables: { projectId },
+      },
+    ],
+  });
 
   const { data, error, loading } = useQuery(GetExhibitorsByProjectDocument, {
     variables: { projectId },
@@ -53,18 +57,22 @@ export default function ExhibitorsTable({
     openModal();
     formik.setValues(Exhibitor);
   };
-  const handleSave = () => {
-    console.log("Saving changes...", currentExhibitor);
-    closeModal();
+
+  const handleDelete = async (Exhibitor: any) => {
+    await deleteExhibitor({ variables: { id: Exhibitor.id } });
   };
 
-  if (loading) return <p className="p-4 text-sm text-gray-500">Loading...</p>;
+  if (loading)
+    return (
+      <p className="p-4 text-sm text-gray-500 text-center  dark:text-white">
+        Loading...
+      </p>
+    );
   if (error)
     return (
       <p className="p-4 text-sm text-red-500">Error loading exhibitors.</p>
     );
 
-  const router = useRouter();
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -96,9 +104,9 @@ export default function ExhibitorsTable({
                 <TableRow key={Exhibitor.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 overflow-hidden">
                         {Exhibitor?.logoUrl ? (
-                          <div className="relative w-10 h-10">
+                          <div className="relative w-10 h-10 ">
                             <Image
                               src={Exhibitor.logoUrl}
                               alt={Exhibitor.companyName}
@@ -162,7 +170,13 @@ export default function ExhibitorsTable({
                       >
                         Edit
                       </button>
-                      <button className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
+                      <button
+                        className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+                        onClick={() => {
+                          setEditingItem(Exhibitor);
+                          setDeleteModalOpen(true);
+                        }}
+                      >
                         Delete
                       </button>
                     </div>
@@ -177,6 +191,12 @@ export default function ExhibitorsTable({
         modal={modal}
         formik={formik}
         editingItem={editingItem}
+        setEditingItem={setEditingItem}
+      />
+      <WarningModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={() => handleDelete(editingItem)}
       />
     </div>
   );

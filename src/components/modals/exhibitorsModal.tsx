@@ -13,24 +13,29 @@ type ExhibitorsModalProps = {
   };
   formik: any;
   editingItem: any | null;
+  setEditingItem: (item: any | null) => void;
 };
 
 const ExhibitorsModal = ({
   modal,
   formik,
   editingItem,
+  setEditingItem,
 }: ExhibitorsModalProps) => {
   const { isOpen, closeModal } = modal;
+  const handleClose = () => {
+    formik.resetForm();
+    setEditingItem(null);
+    closeModal();
+  };
 
+  useEffect(() => {
+    if (editingItem) {
+      formik.setValues(editingItem);
+    }
+  }, [editingItem]);
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={() => {
-        formik.resetForm();
-        closeModal();
-      }}
-      className="max-w-[700px] m-4"
-    >
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] m-4">
       <form
         onSubmit={formik.handleSubmit}
         className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11"
@@ -118,10 +123,7 @@ const ExhibitorsModal = ({
             size="sm"
             variant="outline"
             type="button"
-            onClick={() => {
-              closeModal();
-              formik.resetForm();
-            }}
+            onClick={handleClose}
           >
             Cancel
           </Button>

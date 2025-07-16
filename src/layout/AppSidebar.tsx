@@ -21,6 +21,8 @@ import Logo from "@/../public/images/logo/logo.png";
 import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
 import { useQuery } from "@apollo/client";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 type NavItem = {
   name: string;
@@ -56,10 +58,8 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
-  const isProjectsRoute = pathname.startsWith("/projects/");
-  const project = isProjectsRoute ? pathname.split("/")[2] : "";
+  const isProjectsRoute = pathname.startsWith("/projects");
 
-  console.log("project", project);
   const defaultItems: NavItem[] = [
     {
       icon: <GridIcon />,
@@ -72,12 +72,12 @@ const AppSidebar: React.FC = () => {
     {
       icon: <PageIcon />,
       name: "overview",
-      path: `/projects/${project}`,
+      path: `/projects`,
     },
     {
       icon: <ListIcon />,
       name: "Agenda",
-      path: `/projects/${project}/agenda`,
+      path: `/projects/agenda`,
     },
     {
       icon: <UserCircleIcon />,
@@ -85,28 +85,28 @@ const AppSidebar: React.FC = () => {
       subItems: [
         {
           name: "Exhibitors",
-          path: `/projects/${project}/exhibitors`,
+          path: `/projects/exhibitors`,
           draft: false,
         },
         {
           name: "Media Partners",
-          path: `/projects/${project}/speakers`,
+          path: `/projects/speakers`,
           draft: true,
         },
         {
           name: "Delegates",
-          path: `/projects/${project}/delegates`,
+          path: `/projects/delegates`,
         },
       ],
     },
     {
       icon: <CalenderIcon />,
       name: "UTM Builder",
-      path: `/projects/${project}/utm`,
+      path: `/projects/utm`,
     },
   ];
 
-  const navItems = isProjectsRoute ? ProjectsItems : defaultItems;
+  const navItems =  isProjectsRoute ? ProjectsItems : defaultItems;
 
   const renderMenuItems = (
     navItems: NavItem[],

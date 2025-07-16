@@ -57,6 +57,7 @@ export type CreateAgendaItemInput = {
 export type CreateExhibitorInput = {
   companyName: Scalars['String']['input'];
   description: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
   linkedin?: InputMaybe<Scalars['String']['input']>;
   logoUrl?: InputMaybe<Scalars['String']['input']>;
   projectId: Scalars['String']['input'];
@@ -65,6 +66,7 @@ export type CreateExhibitorInput = {
 
 export type CreateMediaPartnerInput = {
   description: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
   logoUrl?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   projectId: Scalars['String']['input'];
@@ -75,6 +77,7 @@ export type CreateProjectInput = {
   currency?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   endDate?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   slug: Scalars['String']['input'];
   startDate?: InputMaybe<Scalars['String']['input']>;
@@ -95,6 +98,7 @@ export type CreateSpeakerInput = {
 
 export type CreateSupportingPartnerInput = {
   description: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
   logoUrl?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   projectId: Scalars['String']['input'];
@@ -145,6 +149,11 @@ export type Mutation = {
   createSpeaker: Speaker;
   createSupportingPartner: SupportingPartner;
   createUtm: Utm;
+  deleteExhibitor: Exhibitor;
+  deleteMediaPartner: MediaPartner;
+  deleteProject: Project;
+  deleteSpeaker: Speaker;
+  deleteSupportingPartner: SupportingPartner;
 };
 
 
@@ -187,6 +196,31 @@ export type MutationCreateUtmArgs = {
   input: CreateUtmInput;
 };
 
+
+export type MutationDeleteExhibitorArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteMediaPartnerArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteProjectArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteSpeakerArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteSupportingPartnerArgs = {
+  id: Scalars['String']['input'];
+};
+
 export type Project = {
   __typename?: 'Project';
   createdAt: Scalars['DateTime']['output'];
@@ -206,19 +240,19 @@ export type Query = {
   __typename?: 'Query';
   getAgendaDay?: Maybe<AgendaDay>;
   getAllAgendaDays: Array<AgendaDay>;
+  getAllProjects: Array<Project>;
   getExhibitors: Array<Exhibitor>;
   getExhibitorsByProject: Array<Exhibitor>;
   getMediaPartners: Array<MediaPartner>;
   getMediaPartnersByProject: Array<MediaPartner>;
   getParticipantLogos: Array<Scalars['String']['output']>;
+  getProjectBySlug: Project;
   getSpeakers: Array<Speaker>;
   getSpeakersByProject: Array<Speaker>;
   getSupportingPartners: Array<SupportingPartner>;
   getSupportingPartnersByProject: Array<SupportingPartner>;
   getUtm: Array<Utm>;
   getUtmByProject: Array<Utm>;
-  project: Project;
-  projects: Array<Project>;
 };
 
 
@@ -242,6 +276,11 @@ export type QueryGetParticipantLogosArgs = {
 };
 
 
+export type QueryGetProjectBySlugArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
 export type QueryGetSpeakersByProjectArgs = {
   projectId: Scalars['String']['input'];
 };
@@ -253,11 +292,6 @@ export type QueryGetSupportingPartnersByProjectArgs = {
 
 
 export type QueryGetUtmByProjectArgs = {
-  slug: Scalars['String']['input'];
-};
-
-
-export type QueryProjectArgs = {
   slug: Scalars['String']['input'];
 };
 
@@ -301,6 +335,13 @@ export type Utm = {
   url: Scalars['String']['output'];
 };
 
+export type CreateExhibitorMutationVariables = Exact<{
+  input: CreateExhibitorInput;
+}>;
+
+
+export type CreateExhibitorMutation = { __typename?: 'Mutation', createExhibitor: { __typename?: 'Exhibitor', id: string, companyName: string } };
+
 export type CreateProjectMutationVariables = Exact<{
   input: CreateProjectInput;
 }>;
@@ -314,6 +355,18 @@ export type CreateUtmMutationVariables = Exact<{
 
 
 export type CreateUtmMutation = { __typename?: 'Mutation', createUtm: { __typename?: 'UTM', id: string, source: string, medium: string, campaign: string, term?: string | null, content?: string | null } };
+
+export type DeleteExhibitorMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type DeleteExhibitorMutation = { __typename?: 'Mutation', deleteExhibitor: { __typename?: 'Exhibitor', id: string, companyName: string } };
+
+export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllProjectsQuery = { __typename?: 'Query', getAllProjects: Array<{ __typename?: 'Project', id: string, name: string, slug: string, description?: string | null, startDate: any, endDate: any }> };
 
 export type GetExhibitorsByProjectQueryVariables = Exact<{
   projectId: Scalars['String']['input'];
@@ -329,22 +382,19 @@ export type GetUtmBySlugQueryVariables = Exact<{
 
 export type GetUtmBySlugQuery = { __typename?: 'Query', getUtmByProject: Array<{ __typename?: 'UTM', id: string, source: string, medium: string, campaign: string, term?: string | null, content?: string | null, url: string }> };
 
-export type ProjectQueryVariables = Exact<{
+export type GetProjectBySlugQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type ProjectQuery = { __typename?: 'Query', project: { __typename?: 'Project', id: string, name: string, description?: string | null } };
-
-export type ProjectsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetProjectBySlugQuery = { __typename?: 'Query', getProjectBySlug: { __typename?: 'Project', id: string, name: string, description?: string | null } };
 
 
-export type ProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: string, name: string, slug: string, description?: string | null, startDate: any, endDate: any }> };
-
-
+export const CreateExhibitorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateExhibitor"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateExhibitorInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createExhibitor"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"companyName"}}]}}]}}]} as unknown as DocumentNode<CreateExhibitorMutation, CreateExhibitorMutationVariables>;
 export const CreateProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateProjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<CreateProjectMutation, CreateProjectMutationVariables>;
 export const CreateUtmDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUtm"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUTMInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUtm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"campaign"}},{"kind":"Field","name":{"kind":"Name","value":"term"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<CreateUtmMutation, CreateUtmMutationVariables>;
+export const DeleteExhibitorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteExhibitor"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteExhibitor"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"companyName"}}]}}]}}]} as unknown as DocumentNode<DeleteExhibitorMutation, DeleteExhibitorMutationVariables>;
+export const GetAllProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}}]}}]}}]} as unknown as DocumentNode<GetAllProjectsQuery, GetAllProjectsQueryVariables>;
 export const GetExhibitorsByProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExhibitorsByProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExhibitorsByProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"companyName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedin"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"projectId"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"website"}}]}}]}}]} as unknown as DocumentNode<GetExhibitorsByProjectQuery, GetExhibitorsByProjectQueryVariables>;
 export const GetUtmBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUtmBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUtmByProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"medium"}},{"kind":"Field","name":{"kind":"Name","value":"campaign"}},{"kind":"Field","name":{"kind":"Name","value":"term"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<GetUtmBySlugQuery, GetUtmBySlugQueryVariables>;
-export const ProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Project"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<ProjectQuery, ProjectQueryVariables>;
-export const ProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}}]}}]}}]} as unknown as DocumentNode<ProjectsQuery, ProjectsQueryVariables>;
+export const GetProjectBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getProjectBySlug"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetProjectBySlugQuery, GetProjectBySlugQueryVariables>;

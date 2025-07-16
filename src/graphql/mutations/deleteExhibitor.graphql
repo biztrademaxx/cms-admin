@@ -1,0 +1,6 @@
+mutation DeleteExhibitor($id: String!) {
+  deleteExhibitor(id: $id) {
+    id
+    companyName
+  }
+}

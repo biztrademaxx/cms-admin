@@ -1,0 +1,6 @@
+mutation CreateExhibitor($input: CreateExhibitorInput!) {
+  createExhibitor(input: $input) {
+    id
+    companyName
+  }
+}
