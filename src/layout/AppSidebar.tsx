@@ -12,17 +12,14 @@ import {
   HorizontaLDots,
   ListIcon,
   PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
+  // PieChartIcon,
+  // PlugInIcon,
+  // TableIcon,
   UserCircleIcon,
 } from "../icons/index";
 import Logo from "@/../public/images/logo/logo.png";
 import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
-import { useQuery } from "@apollo/client";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
 
 type NavItem = {
   name: string;

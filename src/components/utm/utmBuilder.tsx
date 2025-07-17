@@ -125,6 +125,7 @@ export default function UTMBuilder({ data }: { data: UTMEntry }) {
       <div className="mt-6">
         <Label>Generated UTM URL</Label>
         <TextArea
+        name="url"
           className="bg-gray-50 text-sm rounded-xl mt-1 dark:bg-white/[0.03] dark:text-white"
           value={generateUTM(formik.values)}
         />

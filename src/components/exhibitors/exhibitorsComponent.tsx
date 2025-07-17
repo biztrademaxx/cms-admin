@@ -1,6 +1,6 @@
 "use client";
 import * as Yup from "yup";
-import React, { useEffect } from "react";
+import React from "react";
 import Button from "../ui/button/Button";
 import ExhibitorsTable from "../tables/exhibitorsTable";
 import { useModal } from "@/hooks/useModal";

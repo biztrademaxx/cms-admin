@@ -10,9 +10,6 @@ import {
 
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { MoreDotIcon } from "@/icons";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "../ui/modal";
 import Label from "../form/Label";

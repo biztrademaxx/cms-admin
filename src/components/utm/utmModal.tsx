@@ -6,7 +6,7 @@ import { UTMEntry } from "./utm.types";
 type AgendaMOdalProps = {
   isOpen: boolean;
   closeModal: () => void;
-  data: UTMEntry
+  data: UTMEntry |  any
 };
 
 const UtmModal = ({ isOpen, closeModal, data }: AgendaMOdalProps) => {

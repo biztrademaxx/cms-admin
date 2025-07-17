@@ -76,7 +76,7 @@ export default function UTMDashboard() {
       slug: projectSlug,
     },
   });
-  const handleCopy = async (entry: UTMEntry) => {
+  const handleCopy = async (entry:UTMEntry | any ) => {
     const {source,medium,campaign,term,content,url}=entry;
     const text=generateUTM({
       url,
@@ -93,7 +93,7 @@ export default function UTMDashboard() {
     openModal();
   };
 
-  const handleEdit = (entry: UTMEntry) => {
+  const handleEdit = (entry: UTMEntry |any) => {
     openModal();
     setSelectedEntry(entry);
   };
@@ -199,25 +199,26 @@ export default function UTMDashboard() {
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      {entry.visits ?? "-"}
+                      { "-"}
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      {entry.uniqueClicks ?? "-"}
+                      { "-"}
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-theme-sm text-gray-600 dark:text-gray-400">
                       <Badge
                         size="sm"
                         color={
-                          entry?.status === "Active"
-                            ? "success"
-                            : entry?.status === "Paused"
-                            ? "warning"
-                            : "error"
+                          // entry?.status === "Active"
+                          //   ? "success"
+                          //   : entry?.status === "Paused"
+                          //   ? "warning"
+                          //   : "error"
+                          "success"
                         }
                       >
-                        {entry.status ?? "Active"}
+                        { "Active"}
                       </Badge>
                     </TableCell>
 

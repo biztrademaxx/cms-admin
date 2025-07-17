@@ -2,7 +2,10 @@ export function convert12HrToISO(datetimeStr: string): string {
   const [datePart, timePart, ampm] = datetimeStr.split(/[\s:]+/); // Split by space/colon
 
   const [day, month, year] = datePart.split("-").map(Number);
-  let [hour, minute] = [parseInt(timePart, 10), parseInt(datetimeStr.split(/[\s:]+/)[2], 10)];
+  let [hour, minute] = [
+    parseInt(timePart, 10),
+    parseInt(datetimeStr.split(/[\s:]+/)[2], 10),
+  ];
 
   if (ampm.toUpperCase() === "PM" && hour < 12) hour += 12;
   if (ampm.toUpperCase() === "AM" && hour === 12) hour = 0;
@@ -11,6 +14,14 @@ export function convert12HrToISO(datetimeStr: string): string {
   return date.toISOString();
 }
 
+export function convertD24HrToISO(datetimeStr: string): string {
+  const [datePart, timePart] = datetimeStr.split(" ");
+  const [day, month, year] = datePart.split("-").map(Number);
+  const [hour, minute] = timePart.split(":").map(Number);
+
+  const date = new Date(year, month - 1, day, hour, minute);
+  return date.toISOString();
+}
 
 export function convertISOtoNormal(datetimeStr: string): string {
   const date = new Date(datetimeStr);
@@ -29,7 +40,9 @@ export function convertISOtoNormal(datetimeStr: string): string {
   const formatter = new Intl.DateTimeFormat("en-IN", options);
   const parts = formatter.formatToParts(date);
 
-  const get = (type: string) => parts.find(p => p.type === type)?.value ?? "";
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
 
-  return `${get("day")}-${get("month")}-${get("year")} ${get("hour")}:${get("minute")} ${get("dayPeriod")}`;
+  return `${get("day")}-${get("month")}-${get("year")} ${get("hour")}:${get(
+    "minute"
+  )} ${get("dayPeriod")}`;
 }

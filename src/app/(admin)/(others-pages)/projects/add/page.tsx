@@ -11,6 +11,7 @@ import DatePicker from "@/components/form/date-picker";
 import { useMutation } from "@apollo/client";
 import { CreateProjectDocument } from "@/gql_generated/graphql";
 import { useRouter } from "next/navigation";
+import { convertD24HrToISO } from "@/utils/dateUtils";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Project name is required"),
@@ -22,7 +23,7 @@ const validationSchema = Yup.object().shape({
 
 export default function CreateProjectForm() {
   const router = useRouter();
-  const [CreateProject, { loading, error, data }] = useMutation(
+  const [CreateProject, { loading }] = useMutation(
     CreateProjectDocument,
     {
       onCompleted: (data) => {
