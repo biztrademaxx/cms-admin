@@ -6,33 +6,38 @@ import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateMediaPartnerDocument,
-  GetMediaPartnersByProjectDocument,
+  CreateSpeakerDocument,
+  CreateSpeakerInput,
+  GetSpeakersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
-import MediaPartnersTable from "../tables/mediaPartnersTable";
+import SpeakersTable from "../tables/speakersTable";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Company name is required"),
-  description: Yup.string().required("Description is required"),
-  logoUrl: Yup.string()
+  name: Yup.string().required("Speaker name is required"),
+  companyName: Yup.string().required("Company name is required"),
+  linkedinUrl: Yup.string()
+    .required("Linkedin URL is required")
+    .url("Enter a valid URL"),
+  image: Yup.string()
+    .required("Profile picture URL is required")
+    .url("Enter a valid URL"),
+  companyLogo: Yup.string()
     .required("Logo URL is required")
     .url("Enter a valid URL"),
-  website: Yup.string()
-    .required("Website is required")
-    .url("Enter a valid URL"),
+  designation: Yup.string().required("Designation is required"),
 });
-const MediaPartnersComponent = () => {
+const SpeakersComponent = () => {
   const projectId = useSelector((state: any) => state.project.projectId);
-  const [createMediaPartner] = useMutation(CreateMediaPartnerDocument, {
+  const [createMediaPartner] = useMutation(CreateSpeakerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
       modal.closeModal();
     },
     refetchQueries: [
       {
-        query: GetMediaPartnersByProjectDocument,
+        query: GetSpeakersByProjectDocument,
         variables: { projectId },
       },
     ],
@@ -44,18 +49,22 @@ const MediaPartnersComponent = () => {
     initialValues: {
       id: "",
       name: "",
-      description: "",
-      logoUrl: "",
-      website: "",
+      linkedinUrl: "",
+      image: "",
+      designation: "",
+      companyLogo: "",
+      companyName: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      const input: any = {
+      const input: CreateSpeakerInput = {
         projectId,
         name: values.name,
-        description: values.description,
-        logoUrl: values.logoUrl,
-        website: values.website,
+        linkedinUrl: values.linkedinUrl,
+        image: values.image,
+        designation: values.designation,
+        companyLogo: values.companyLogo,
+        companyName: values.companyName,
       };
 
       if (values.id) {
@@ -75,17 +84,17 @@ const MediaPartnersComponent = () => {
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Media Partners" />
+          <PageBreadcrumb pageTitle="Speakers" />
           <Button size="sm" onClick={modal.openModal}>
-            + Add Media Partner
+            + Add Speakers
           </Button>
         </div>
         <div className="space-y-6">
-          <MediaPartnersTable formik={formik} modal={modal} />
+          <SpeakersTable formik={formik} modal={modal} />
         </div>
       </div>
     </div>
   );
 };
 
-export default MediaPartnersComponent;
+export default SpeakersComponent;

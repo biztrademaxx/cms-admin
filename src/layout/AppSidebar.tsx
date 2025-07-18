@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
@@ -72,11 +71,6 @@ const AppSidebar: React.FC = () => {
       path: `/projects`,
     },
     {
-      icon: <ListIcon />,
-      name: "Agenda",
-      path: `/projects/agenda`,
-    },
-    {
       icon: <UserCircleIcon />,
       name: "Participants",
       subItems: [
@@ -90,9 +84,19 @@ const AppSidebar: React.FC = () => {
           path: `/projects/media`,
           draft: false,
         },
+      ],
+    },
+    {
+      icon: <ListIcon />,
+      name: "Conference",
+      subItems: [
         {
-          name: "Delegates",
-          path: `/projects/delegates`,
+          name: "Speakers",
+          path: `/projects/speakers`,
+        },
+        {
+          name: "Agenda",
+          path: `/projects/agenda`,
         },
       ],
     },
@@ -103,7 +107,7 @@ const AppSidebar: React.FC = () => {
     },
   ];
 
-  const navItems =  isProjectsRoute ? ProjectsItems : defaultItems;
+  const navItems = isProjectsRoute ? ProjectsItems : defaultItems;
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -316,33 +320,34 @@ const AppSidebar: React.FC = () => {
         }`}
       >
         <Link href="/">
-        <h1 className="font-bold text-2xl dark:text-white">Mateen's CRM</h1>
-          {/* {isExpanded || isHovered || isMobileOpen ? (
-            <>
-            
-             <Image
-                className="dark:hidden"
-                src={Logo}
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <Image
-                className="hidden dark:block"
-                src={LogoDark}
-                alt="Logo"
-                width={150}
-                height={40}
-              /> 
-            </>
+          {isExpanded || isHovered || isMobileOpen ? (
+            // <>
+
+            //  <Image
+            //     className="dark:hidden"
+            //     src={Logo}
+            //     alt="Logo"
+            //     width={150}
+            //     height={40}
+            //   />
+            //   <Image
+            //     className="hidden dark:block"
+            //     src={LogoDark}
+            //     alt="Logo"
+            //     width={150}
+            //     height={40}
+            //   />
+            // </>
+            <h1 className="font-bold text-2xl dark:text-white">Mateen's CRM</h1>
           ) : (
-            <Image
-              src="/images/logo/logo-icon.png"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
-          )} */}
+            // <Image
+            //   src="/images/logo/logo-icon.png"
+            //   alt="Logo"
+            //   width={32}
+            //   height={32}
+            // />
+            <h1 className="font-bold text-lg dark:text-white">MCRM</h1>
+          )}
         </Link>
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">

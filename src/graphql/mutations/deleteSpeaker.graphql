@@ -1,0 +1,6 @@
+mutation DeleteSpeaker($id: String!) {
+  deleteSpeaker(id: $id) {
+    id
+    name
+  }
+}

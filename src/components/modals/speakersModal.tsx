@@ -3,9 +3,8 @@ import { Modal } from "../ui/modal";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import TextArea from "../form/input/TextArea";
 
-type ExhibitorsModalProps = {
+type SpeakersModalProps = {
   modal: {
     isOpen: boolean;
     openModal: () => void;
@@ -16,12 +15,12 @@ type ExhibitorsModalProps = {
   setEditingItem: (item: any | null) => void;
 };
 
-const ExhibitorsModal = ({
+const SpeakersModal = ({
   modal,
   formik,
   editingItem,
   setEditingItem,
-}: ExhibitorsModalProps) => {
+}: SpeakersModalProps) => {
   const { isOpen, closeModal } = modal;
   const handleClose = () => {
     formik.resetForm();
@@ -42,21 +41,63 @@ const ExhibitorsModal = ({
       >
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            {editingItem ? "Edit Exhibitor" : "Add Exhibitor"}
+            {editingItem ? "Edit Speaker" : "Add Speaker"}
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-            Fill out the exhibitor details below.
+            Fill out the speaker details below.
           </p>
         </div>
 
         <div className="px-2 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
+              <Label>Name</Label>
+              <Input
+                type="text"
+                name="name"
+                placeholder="name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                hint={formik.touched.name ? formik.errors.name : ""}
+                error={formik.touched.name && formik.errors.name}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+            <div>
+              <Label>Profile Picture URL</Label>
+              <Input
+                type="text"
+                name="image"
+                placeholder="https://example.com/logo.png"
+                error={formik.touched.image && formik.errors.image}
+                onBlur={formik.handleBlur}
+                hint={formik.touched.image ? formik.errors.image : ""}
+                value={formik.values.image}
+                onChange={formik.handleChange}
+              />
+            </div>
+            <div>
+              <Label>Designation</Label>
+              <Input
+                type="text"
+                name="designation"
+                placeholder="designation"
+                value={formik.values.designation}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.designation ? formik.errors.designation : ""
+                }
+                error={formik.touched.designation && formik.errors.designation}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+            <div>
               <Label>Company Name</Label>
               <Input
                 type="text"
                 name="companyName"
-                placeholder="Company Name"
+                placeholder="company Name"
                 value={formik.values.companyName}
                 onChange={formik.handleChange}
                 hint={
@@ -67,56 +108,35 @@ const ExhibitorsModal = ({
               />
             </div>
             <div>
-              <Label>LinkedIn URL</Label>
+              <Label>Organization Logo URL</Label>
               <Input
                 type="text"
-                name="linkedin"
-                placeholder="https://linkedin.com/"
-                value={formik.values.linkedin}
-                onChange={formik.handleChange}
-                hint={formik.touched.linkedin ? formik.errors.linkedin : ""}
-                error={formik.touched.linkedin && formik.errors.linkedin}
-                onBlur={formik.handleBlur}
-              />
-            </div>
-            <div>
-              <Label>Logo URL</Label>
-              <Input
-                type="text"
-                name="logoUrl"
+                name="companyLogo"
                 placeholder="https://example.com/logo.png"
-                error={formik.touched.logoUrl && formik.errors.logoUrl}
+                error={formik.touched.companyLogo && formik.errors.companyLogo}
                 onBlur={formik.handleBlur}
-                hint={formik.touched.logoUrl ? formik.errors.logoUrl : ""}
-                value={formik.values.logoUrl}
+                hint={
+                  formik.touched.companyLogo ? formik.errors.companyLogo : ""
+                }
+                value={formik.values.companyLogo}
                 onChange={formik.handleChange}
               />
             </div>
             <div>
-              <Label>Website</Label>
+              <Label>Linkedin URL</Label>
               <Input
                 type="text"
-                name="website"
+                name="linkedinUrl"
                 placeholder="https://example.com"
                 onBlur={formik.handleBlur}
-                hint={formik.touched.website ? formik.errors.website : ""}
-                error={formik.touched.website && formik.errors.website}
-                value={formik.values.website}
+                hint={
+                  formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""
+                }
+                error={formik.touched.linkedinUrl && formik.errors.linkedinUrl}
+                value={formik.values.linkedinUrl}
                 onChange={formik.handleChange}
               />
             </div>
-          </div>
-          <div className="mt-6">
-            <Label>Description</Label>
-            <TextArea
-              name="description"
-              placeholder="Short description about the exhibitor"
-              value={formik.values.description}
-              onBlur={formik.handleBlur}
-              hint={formik.touched.description ? formik.errors.description : ""}
-              error={formik.touched.description && formik.errors.description}
-              onChange={formik.handleChange}
-            />
           </div>
         </div>
 
@@ -130,7 +150,7 @@ const ExhibitorsModal = ({
             Cancel
           </Button>
           <Button size="sm" type="submit">
-            {editingItem ? "Update" : "Add"} Exhibitor
+            {editingItem ? "Update" : "Add"} Speaker
           </Button>
         </div>
       </form>
@@ -138,4 +158,4 @@ const ExhibitorsModal = ({
   );
 };
 
-export default ExhibitorsModal;
+export default SpeakersModal;

@@ -10,17 +10,15 @@ import {
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
 import { useMutation, useQuery } from "@apollo/client";
-import {
-  DeleteMediaPartnerDocument,
-  GetMediaPartnersByProjectDocument,
-} from "@/gql_generated/graphql";
+
 import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
-import MediaPartnersModal from "../modals/mediaPartnersModal";
 import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
+import SpeakersModal from "../modals/speakersModal";
+import { DeleteSpeakerDocument, GetSpeakersByProjectDocument } from "@/gql_generated/graphql";
 
-export default function MediaPartnersTable({
+export default function SpeakersTable({
   formik,
   modal,
 }: {
@@ -32,34 +30,34 @@ export default function MediaPartnersTable({
   const projectId = useSelector((state: any) => state.project.projectId);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
-  const [deleteMediaPartner] = useMutation(DeleteMediaPartnerDocument, {
+  const [deletespeaker] = useMutation(DeleteSpeakerDocument, {
     onCompleted: (data) => {
-      console.log("Media Partner deleted:", data);
+      console.log("speaker deleted:", data);
       setDeleteModalOpen(false);
     },
     refetchQueries: [
       {
-        query: GetMediaPartnersByProjectDocument,
+        query: GetSpeakersByProjectDocument,
         variables: { projectId },
       },
     ],
   });
 
-  const { data, error, loading } = useQuery(GetMediaPartnersByProjectDocument, {
+  const { data, error, loading } = useQuery(GetSpeakersByProjectDocument, {
     variables: { projectId },
     skip: !projectId,
   });
 
-  const tableData = data?.getMediaPartnersByProject || [];
+  const tableData = data?.getSpeakersByProject || [];
 
-  const handleEdit = (MediaPartner: any) => {
-    setEditingItem(MediaPartner);
+  const handleEdit = (speaker: any) => {
+    setEditingItem(speaker);
     openModal();
-    formik.setValues(MediaPartner);
+    formik.setValues(speaker);
   };
 
-  const handleDelete = async (MediaPartner: any) => {
-    await deleteMediaPartner({ variables: { id: MediaPartner.id } });
+  const handleDelete = async (speaker: any) => {
+    await deletespeaker({ variables: { id: speaker.id } });
   };
 
   if (loading)
@@ -71,14 +69,14 @@ export default function MediaPartnersTable({
 
   if (error)
     return (
-      <p className="p-4 text-sm text-red-500">Error loading media partners.</p>
+      <p className="p-4 text-sm text-red-500">Error loading Speakers.</p>
     );
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       {!tableData?.length ? (
         <p className="p-4 text-sm text-gray-500 text-center  dark:text-white">
-          No media partners found.
+          No Speakers found.
         </p>
       ) : (
         <div className="max-w-full overflow-x-auto">
@@ -88,7 +86,7 @@ export default function MediaPartnersTable({
                 <TableRow>
                   {[
                     "Details",
-                    "Description",
+                    "Organization",
                     "Status",
                     "Created At",
                     "Actions",
@@ -105,65 +103,64 @@ export default function MediaPartnersTable({
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {tableData.map((mediaPartner: any) => (
-                  <TableRow key={mediaPartner.id}>
+                {tableData.map((speaker: any) => (
+                  <TableRow key={speaker.id}>
                     <TableCell className="px-5 py-4 sm:px-6 text-start">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 overflow-hidden">
-                          {mediaPartner?.logoUrl ? (
+                          {speaker?.image ? (
                             <div className="relative w-10 h-10 ">
                               <Image
-                                src={mediaPartner.logoUrl}
-                                alt={mediaPartner.name}
+                                src={speaker.image}
+                                alt={speaker.name}
                                 fill
                                 className="object-contain p-1"
                               />
                             </div>
                           ) : (
-                            mediaPartner?.name.slice(0, 2).toUpperCase()
+                            speaker?.name.slice(0, 2).toUpperCase()
                           )}
                         </div>
                         <div>
                           <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                            {mediaPartner?.name || "N/A"}
+                            {speaker?.name || "N/A"}
                           </span>
 
                           <span
                             className="block text-gray-500 text-theme-xs dark:text-gray-400 cursor-pointer "
-                            onClick={() => router.push(mediaPartner?.website)}
                           >
-                            {mediaPartner?.website || "N/A"}
+                            {speaker?.designation || "N/A"}
                           </span>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 max-w-md truncate">
-                      {mediaPartner?.description || "—"}
+                      {speaker?.companyName || "—"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start">
                       <Badge
                         size="sm"
                         color={
-                          mediaPartner.status === "Active"
+                          speaker.status === "Active"
                             ? "success"
-                            : mediaPartner.status === "Pending"
+                            : speaker.status === "Pending"
                             ? "warning"
                             : "error"
                         }
                       >
-                        {mediaPartner.status ?? "Active"}
+                        {speaker.status ?? "Active"}
                       </Badge>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400 uppercase">
-                      {mediaPartner.createdAt
-                        ? convertISOtoNormal(mediaPartner.createdAt)
+                      {speaker.createdAt
+                        ? convertISOtoNormal(speaker.createdAt)
                         : "—"}
                     </TableCell>
 
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleEdit(mediaPartner)}
+                          onClick={() => handleEdit(speaker)}
                           className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
                         >
                           Edit
@@ -171,7 +168,7 @@ export default function MediaPartnersTable({
                         <button
                           className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
                           onClick={() => {
-                            setEditingItem(mediaPartner);
+                            setEditingItem(speaker);
                             setDeleteModalOpen(true);
                           }}
                         >
@@ -186,7 +183,7 @@ export default function MediaPartnersTable({
           </div>
         </div>
       )}
-      <MediaPartnersModal
+      <SpeakersModal
         modal={modal}
         formik={formik}
         editingItem={editingItem}

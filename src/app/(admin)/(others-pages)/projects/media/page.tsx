@@ -1,4 +1,4 @@
-import MediaPartnersComponent from "@/components/media/MediaComponent";
+import MediaPartnersComponent from "@/components/partners/media/MediaComponent";
 import { Metadata } from "next";
 import React from "react";
 

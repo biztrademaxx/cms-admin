@@ -1,0 +1,13 @@
+query getSpeakersByProject($projectId: String!) {
+    getSpeakersByProject(projectId: $projectId) {
+        companyLogo
+        companyName
+        createdAt
+        designation
+        id
+        image
+        linkedinUrl
+        name
+        projectId
+    }
+}
