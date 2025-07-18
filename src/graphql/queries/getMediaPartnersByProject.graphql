@@ -1,0 +1,11 @@
+query GetMediaPartnersByProject($projectId: String!) {
+    getMediaPartnersByProject(projectId: $projectId) {
+        id
+        logoUrl
+        name
+        description
+        createdAt
+        logoUrl
+        website
+    }
+}

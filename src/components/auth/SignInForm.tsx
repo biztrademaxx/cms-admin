@@ -102,14 +102,17 @@ export default function SignInForm() {
                     value={formik.values.password}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={
-                      formik.touched.password && !!formik.errors.password
-                    }
+                    error={formik.touched.password && !!formik.errors.password}
                     hint={formik.touched.password ? formik.errors.password : ""}
                   />
                   <span
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                    className="absolute z-30 -translate-y-1/2 cursor-pointer right-4"
+                    style={
+                      formik.touched.password && formik.errors.password
+                        ? { top: "35%" }
+                        : { top: "50%" }
+                    }
                   >
                     {showPassword ? (
                       <EyeIcon className="fill-gray-500 dark:fill-gray-400" />

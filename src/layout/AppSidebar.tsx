@@ -17,8 +17,8 @@ import {
   // TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-import Logo from "@/../public/images/logo/logo.png";
-import LogoDark from "@/../public/images/logo/logo-dark.png";
+// import Logo from "@/../public/images/logo/logo.png";
+// import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
@@ -87,8 +87,8 @@ const AppSidebar: React.FC = () => {
         },
         {
           name: "Media Partners",
-          path: `/projects/speakers`,
-          draft: true,
+          path: `/projects/media`,
+          draft: false,
         },
         {
           name: "Delegates",
@@ -316,9 +316,11 @@ const AppSidebar: React.FC = () => {
         }`}
       >
         <Link href="/">
-          {isExpanded || isHovered || isMobileOpen ? (
+        <h1 className="font-bold text-2xl dark:text-white">Mateen's CRM</h1>
+          {/* {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <Image
+            
+             <Image
                 className="dark:hidden"
                 src={Logo}
                 alt="Logo"
@@ -331,7 +333,7 @@ const AppSidebar: React.FC = () => {
                 alt="Logo"
                 width={150}
                 height={40}
-              />
+              /> 
             </>
           ) : (
             <Image
@@ -340,7 +342,7 @@ const AppSidebar: React.FC = () => {
               width={32}
               height={32}
             />
-          )}
+          )} */}
         </Link>
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">

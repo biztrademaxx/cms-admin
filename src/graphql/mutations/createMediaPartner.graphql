@@ -1,0 +1,6 @@
+mutation CreateMediaPartner($input: CreateMediaPartnerInput!) {
+  createMediaPartner(input: $input) {
+    id
+    name
+  }
+}

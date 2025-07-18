@@ -2,24 +2,20 @@
 import * as Yup from "yup";
 import React from "react";
 import Button from "../ui/button/Button";
-import ExhibitorsTable from "../tables/exhibitorsTable";
 import { useModal } from "@/hooks/useModal";
-import ExhibitorsModal from "../modals/exhibitorsModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateExhibitorDocument,
-  GetExhibitorsByProjectDocument,
+  CreateMediaPartnerDocument,
+  GetMediaPartnersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
+import MediaPartnersTable from "../tables/mediaPartnersTable";
 
 const validationSchema = Yup.object().shape({
-  companyName: Yup.string().required("Company name is required"),
+  name: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
-  linkedin: Yup.string()
-    .required("Linkedin is required")
-    .url("Enter a valid URL"),
   logoUrl: Yup.string()
     .required("Logo URL is required")
     .url("Enter a valid URL"),
@@ -27,16 +23,16 @@ const validationSchema = Yup.object().shape({
     .required("Website is required")
     .url("Enter a valid URL"),
 });
-const ExhibitorsComponent = () => {
+const MediaPartnersComponent = () => {
   const projectId = useSelector((state: any) => state.project.projectId);
-  const [createExhibitor] = useMutation(CreateExhibitorDocument, {
+  const [createMediaPartner] = useMutation(CreateMediaPartnerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
       modal.closeModal();
     },
     refetchQueries: [
       {
-        query: GetExhibitorsByProjectDocument,
+        query: GetMediaPartnersByProjectDocument,
         variables: { projectId },
       },
     ],
@@ -47,9 +43,8 @@ const ExhibitorsComponent = () => {
   const formik = useFormik({
     initialValues: {
       id: "",
-      companyName: "",
+      name: "",
       description: "",
-      linkedin: "",
       logoUrl: "",
       website: "",
     },
@@ -57,9 +52,8 @@ const ExhibitorsComponent = () => {
     onSubmit: async (values) => {
       const input: any = {
         projectId,
-        companyName: values.companyName,
+        name: values.name,
         description: values.description,
-        linkedin: values.linkedin,
         logoUrl: values.logoUrl,
         website: values.website,
       };
@@ -68,7 +62,7 @@ const ExhibitorsComponent = () => {
         input.id = values.id;
       }
 
-      await createExhibitor({
+      await createMediaPartner({
         variables: {
           input,
         },
@@ -81,17 +75,17 @@ const ExhibitorsComponent = () => {
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Exhibitors" />
+          <PageBreadcrumb pageTitle="Media Partners" />
           <Button size="sm" onClick={modal.openModal}>
-            + Add Exhibitor
+            + Add Media Partner
           </Button>
         </div>
         <div className="space-y-6">
-          <ExhibitorsTable formik={formik} modal={modal} />
+          <MediaPartnersTable formik={formik} modal={modal} />
         </div>
       </div>
     </div>
   );
 };
 
-export default ExhibitorsComponent;
+export default MediaPartnersComponent;

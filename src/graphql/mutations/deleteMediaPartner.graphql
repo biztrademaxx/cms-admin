@@ -1,0 +1,6 @@
+mutation DeleteMediaPartner($id: String!) {
+  deleteMediaPartner(id: $id) {
+    id
+    name
+  }
+}

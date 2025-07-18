@@ -5,7 +5,7 @@ import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
 
-type ExhibitorsModalProps = {
+type MediaPartnersModalProps = {
   modal: {
     isOpen: boolean;
     openModal: () => void;
@@ -16,12 +16,12 @@ type ExhibitorsModalProps = {
   setEditingItem: (item: any | null) => void;
 };
 
-const ExhibitorsModal = ({
+const MediaPartnersModal = ({
   modal,
   formik,
   editingItem,
   setEditingItem,
-}: ExhibitorsModalProps) => {
+}: MediaPartnersModalProps) => {
   const { isOpen, closeModal } = modal;
   const handleClose = () => {
     formik.resetForm();
@@ -42,41 +42,31 @@ const ExhibitorsModal = ({
       >
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            {editingItem ? "Edit Exhibitor" : "Add Exhibitor"}
+            {editingItem ? "Edit MediaPartner" : "Add MediaPartner"}
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-            Fill out the exhibitor details below.
+            Fill out the MediaPartner details below.
           </p>
         </div>
 
         <div className="px-2 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
-              <Label>Company Name</Label>
+              <Label>name</Label>
               <Input
                 type="text"
-                name="companyName"
-                placeholder="Company Name"
-                value={formik.values.companyName}
+                name="name"
+                placeholder="name"
+                value={formik.values.name}
                 onChange={formik.handleChange}
-                hint={formik.touched.companyName ? formik.errors.companyName:""}
-                error={formik.touched.companyName && formik.errors.companyName}
+                hint={
+                  formik.touched.name ? formik.errors.name : ""
+                }
+                error={formik.touched.name && formik.errors.name}
                 onBlur={formik.handleBlur}
               />
             </div>
-            <div>
-              <Label>LinkedIn URL</Label>
-              <Input
-                type="text"
-                name="linkedin"
-                placeholder="https://linkedin.com/"
-                value={formik.values.linkedin}
-                onChange={formik.handleChange}
-                hint={formik.touched.linkedin ? formik.errors.linkedin: ""}
-                error={formik.touched.linkedin && formik.errors.linkedin}
-                onBlur={formik.handleBlur}
-              />
-            </div>
+            
             <div>
               <Label>Logo URL</Label>
               <Input
@@ -85,7 +75,7 @@ const ExhibitorsModal = ({
                 placeholder="https://example.com/logo.png"
                 error={formik.touched.logoUrl && formik.errors.logoUrl}
                 onBlur={formik.handleBlur}
-                hint={formik.touched.logoUrl ? formik.errors.logoUrl:""}
+                hint={formik.touched.logoUrl ? formik.errors.logoUrl : ""}
                 value={formik.values.logoUrl}
                 onChange={formik.handleChange}
               />
@@ -97,7 +87,7 @@ const ExhibitorsModal = ({
                 name="website"
                 placeholder="https://example.com"
                 onBlur={formik.handleBlur}
-                hint={formik.touched.website ? formik.errors.website:""}
+                hint={formik.touched.website ? formik.errors.website : ""}
                 error={formik.touched.website && formik.errors.website}
                 value={formik.values.website}
                 onChange={formik.handleChange}
@@ -108,10 +98,10 @@ const ExhibitorsModal = ({
             <Label>Description</Label>
             <TextArea
               name="description"
-              placeholder="Short description about the exhibitor"
+              placeholder="Short description about the MediaPartner"
               value={formik.values.description}
               onBlur={formik.handleBlur}
-              hint={formik.touched.description ? formik.errors.description:""}
+              hint={formik.touched.description ? formik.errors.description : ""}
               error={formik.touched.description && formik.errors.description}
               onChange={formik.handleChange}
             />
@@ -128,7 +118,7 @@ const ExhibitorsModal = ({
             Cancel
           </Button>
           <Button size="sm" type="submit">
-            {editingItem ? "Update" : "Add"} Exhibitor
+            {editingItem ? "Update" : "Add"} MediaPartner
           </Button>
         </div>
       </form>
@@ -136,4 +126,4 @@ const ExhibitorsModal = ({
   );
 };
 
-export default ExhibitorsModal;
+export default MediaPartnersModal;
