@@ -4,6 +4,13 @@
       id
       name
       description
+      slug
+      startDate
+      currency
+      endDate
+      venue
+      website
+      year
     }
   }
 

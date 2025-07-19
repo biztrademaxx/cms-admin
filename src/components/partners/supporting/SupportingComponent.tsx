@@ -7,11 +7,14 @@ import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
   CreateMediaPartnerDocument,
+  CreateSupportingPartnerDocument,
   GetMediaPartnersByProjectDocument,
+  GetSupportingPartnersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
 import MediaPartnersTable from "../../tables/mediaPartnersTable";
+import SupportingPartnerTable from "@/components/tables/supportingPartnersTable";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
@@ -23,16 +26,16 @@ const validationSchema = Yup.object().shape({
     .required("Website is required")
     .url("Enter a valid URL"),
 });
-const MediaPartnersComponent = () => {
-  const projectId = useSelector((state: any) => state.project.projectId);
-  const [createMediaPartner] = useMutation(CreateMediaPartnerDocument, {
+const SupportingPartnersComponent = () => {
+ const {projectId,projectName} = useSelector((state: any) => state.project);
+  const [createSupportingPartner] = useMutation(CreateSupportingPartnerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
       modal.closeModal();
     },
     refetchQueries: [
       {
-        query: GetMediaPartnersByProjectDocument,
+        query: GetSupportingPartnersByProjectDocument,
         variables: { projectId },
       },
     ],
@@ -62,7 +65,7 @@ const MediaPartnersComponent = () => {
         input.id = values.id;
       }
 
-      await createMediaPartner({
+      await createSupportingPartner({
         variables: {
           input,
         },
@@ -74,18 +77,18 @@ const MediaPartnersComponent = () => {
   return (
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <div className="flex justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Media Partners" />
+        <div className="flex flex-wrap justify-between items-center p-2">
+          <PageBreadcrumb pageTitle="Supporting Partners" projectName={projectName} />
           <Button size="sm" onClick={modal.openModal}>
-            + Add Media Partner
+            + Add Supporting Partner
           </Button>
         </div>
         <div className="space-y-6">
-          <MediaPartnersTable formik={formik} modal={modal} />
+          <SupportingPartnerTable formik={formik} modal={modal} />
         </div>
       </div>
     </div>
   );
 };
 
-export default MediaPartnersComponent;
+export default SupportingPartnersComponent;

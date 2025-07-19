@@ -29,7 +29,7 @@ const validationSchema = Yup.object().shape({
   designation: Yup.string().required("Designation is required"),
 });
 const SpeakersComponent = () => {
-  const projectId = useSelector((state: any) => state.project.projectId);
+  const {projectId,projectName} = useSelector((state: any) => state.project);
   const [createMediaPartner] = useMutation(CreateSpeakerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
@@ -83,8 +83,8 @@ const SpeakersComponent = () => {
   return (
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <div className="flex justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Speakers" />
+        <div className="flex flex-wrap justify-between items-center p-2">
+          <PageBreadcrumb pageTitle="Speakers" projectName={projectName} />
           <Button size="sm" onClick={modal.openModal}>
             + Add Speakers
           </Button>

@@ -84,6 +84,11 @@ const AppSidebar: React.FC = () => {
           path: `/projects/media`,
           draft: false,
         },
+              {
+          name: "Supporting Partners",
+          path: `/projects/supporting`,
+          draft: false,
+        },
       ],
     },
     {

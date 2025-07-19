@@ -1,6 +1,7 @@
-import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Trash, Pencil } from "lucide-react";
 import { useState } from "react";
-import Select from "../form/Select";
+import WarningModal from "../modals/warningModal";
+import { useRouter } from "next/navigation";
 
 const YEAR_OPTIONS = [
   { value: "2025", label: "2025" },
@@ -19,6 +20,8 @@ const ProjectCard = ({
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedYear, setSelectedYear] = useState("2025");
+  const [showDeleteModal, setShowEditModal] = useState(false);
+  const router = useRouter();
 
   const toggleDropdown = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -51,40 +54,58 @@ const ProjectCard = ({
             {project.description || "No description"}
           </p>
         </div>
+        <div className="flex justify-between items-center">
+          <div className="relative">
+            <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
+              Select Year
+            </label>
 
-        <div className="relative">
-          <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
-            Select Year
-          </label>
-
-          <div className="flex items-center gap-2 text-gray-700 dark:text-white">
-            <ChevronLeft
-              size={16}
-              onClick={(e) => {
-                e.stopPropagation();
-                const idx = YEAR_OPTIONS.findIndex(
-                  (y) => y.value === selectedYear
-                );
-                if (idx > 0) setSelectedYear(YEAR_OPTIONS[idx - 1].value);
-              }}
-              className="hover:text-brand-500"
-            />
-            <span>{selectedYear}</span>
-            <ChevronRight
-              size={16}
-              onClick={(e) => {
-                e.stopPropagation();
-                const idx = YEAR_OPTIONS.findIndex(
-                  (y) => y.value === selectedYear
-                );
-                if (idx < YEAR_OPTIONS.length - 1)
-                  setSelectedYear(YEAR_OPTIONS[idx + 1].value);
-              }}
-              className="hover:text-brand-500"
-            />
+            <div className="flex items-center gap-2 text-gray-700 dark:text-white">
+              <ChevronLeft
+                size={16}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const idx = YEAR_OPTIONS.findIndex(
+                    (y) => y.value === selectedYear
+                  );
+                  if (idx > 0) setSelectedYear(YEAR_OPTIONS[idx - 1].value);
+                }}
+                className="hover:text-brand-500"
+              />
+              <span>{selectedYear}</span>
+              <ChevronRight
+                size={16}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const idx = YEAR_OPTIONS.findIndex(
+                    (y) => y.value === selectedYear
+                  );
+                  if (idx < YEAR_OPTIONS.length - 1)
+                    setSelectedYear(YEAR_OPTIONS[idx + 1].value);
+                }}
+                className="hover:text-brand-500"
+              />
+            </div>
           </div>
+
+          <Pencil
+            size={16}
+            className="text-black dark:text-white hover:text-brand-500"
+            onClick={(e) => {
+              setShowEditModal(true);
+              e.stopPropagation();
+            }}
+          />
         </div>
       </div>
+      <WarningModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowEditModal(false)}
+        onConfirm={() => router.push(`/projects/add?p=${project.slug}`)}
+        title="Edit Project"
+        message="Are you sure you want to edit this project?"
+        confirmText="Edit"
+      />
     </div>
   );
 };

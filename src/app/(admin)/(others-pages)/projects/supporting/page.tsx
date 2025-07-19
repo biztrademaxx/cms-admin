@@ -1,4 +1,4 @@
-import SpeakersComponent from "@/components/speakers/speakersComponent";
+import SupportingPartnersComponent from "@/components/partners/supporting/SupportingComponent";
 import { Metadata } from "next";
 import React from "react";
 
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function SpeakerPage() {
-  return <SpeakersComponent />;
+  return <SupportingPartnersComponent />;
 }

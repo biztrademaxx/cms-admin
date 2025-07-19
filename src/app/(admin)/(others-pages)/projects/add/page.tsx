@@ -8,10 +8,13 @@ import Button from "@/components/ui/button/Button";
 import Select from "@/components/form/Select";
 import { ChevronDownIcon } from "lucide-react";
 import DatePicker from "@/components/form/date-picker";
-import { useMutation } from "@apollo/client";
-import { CreateProjectDocument } from "@/gql_generated/graphql";
-import { useRouter } from "next/navigation";
-import { convertD24HrToISO } from "@/utils/dateUtils";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  CreateProjectDocument,
+  GetProjectBySlugDocument,
+} from "@/gql_generated/graphql";
+import { useRouter, useSearchParams } from "next/navigation";
+import { convertD24HrToISO, formatIsoToCustom } from "@/utils/dateUtils";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Project name is required"),
@@ -23,30 +26,50 @@ const validationSchema = Yup.object().shape({
 
 export default function CreateProjectForm() {
   const router = useRouter();
-  const [CreateProject, { loading }] = useMutation(
-    CreateProjectDocument,
+  const params = useSearchParams();
+  const projectSlug = params.get("p") || "";
+
+  const [CreateProject, { loading }] = useMutation(CreateProjectDocument, {
+    onCompleted: (data) => {
+      console.log("Project created:", data);
+      router.push("/");
+    },
+
+    onError: (error) => {
+      console.error("Error creating project:", error);
+    },
+  });
+
+  const { data: projectData, loading: projectLoading } = useQuery(
+    GetProjectBySlugDocument,
     {
-      onCompleted: (data) => {
-        console.log("Project created:", data);
-        router.push("/");
+      variables: {
+        slug: projectSlug,
       },
-      onError: (error) => {
-        console.error("Error creating project:", error);
-      },
+      fetchPolicy: "cache-and-network",
+      nextFetchPolicy: "cache-first",
+      skip: !projectSlug,
     }
   );
+
   const formik = useFormik({
     initialValues: {
-      name: "",
-      slug: "",
-      year: 2026,
-      startDate: "",
-      endDate: "",
-      venue: "",
-      currency: "GBP",
-      website: "",
-      description: "",
+      id: projectData?.getProjectBySlug?.id || "",
+      name: projectData?.getProjectBySlug?.name || "",
+      slug: projectData?.getProjectBySlug?.slug || "",
+      year: projectData?.getProjectBySlug?.year || 2026,
+      startDate: projectData?.getProjectBySlug?.startDate
+        ? formatIsoToCustom(projectData?.getProjectBySlug?.startDate)
+        : "",
+      endDate: projectData?.getProjectBySlug?.endDate
+        ? formatIsoToCustom(projectData?.getProjectBySlug?.endDate)
+        : "",
+      venue: projectData?.getProjectBySlug?.venue || "",
+      currency: projectData?.getProjectBySlug?.currency || "INR",
+      website: projectData?.getProjectBySlug?.website || "",
+      description: projectData?.getProjectBySlug?.description || "",
     },
+    enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
       try {
@@ -63,6 +86,7 @@ export default function CreateProjectForm() {
     },
   });
 
+  console.log(formik.values.startDate);
   const options = [
     { value: "GBP", label: "GBP" },
     { value: "USD", label: "USD" },
@@ -73,6 +97,10 @@ export default function CreateProjectForm() {
   const handleSelectChange = (selectedOption: any) => {
     formik.setFieldValue("currency", selectedOption.value);
   };
+
+  if (projectSlug && projectLoading) {
+    return <div>Loading project...</div>;
+  }
 
   return (
     <div className="space-y-8">
@@ -89,7 +117,7 @@ export default function CreateProjectForm() {
               placeholder="e.g. Bio Technology Show"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              defaultValue={formik.values.name}
+              value={formik.values.name}
             />
             {formik.touched.name && formik.errors.name && (
               <p className="text-xs text-red-500 mt-1">{formik.errors.name}</p>
@@ -104,7 +132,7 @@ export default function CreateProjectForm() {
               placeholder="e.g. bio-technology-show"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              defaultValue={formik.values.slug}
+              value={formik.values.slug}
             />
             {formik.touched.slug && formik.errors.slug && (
               <p className="text-xs text-red-500 mt-1">{formik.errors.slug}</p>
@@ -121,7 +149,7 @@ export default function CreateProjectForm() {
               name="year"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              defaultValue={formik.values.year}
+              value={formik.values.year}
             />
           </div>
 
@@ -133,7 +161,7 @@ export default function CreateProjectForm() {
               placeholder="e.g. ExCeL London"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              defaultValue={formik.values.venue}
+              value={formik.values.venue}
             />
           </div>
 
@@ -204,7 +232,7 @@ export default function CreateProjectForm() {
               placeholder="https://example.com"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              defaultValue={formik.values.website}
+              value={formik.values.website}
             />
           </div>
 
@@ -232,7 +260,7 @@ export default function CreateProjectForm() {
             Cancel
           </Button>
           <Button type="submit" disabled={!formik.isValid || loading}>
-            Create Project
+           {projectSlug ? "Update" : "Create"} Project
           </Button>
         </div>
       </form>

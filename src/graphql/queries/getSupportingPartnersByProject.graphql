@@ -1,0 +1,11 @@
+query GetSupportingPartnersByProject($projectId: String!) {
+    getSupportingPartnersByProject(projectId: $projectId) {
+        id
+        logoUrl
+        name
+        description
+        createdAt
+        logoUrl
+        website
+    }
+}
