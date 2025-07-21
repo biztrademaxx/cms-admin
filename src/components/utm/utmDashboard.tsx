@@ -15,9 +15,10 @@ import UtmModal from "./utmModal";
 import { useModal } from "@/hooks/useModal";
 import { useQuery } from "@apollo/client";
 import { usePathname } from "next/navigation";
-import { GetUtmBySlugDocument } from "@/gql_generated/graphql";
+import { GetUtmByIdDocument } from "@/gql_generated/graphql";
 import { UTMEntry } from "./utm.types";
 import { generateUTM } from "./common";
+import { useSelector } from "react-redux";
 
 const utmMetrics = [
   {
@@ -67,13 +68,12 @@ export default function UTMDashboard() {
   const [selectedEntry, setSelectedEntry] = React.useState<UTMEntry | null>(
     null
   );
+ const projectId = useSelector((state: any) => state.project.projectId);
   const { isOpen, openModal, closeModal } = useModal();
-  const pathname = usePathname();
-  const projectSlug = pathname.split("/")[2] || ""; // Assuming the slug is the second segment in the path
-  const { data: utmData } = useQuery(GetUtmBySlugDocument, {
-    skip: !projectSlug,
+  const { data: utmData } = useQuery(GetUtmByIdDocument, {
+    skip: !projectId,
     variables: {
-      slug: projectSlug,
+      id: projectId,
     },
   });
   const handleCopy = async (entry:UTMEntry | any ) => {

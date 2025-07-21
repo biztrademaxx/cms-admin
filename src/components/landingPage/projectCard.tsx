@@ -101,7 +101,7 @@ const ProjectCard = ({
       <WarningModal
         isOpen={showDeleteModal}
         onClose={() => setShowEditModal(false)}
-        onConfirm={() => router.push(`/projects/add?p=${project.slug}`)}
+        onConfirm={() => router.push(`/projects/add?p=${project.id}`)}
         title="Edit Project"
         message="Are you sure you want to edit this project?"
         confirmText="Edit"

@@ -11,7 +11,7 @@ import DatePicker from "@/components/form/date-picker";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   CreateProjectDocument,
-  GetProjectBySlugDocument,
+
 } from "@/gql_generated/graphql";
 import { useRouter, useSearchParams } from "next/navigation";
 import { convertD24HrToISO, formatIsoToCustom } from "@/utils/dateUtils";
@@ -27,7 +27,7 @@ const validationSchema = Yup.object().shape({
 export default function CreateProjectForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const projectSlug = params.get("p") || "";
+  const projectId = params.get("p") || "";
 
   const [CreateProject, { loading }] = useMutation(CreateProjectDocument, {
     onCompleted: (data) => {
@@ -41,14 +41,14 @@ export default function CreateProjectForm() {
   });
 
   const { data: projectData, loading: projectLoading } = useQuery(
-    GetProjectBySlugDocument,
+    get,
     {
       variables: {
-        slug: projectSlug,
+        id: projectId,
       },
       fetchPolicy: "cache-and-network",
       nextFetchPolicy: "cache-first",
-      skip: !projectSlug,
+      skip: !projectId,
     }
   );
 
@@ -98,7 +98,7 @@ export default function CreateProjectForm() {
     formik.setFieldValue("currency", selectedOption.value);
   };
 
-  if (projectSlug && projectLoading) {
+  if (projectId && projectLoading) {
     return <div>Loading project...</div>;
   }
 

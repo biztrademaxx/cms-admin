@@ -1,6 +1,6 @@
 
-  query GetProjectBySlug($slug: String!) {
-    getProjectBySlug(slug: $slug) {
+  query getProjectBySlug($id: String!) {
+    getProjectBySlug(id: $id) {
       id
       name
       description

@@ -1,6 +1,6 @@
 
-  query GetUtmBySlug($slug: String!) {
-    getUtmByProject(slug: $slug) {
+  query GetUtmById($id: String!) {
+    getUtmByProject(id: $id) {
       id
       source
       medium
