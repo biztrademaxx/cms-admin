@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import { useModal } from "@/hooks/useModal";
 import { UTMEntry } from "./utm.types";
 import { generateUTM } from "./common";
+import { useSelector } from "react-redux";
 
 // Yup Validation Schema
 const validationSchema = Yup.object().shape({
@@ -25,9 +26,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function UTMBuilder({ data }: { data: UTMEntry }) {
-  const pathname = usePathname();
   const { closeModal } = useModal();
-  const projectSlug = pathname.split("/")[2] || "";
+  const projectId = useSelector((state: any) => state.project.projectId);
   const [SaveUTM] = useMutation(CreateUtmDocument, {
     onCompleted: (data) => {
       console.log("UTM saved successfully:", data);
@@ -53,15 +53,15 @@ export default function UTMBuilder({ data }: { data: UTMEntry }) {
     validationSchema,
     onSubmit: async () => {
       try {
-        if (!projectSlug) {
-          alert("Project slug is required to save UTM.");
+        if (!projectId) {
+          alert("Project id is required to save UTM.");
           return;
         }
         await SaveUTM({
           variables: {
             input: {
               ...formik.values,
-              projectSlug,
+              projectId: projectId,
             },
           },
         });
@@ -125,7 +125,7 @@ export default function UTMBuilder({ data }: { data: UTMEntry }) {
       <div className="mt-6">
         <Label>Generated UTM URL</Label>
         <TextArea
-        name="url"
+          name="url"
           className="bg-gray-50 text-sm rounded-xl mt-1 dark:bg-white/[0.03] dark:text-white"
           value={generateUTM(formik.values)}
         />
