@@ -36,8 +36,8 @@ export default function SignInForm() {
       });
 
       const data = await response.json();
-
-      if (response.ok) {
+      console.log(data);
+      if (data.message === "Login successful") {
         router.push("/");
       } else {
         if (data.error === "Invalid credentials") {
