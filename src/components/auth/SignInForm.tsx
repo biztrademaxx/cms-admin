@@ -22,10 +22,12 @@ const validationSchema = Yup.object({
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (values: { email: string; password: string }) => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/signin", {
         method: "POST",
@@ -45,6 +47,9 @@ export default function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -135,8 +140,13 @@ export default function SignInForm() {
 
               {/* Submit */}
               <div>
-                <Button className="w-full" size="sm" type="submit">
-                  Sign in
+                <Button
+                  className="w-full"
+                  size="sm"
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>
             </div>

@@ -84,10 +84,15 @@ const AppSidebar: React.FC = () => {
           path: `/projects/media`,
           draft: false,
         },
-              {
+        {
           name: "Supporting Partners",
           path: `/projects/supporting`,
           draft: false,
+        },
+        {
+          name: "Sponsors",
+          path: `/projects/sponsors`,
+          draft: true,
         },
       ],
     },
@@ -197,7 +202,7 @@ const AppSidebar: React.FC = () => {
                 {nav.subItems.map((subItem) => (
                   <li key={subItem.name}>
                     <Link
-                      href={subItem.path}
+                      href={subItem.draft ? "#" : subItem.path}
                       className={`menu-dropdown-item ${
                         isActive(subItem.path)
                           ? "menu-dropdown-item-active"
