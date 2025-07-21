@@ -8,7 +8,11 @@ export function middleware(request: NextRequest) {
   if (!isLoggedIn) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
-  
+
+  if (isLoggedIn && request.nextUrl.pathname === "/signin") {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   return NextResponse.next();
 }
 

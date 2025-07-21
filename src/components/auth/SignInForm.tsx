@@ -38,7 +38,7 @@ export default function SignInForm() {
       const data = await response.json();
       console.log(data.message === "Login successful");
       if (data.message === "Login successful") {
-        router.push("/#");
+        router.push("/");
       } else {
         if (data.error === "Invalid credentials") {
           formik.setFieldError("email", `${" "}`);
