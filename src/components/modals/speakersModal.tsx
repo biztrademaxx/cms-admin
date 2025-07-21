@@ -31,6 +31,8 @@ const SpeakersModal = ({
   useEffect(() => {
     if (editingItem) {
       formik.setValues(editingItem);
+    }else{
+      formik.resetForm();
     }
   }, [editingItem]);
   return (
@@ -149,7 +151,7 @@ const SpeakersModal = ({
           >
             Cancel
           </Button>
-          <Button size="sm" type="submit">
+          <Button size="sm" type="submit" disabled={formik.isSubmitting}>
             {editingItem ? "Update" : "Add"} Speaker
           </Button>
         </div>

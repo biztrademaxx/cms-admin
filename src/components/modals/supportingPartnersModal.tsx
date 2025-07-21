@@ -32,6 +32,8 @@ const SupportingPartnersModal = ({
   useEffect(() => {
     if (editingItem) {
       formik.setValues(editingItem);
+    }else{
+      formik.resetForm();
     }
   }, [editingItem]);
   return (
@@ -117,8 +119,8 @@ const SupportingPartnersModal = ({
           >
             Cancel
           </Button>
-          <Button size="sm" type="submit">
-            {editingItem ? "Update" : "Add"} MediaPartner
+          <Button size="sm" type="submit" disabled={formik.isSubmitting}>
+            {editingItem ? "Update" : "Add"} Supporting Partner
           </Button>
         </div>
       </form>

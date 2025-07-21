@@ -32,6 +32,8 @@ const ExhibitorsModal = ({
   useEffect(() => {
     if (editingItem) {
       formik.setValues(editingItem);
+    }else{
+      formik.resetForm();
     }
   }, [editingItem]);
   return (
@@ -129,7 +131,7 @@ const ExhibitorsModal = ({
           >
             Cancel
           </Button>
-          <Button size="sm" type="submit">
+          <Button size="sm" type="submit" disabled={formik.isSubmitting}>
             {editingItem ? "Update" : "Add"} Exhibitor
           </Button>
         </div>
