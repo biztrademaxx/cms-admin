@@ -11,6 +11,7 @@ import DatePicker from "@/components/form/date-picker";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   CreateProjectDocument,
+  GetProjectBySlugDocument,
 
 } from "@/gql_generated/graphql";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -41,7 +42,7 @@ export default function CreateProjectForm() {
   });
 
   const { data: projectData, loading: projectLoading } = useQuery(
-    get,
+    GetProjectBySlugDocument,
     {
       variables: {
         id: projectId,
@@ -260,7 +261,7 @@ export default function CreateProjectForm() {
             Cancel
           </Button>
           <Button type="submit" disabled={!formik.isValid || loading}>
-           {projectSlug ? "Update" : "Create"} Project
+           {projectId ? "Update" : "Create"} Project
           </Button>
         </div>
       </form>
