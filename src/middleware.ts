@@ -4,12 +4,13 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const userCookie = request.cookies.get("user");
   const isLoggedIn = userCookie?.value === "true";
+  const pathname = request.nextUrl.pathname;
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn && pathname !== "/signin") {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  if (isLoggedIn && request.nextUrl.pathname === "/signin") {
+  if (isLoggedIn && pathname === "/signin") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

@@ -19,6 +19,7 @@ import {
 // import Logo from "@/../public/images/logo/logo.png";
 // import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
+import { PieChartIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -111,9 +112,22 @@ const AppSidebar: React.FC = () => {
       ],
     },
     {
-      icon: <CalenderIcon />,
-      name: "UTM Builder",
-      path: `/projects/utm`,
+      icon: <PieChartIcon />,
+      name: "Marketing",
+      subItems: [
+        {
+          name: "Overview",
+          path: `/projects/marketing`,
+        },
+        {
+          name: "leads",
+          path: `/projects/marketing/leads`,
+        },
+        {
+          name: "UTM Builder",
+          path: `/projects/marketing/utm`,
+        },
+      ],
     },
   ];
 

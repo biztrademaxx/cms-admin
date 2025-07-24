@@ -1,10 +1,10 @@
 "use client";
 import * as Yup from "yup";
 import React from "react";
-import Button from "../ui/button/Button";
-import ExhibitorsTable from "../tables/exhibitorsTable";
+import Button from "../../ui/button/Button";
+import ExhibitorsTable from "../../tables/exhibitorsTable";
 import { useModal } from "@/hooks/useModal";
-import ExhibitorsModal from "../modals/exhibitorsModal";
+import ExhibitorsModal from "../../modals/exhibitorsModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
@@ -12,9 +12,10 @@ import {
   GetExhibitorsByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
-import PageBreadcrumb from "../common/PageBreadCrumb";
+import PageBreadcrumb from "../../common/PageBreadCrumb";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
-import SearchField from "../form/input/SearchField";
+import SearchField from "../../form/input/SearchField";
+import UTMDashboard from "./utmDashboard";
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
@@ -27,20 +28,20 @@ const validationSchema = Yup.object().shape({
     .required("Website is required")
     .url("Enter a valid URL"),
 });
-const ExhibitorsComponent = () => {
+const UtmComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
-  const [createExhibitor] = useMutation(CreateExhibitorDocument, {
-    onCompleted: (data) => {
-      console.log("Exhibitor created:", data);
-      modal.closeModal();
-    },
-    refetchQueries: [
-      {
-        query: GetExhibitorsByProjectDocument,
-        variables: { projectId },
-      },
-    ],
-  });
+//   const [createExhibitor] = useMutation(CreateExhibitorDocument, {
+//     onCompleted: (data) => {
+//       console.log("Exhibitor created:", data);
+//       modal.closeModal();
+//     },
+//     refetchQueries: [
+//       {
+//         query: GetExhibitorsByProjectDocument,
+//         variables: { projectId },
+//       },
+//     ],
+//   });
 
   const modal = useModal();
 
@@ -73,11 +74,11 @@ const ExhibitorsComponent = () => {
         input.id = values.id;
       }
 
-      await createExhibitor({
-        variables: {
-          input,
-        },
-      });
+    //   await createExhibitor({
+    //     variables: {
+    //       input,
+    //     },
+    //   });
 
       console.log(values);
     },
@@ -87,20 +88,19 @@ const ExhibitorsComponent = () => {
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Exhibitors" projectName={projectName} />
+          <PageBreadcrumb pageTitle="UTM Builder" projectName={projectName} />
           <div className="flex items-center gap-2">
-            <SearchField inputRef={null} />
-            <Button size="sm" onClick={modal.openModal}>
-              + Add Exhibitor
-            </Button>
+            {/* <Button size="sm" onClick={modal.openModal}>
+              + Add UTM
+            </Button> */}
           </div>
         </div>
         <div className="space-y-6">
-          <ExhibitorsTable formik={formik} modal={modal} />
+          <UTMDashboard modal={modal} />
         </div>
       </div>
     </div>
   );
 };
 
-export default ExhibitorsComponent;
+export default UtmComponent;

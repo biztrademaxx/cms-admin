@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "../ui/modal";
+import { Modal } from "../../ui/modal";
 import UTMBuilder from "./utmBuilder";
 import { UTMEntry } from "./utm.types";
 

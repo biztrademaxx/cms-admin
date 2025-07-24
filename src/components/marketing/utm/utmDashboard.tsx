@@ -9,23 +9,21 @@ import {
   TableCell,
   TableBody,
 } from "@/components/ui/table";
-import Button from "../ui/button/Button";
-import Badge from "../ui/badge/Badge";
+import Button from "../../ui/button/Button";
+import Badge from "../../ui/badge/Badge";
 import UtmModal from "./utmModal";
-import { useModal } from "@/hooks/useModal";
 import { useQuery } from "@apollo/client";
-import { usePathname } from "next/navigation";
 import { GetUtmByIdDocument } from "@/gql_generated/graphql";
 import { UTMEntry } from "./utm.types";
 import { generateUTM } from "./common";
 import { useSelector } from "react-redux";
+import UtmMetrics from "./utmMetrics";
 
 const utmMetrics = [
   {
     title: "Total Visits",
     value: "3,289",
     icon: BarChart3,
-    selected: true,
   },
   {
     title: "Unique Clicks",
@@ -39,96 +37,41 @@ const utmMetrics = [
   },
 ];
 
-// const utmData: UTMEntry[] = [
-//   {
-//     id: 1,
-//     campaign: "Summer_Sale",
-//     source: "Google",
-//     medium: "CPC",
-//     visits: 1200,
-//     uniqueClicks: 900,
-//     status: "Active",
-//     fullURL:
-//       "https://yourdomain.com/?utm_source=google&utm_medium=cpc&utm_campaign=Summer_Sale",
-//   },
-//   {
-//     id: 2,
-//     campaign: "B2B_Launch",
-//     source: "LinkedIn",
-//     medium: "Social",
-//     visits: 540,
-//     uniqueClicks: 490,
-//     status: "Paused",
-//     fullURL:
-//       "https://yourdomain.com/?utm_source=linkedin&utm_medium=social&utm_campaign=B2B_Launch",
-//   },
-// ];
-
-export default function UTMDashboard() {
+export default function UTMDashboard({ modal }: { modal: any }) {
   const [selectedEntry, setSelectedEntry] = React.useState<UTMEntry | null>(
     null
   );
- const projectId = useSelector((state: any) => state.project.projectId);
-  const { isOpen, openModal, closeModal } = useModal();
+  const projectId = useSelector((state: any) => state.project.projectId);
+  const { isOpen, openModal, closeModal } = modal;
   const { data: utmData } = useQuery(GetUtmByIdDocument, {
     skip: !projectId,
     variables: {
       id: projectId,
     },
   });
-  const handleCopy = async (entry:UTMEntry | any ) => {
-    const {source,medium,campaign,term,content,url}=entry;
-    const text=generateUTM({
+  const handleCopy = async (entry: UTMEntry | any) => {
+    const { source, medium, campaign, term, content, url } = entry;
+    const text = generateUTM({
       url,
       source,
       medium,
       campaign,
       term,
-      content
+      content,
     });
     await navigator.clipboard.writeText(text);
     alert("Copied to clipboard");
   };
-  const handleAdd = () => {
-    openModal();
-  };
 
-  const handleEdit = (entry: UTMEntry |any) => {
+  const handleEdit = (entry: UTMEntry | any) => {
     openModal();
     setSelectedEntry(entry);
   };
   return (
     <div className="space-y-8">
-      <div className="flex justify-end">
-        <Button size="sm" onClick={handleAdd}>
-          + Add UTM
-        </Button>
-      </div>
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
-        {utmMetrics.map((metric, index) => (
-          <div
-            key={index}
-            className={`rounded-2xl border bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 ${
-              metric.selected
-                ? "border-brand-500 dark:text-brand-400"
-                : "border-gray-200"
-            }`}
-          >
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-              <metric.icon className="text-gray-800 size-6 dark:text-white/90" />
-            </div>
-
-            <div className="mt-5">
-              <h4 className="font-bold text-gray-800 text-title-sm dark:text-white/90">
-                {metric.value}
-              </h4>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {metric.title}
-              </span>
-            </div>
-          </div>
-        ))}
+        <UtmMetrics data={utmMetrics} />
       </div>
 
       {/* UTM Table */}
@@ -199,11 +142,11 @@ export default function UTMDashboard() {
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      { "-"}
+                      {"-"}
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      { "-"}
+                      {"-"}
                     </TableCell>
 
                     <TableCell className="px-4 py-4 text-theme-sm text-gray-600 dark:text-gray-400">
@@ -218,7 +161,7 @@ export default function UTMDashboard() {
                           "success"
                         }
                       >
-                        { "Active"}
+                        {"Active"}
                       </Badge>
                     </TableCell>
 
@@ -232,15 +175,15 @@ export default function UTMDashboard() {
                         <ClipboardCopy className="h-4 w-4 mr-1" />
                         Copy
                       </Button>
-                      <Button
+                      {/* <Button
                         size="sm"
                         variant="outline"
                         className="text-theme-xs"
-                        onClick={()=>handleEdit(entry)}
+                        onClick={() => handleEdit(entry)}
                       >
                         <Eye className="h-4 w-4 mr-1" />
                         Preview
-                      </Button>
+                      </Button> */}
                     </TableCell>
                   </TableRow>
                 ))}

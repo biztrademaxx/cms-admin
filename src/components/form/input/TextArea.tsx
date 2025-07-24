@@ -37,7 +37,7 @@ const TextArea: React.FC<TextareaProps> = ({
 
   return (
     <div className="relative">
-      <textarea
+      <TextArea
         name={name}
         placeholder={placeholder}
         rows={rows}
@@ -48,7 +48,7 @@ const TextArea: React.FC<TextareaProps> = ({
         className={textareaClasses}
       />
       {hint && (
-        <p
+        <p  
           className={`mt-2 text-sm ${
             error ? "text-error-500" : "text-gray-500 dark:text-gray-400"
           }`}

@@ -1,4 +1,10 @@
-import { ChevronLeft, ChevronRight, ChevronDown, Trash, Pencil } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Trash,
+  Pencil,
+} from "lucide-react";
 import { useState } from "react";
 import WarningModal from "../modals/warningModal";
 import { useRouter } from "next/navigation";
@@ -59,7 +65,7 @@ const ProjectCard = ({
             <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
               Select Year
             </label>
-
+            {/* 
             <div className="flex items-center gap-2 text-gray-700 dark:text-white">
               <ChevronLeft
                 size={16}
@@ -85,6 +91,41 @@ const ProjectCard = ({
                 }}
                 className="hover:text-brand-500"
               />
+            </div> */}
+
+            <select
+              value={selectedYear}
+              onChange={(e) => handleYearChange(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              className="appearance-none bg-none focus:outline-none p-2 pr-8 leading-tight text-gray-700 dark:text-gray-400"
+            >
+              {YEAR_OPTIONS.map((year) => (
+                <option
+                  key={year.value}
+                  value={year.value}
+                  className="text-gray-700 dark:bg-gray-900 rounded-2xl dark:text-gray-400"
+                >
+                  {year.value}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 flex items-center text-gray-700 pointer-events-none bg-none right-3 dark:text-gray-400">
+              <svg
+                className="stroke-current"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
           </div>
 

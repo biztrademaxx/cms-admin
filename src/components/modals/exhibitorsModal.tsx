@@ -4,6 +4,8 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
+import Dropzone from "react-dropzone";
+import DropzoneComponent from "../form/DropZone";
 
 type ExhibitorsModalProps = {
   modal: {
@@ -32,7 +34,7 @@ const ExhibitorsModal = ({
   useEffect(() => {
     if (editingItem) {
       formik.setValues(editingItem);
-    }else{
+    } else {
       formik.resetForm();
     }
   }, [editingItem]);
@@ -52,7 +54,36 @@ const ExhibitorsModal = ({
         </div>
 
         <div className="px-2 overflow-y-auto custom-scrollbar">
+          {!formik.values.logoUrl && (
+            <div className="mb-6 ">
+              <Label>Exhibitor Logo</Label>
+              <DropzoneComponent
+                onImageUpload={(url) => {
+                  formik.setFieldValue("logoUrl", url);
+                }}
+              />
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+            {formik.values.logoUrl && (
+              <div>
+                <Label>Exhibitor Logo</Label>
+                <div className="mt-3 flex items-start gap-4">
+                  <img
+                    src={formik.values.logoUrl}
+                    alt="Logo Preview"
+                    className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => formik.setFieldValue("logoUrl", "")}
+                    className="text-sm text-red-500 underline hover:text-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
             <div>
               <Label>Company Name</Label>
               <Input
@@ -79,19 +110,6 @@ const ExhibitorsModal = ({
                 hint={formik.touched.linkedin ? formik.errors.linkedin : ""}
                 error={formik.touched.linkedin && formik.errors.linkedin}
                 onBlur={formik.handleBlur}
-              />
-            </div>
-            <div>
-              <Label>Logo URL</Label>
-              <Input
-                type="text"
-                name="logoUrl"
-                placeholder="https://example.com/logo.png"
-                error={formik.touched.logoUrl && formik.errors.logoUrl}
-                onBlur={formik.handleBlur}
-                hint={formik.touched.logoUrl ? formik.errors.logoUrl : ""}
-                value={formik.values.logoUrl}
-                onChange={formik.handleChange}
               />
             </div>
             <div>
