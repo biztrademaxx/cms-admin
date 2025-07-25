@@ -37,7 +37,13 @@ const utmMetrics = [
   },
 ];
 
-export default function UTMDashboard({ modal }: { modal: any }) {
+export default function UTMDashboard({
+  modal,
+  formik,
+}: {
+  modal: any;
+  formik: any;
+}) {
   const [selectedEntry, setSelectedEntry] = React.useState<UTMEntry | null>(
     null
   );
@@ -175,7 +181,7 @@ export default function UTMDashboard({ modal }: { modal: any }) {
                         <ClipboardCopy className="h-4 w-4 mr-1" />
                         Copy
                       </Button>
-                      {/* <Button
+                      <Button
                         size="sm"
                         variant="outline"
                         className="text-theme-xs"
@@ -183,7 +189,7 @@ export default function UTMDashboard({ modal }: { modal: any }) {
                       >
                         <Eye className="h-4 w-4 mr-1" />
                         Preview
-                      </Button> */}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -192,7 +198,7 @@ export default function UTMDashboard({ modal }: { modal: any }) {
           </div>
         </div>
       </div>
-      <UtmModal isOpen={isOpen} closeModal={closeModal} data={selectedEntry} />
+      <UtmModal modal={modal} editingItem={selectedEntry} formik={formik} />
     </div>
   );
 }

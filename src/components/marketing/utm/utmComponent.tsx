@@ -2,85 +2,74 @@
 import * as Yup from "yup";
 import React from "react";
 import Button from "../../ui/button/Button";
-import ExhibitorsTable from "../../tables/exhibitorsTable";
 import { useModal } from "@/hooks/useModal";
-import ExhibitorsModal from "../../modals/exhibitorsModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
-import {
-  CreateExhibitorDocument,
-  GetExhibitorsByProjectDocument,
-} from "@/gql_generated/graphql";
+import { CreateUtmDocument, GetUtmByIdDocument } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
-import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
-import SearchField from "../../form/input/SearchField";
 import UTMDashboard from "./utmDashboard";
 
 const validationSchema = Yup.object().shape({
-  companyName: Yup.string().required("Company name is required"),
-  description: Yup.string().required("Description is required"),
-  linkedin: Yup.string()
-    .required("Linkedin is required")
-    .url("Enter a valid URL"),
-  logoUrl: Yup.string().required("Logo URL is required"),
-  website: Yup.string()
-    .required("Website is required")
-    .url("Enter a valid URL"),
+  url: Yup.string().url("Enter a valid URL").required("URL is required"),
+  source: Yup.string().required("Source is required"),
+  medium: Yup.string().required("Medium is required"),
+  campaign: Yup.string().required("Campaign is required"),
+  term: Yup.string(),
+  content: Yup.string(),
 });
-const UtmComponent = () => {
-  const { projectId, projectName } = useSelector((state: any) => state.project);
-//   const [createExhibitor] = useMutation(CreateExhibitorDocument, {
-//     onCompleted: (data) => {
-//       console.log("Exhibitor created:", data);
-//       modal.closeModal();
-//     },
-//     refetchQueries: [
-//       {
-//         query: GetExhibitorsByProjectDocument,
-//         variables: { projectId },
-//       },
-//     ],
-//   });
 
+const UtmComponent = () => {
   const modal = useModal();
+  const { projectId, projectName } = useSelector((state: any) => state.project);
+  const [SaveUTM] = useMutation(CreateUtmDocument, {
+    onCompleted: (data) => {
+      console.log("UTM saved successfully:", data);
+      alert("UTM saved successfully!");
+      modal.closeModal();
+    },
+    refetchQueries: [
+      {
+        query: GetUtmByIdDocument,
+        variables: {
+          projectId: projectId,
+        },
+      },
+    ], // Adjust this based on your query name
+    onError: (error) => {
+      console.error("Error saving UTM:", error);
+      alert("Failed to save UTM. Please try again.");
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
-      id: "",
-      companyName: "",
-      description: "",
-      linkedin: "",
-      logoUrl: "",
-      website: "",
+      url: "",
+      source: "",
+      medium: "",
+      campaign: "",
+      term: "",
+      content: "",
     },
     validationSchema,
-    onSubmit: async (values) => {
-      let logoFileOrUrl = formik.values.logoUrl;
-      if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
-        const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
-        logoFileOrUrl = await uploadImageToCloud(file);
+    onSubmit: async () => {
+      try {
+        if (!projectId) {
+          alert("Project id is required to save UTM.");
+          return;
+        }
+        await SaveUTM({
+          variables: {
+            input: {
+              ...formik.values,
+              projectId: projectId,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("Error saving UTM:", error);
+        alert("Failed to save UTM. Please try again.");
       }
-      const input: any = {
-        projectId,
-        companyName: values.companyName,
-        description: values.description,
-        linkedin: values.linkedin,
-        logoUrl: logoFileOrUrl,
-        website: values.website,
-      };
-
-      if (values.id) {
-        input.id = values.id;
-      }
-
-    //   await createExhibitor({
-    //     variables: {
-    //       input,
-    //     },
-    //   });
-
-      console.log(values);
     },
   });
 
@@ -90,13 +79,13 @@ const UtmComponent = () => {
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="UTM Builder" projectName={projectName} />
           <div className="flex items-center gap-2">
-            {/* <Button size="sm" onClick={modal.openModal}>
+            <Button size="sm" onClick={modal.openModal}>
               + Add UTM
-            </Button> */}
+            </Button>
           </div>
         </div>
         <div className="space-y-6">
-          <UTMDashboard modal={modal} />
+          <UTMDashboard modal={modal} formik={formik} />
         </div>
       </div>
     </div>
