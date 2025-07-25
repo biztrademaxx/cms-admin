@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal } from "../../ui/modal";
 import { UTMEntry } from "./utm.types";
 import Input from "@/components/form/input/InputField";
@@ -11,15 +11,17 @@ type UTMModalProps = {
   modal: {
     isOpen: boolean;
     closeModal: () => void;
-  }
+  };
   editingItem: UTMEntry | any;
   formik: any;
+  setEditingItem: (item: any | null) => void;
 };
 
 export default function UtmModal({
   modal,
   formik,
   editingItem,
+  setEditingItem,
 }: UTMModalProps) {
   const { closeModal, isOpen } = modal;
   const handleCopy = async () => {
@@ -30,8 +32,22 @@ export default function UtmModal({
     }
   };
 
+  const handleClose = () => {
+    formik.resetForm();
+    setEditingItem(null);
+    closeModal();
+  };
+
+  useEffect(() => {
+    if (editingItem) {
+      formik.setValues(editingItem);
+    } else {
+      formik.resetForm();
+    }
+  }, [editingItem]);
+
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] m-4">
       <form
         onSubmit={formik.handleSubmit}
         className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03] lg:p-12"
@@ -91,12 +107,26 @@ export default function UtmModal({
             className="bg-gray-50 text-sm rounded-xl mt-1 dark:bg-white/[0.03] dark:text-white"
             value={generateUTM(formik.values)}
           />
-         
-          <div className="mt-3 flex justify-end gap-2">
+
+          <div className="mt-3 flex justify-between">
             <Button type="button" variant="outline" onClick={handleCopy}>
               Copy to Clipboard
             </Button>
-            <Button type="submit">Save UTM</Button>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                type="button"
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+
+              <Button size="sm"  type="submit">
+                {" "}
+                {editingItem ? "Update" : "Add"} UTM
+              </Button>
+            </div>
           </div>
         </div>
       </form>

@@ -198,7 +198,7 @@ export default function UTMDashboard({
           </div>
         </div>
       </div>
-      <UtmModal modal={modal} editingItem={selectedEntry} formik={formik} />
+      <UtmModal modal={modal} editingItem={selectedEntry} setEditingItem={setSelectedEntry} formik={formik} />
     </div>
   );
 }
