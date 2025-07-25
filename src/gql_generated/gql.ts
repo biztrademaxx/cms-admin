@@ -29,7 +29,7 @@ type Documents = {
     "query GetMediaPartnersByProject($projectId: String!) {\n  getMediaPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": typeof types.GetMediaPartnersByProjectDocument,
     "query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    id\n    image\n    linkedinUrl\n    name\n    projectId\n  }\n}": typeof types.GetSpeakersByProjectDocument,
     "query GetSupportingPartnersByProject($projectId: String!) {\n  getSupportingPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": typeof types.GetSupportingPartnersByProjectDocument,
-    "query GetUtmById($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": typeof types.GetUtmByIdDocument,
+    "query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": typeof types.GetUtmByProjectIdDocument,
     "query getProjectBySlug($id: String!) {\n  getProjectBySlug(id: $id) {\n    id\n    name\n    description\n    slug\n    startDate\n    currency\n    endDate\n    venue\n    website\n    year\n  }\n}": typeof types.GetProjectBySlugDocument,
 };
 const documents: Documents = {
@@ -48,7 +48,7 @@ const documents: Documents = {
     "query GetMediaPartnersByProject($projectId: String!) {\n  getMediaPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": types.GetMediaPartnersByProjectDocument,
     "query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    id\n    image\n    linkedinUrl\n    name\n    projectId\n  }\n}": types.GetSpeakersByProjectDocument,
     "query GetSupportingPartnersByProject($projectId: String!) {\n  getSupportingPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": types.GetSupportingPartnersByProjectDocument,
-    "query GetUtmById($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": types.GetUtmByIdDocument,
+    "query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": types.GetUtmByProjectIdDocument,
     "query getProjectBySlug($id: String!) {\n  getProjectBySlug(id: $id) {\n    id\n    name\n    description\n    slug\n    startDate\n    currency\n    endDate\n    venue\n    website\n    year\n  }\n}": types.GetProjectBySlugDocument,
 };
 
@@ -129,7 +129,7 @@ export function gql(source: "query GetSupportingPartnersByProject($projectId: St
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query GetUtmById($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}"): (typeof documents)["query GetUtmById($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}"];
+export function gql(source: "query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}"): (typeof documents)["query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

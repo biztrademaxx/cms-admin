@@ -13,11 +13,11 @@ import Button from "../../ui/button/Button";
 import Badge from "../../ui/badge/Badge";
 import UtmModal from "./utmModal";
 import { useQuery } from "@apollo/client";
-import { GetUtmByIdDocument } from "@/gql_generated/graphql";
 import { UTMEntry } from "./utm.types";
 import { generateUTM } from "./common";
 import { useSelector } from "react-redux";
 import UtmMetrics from "./utmMetrics";
+import { GetUtmByProjectIdDocument } from "@/gql_generated/graphql";
 
 const utmMetrics = [
   {
@@ -49,7 +49,7 @@ export default function UTMDashboard({
   );
   const projectId = useSelector((state: any) => state.project.projectId);
   const { isOpen, openModal, closeModal } = modal;
-  const { data: utmData } = useQuery(GetUtmByIdDocument, {
+  const { data: utmData } = useQuery(GetUtmByProjectIdDocument, {
     skip: !projectId,
     variables: {
       id: projectId,

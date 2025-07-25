@@ -1,5 +1,5 @@
 
-  query GetUtmById($id: String!) {
+  query GetUtmByProjectId($id: String!) {
     getUtmByProject(id: $id) {
       id
       source

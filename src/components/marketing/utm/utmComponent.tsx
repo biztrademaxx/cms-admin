@@ -5,7 +5,10 @@ import Button from "../../ui/button/Button";
 import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
-import { CreateUtmDocument, GetUtmByIdDocument } from "@/gql_generated/graphql";
+import {
+  CreateUtmDocument,
+  GetUtmByProjectIdDocument,
+} from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
 import UTMDashboard from "./utmDashboard";
@@ -30,7 +33,7 @@ const UtmComponent = () => {
     },
     refetchQueries: [
       {
-        query: GetUtmByIdDocument,
+        query: GetUtmByProjectIdDocument,
         variables: {
           projectId: projectId,
         },
