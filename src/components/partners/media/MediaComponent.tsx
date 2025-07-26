@@ -7,11 +7,13 @@ import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
   CreateMediaPartnerDocument,
+  DeleteMediaPartnerDocument,
   GetMediaPartnersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
-import MediaPartnersTable from "../../tables/mediaPartnersTable";
+import EntityTable from "@/components/tables/entityTable";
+import MediaPartnersModal from "@/components/modals/mediaPartnersModal";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
@@ -24,7 +26,7 @@ const validationSchema = Yup.object().shape({
     .url("Enter a valid URL"),
 });
 const MediaPartnersComponent = () => {
- const {projectId,projectName} = useSelector((state: any) => state.project);
+  const { projectId, projectName } = useSelector((state: any) => state.project);
   const [createMediaPartner] = useMutation(CreateMediaPartnerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
@@ -75,13 +77,35 @@ const MediaPartnersComponent = () => {
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Media Partners" projectName={projectName}/>
+          <PageBreadcrumb
+            pageTitle="Media Partners"
+            projectName={projectName}
+          />
           <Button size="sm" onClick={modal.openModal}>
             + Add Media Partner
           </Button>
         </div>
         <div className="space-y-6">
-          <MediaPartnersTable formik={formik} modal={modal} />
+          <EntityTable
+            title="Media Partners"
+            query={GetMediaPartnersByProjectDocument}
+            deleteMutation={DeleteMediaPartnerDocument}
+            formik={formik}
+            modal={modal}
+            ModalComponent={MediaPartnersModal}
+            dataKey="getMediaPartnersByProject"
+            columns={[
+              {
+                key: "name",
+                label: "Details",
+                type: "avatar",
+                subTextKey: "website",
+              },
+              { key: "description", label: "Description", type: "text" },
+              { key: "status", label: "Status", type: "badge" },
+              { key: "createdAt", label: "Created At", type: "date" },
+            ]}
+          />
         </div>
       </div>
     </div>

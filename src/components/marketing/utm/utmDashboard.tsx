@@ -48,7 +48,7 @@ export default function UTMDashboard({
     null
   );
   const projectId = useSelector((state: any) => state.project.projectId);
-  const { isOpen, openModal, closeModal } = modal;
+  const { openModal } = modal;
   const { data: utmData } = useQuery(GetUtmByProjectIdDocument, {
     skip: !projectId,
     variables: {

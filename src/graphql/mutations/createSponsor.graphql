@@ -1,0 +1,6 @@
+mutation CreateSponsor($input: CreateSponsorInput!) {
+  createSponsor(input: $input) {
+    id
+    name
+  }
+}

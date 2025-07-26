@@ -9,12 +9,14 @@ import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
   CreateExhibitorDocument,
+  DeleteExhibitorDocument,
   GetExhibitorsByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import SearchField from "../form/input/SearchField";
+import EntityTable from "../tables/entityTable";
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
@@ -96,7 +98,27 @@ const ExhibitorsComponent = () => {
           </div>
         </div>
         <div className="space-y-6">
-          <ExhibitorsTable formik={formik} modal={modal} />
+          <EntityTable
+            title="Exhibitors"
+            query={GetExhibitorsByProjectDocument}
+            deleteMutation={DeleteExhibitorDocument}
+            formik={formik}
+            modal={modal}
+            ModalComponent={ExhibitorsModal}
+            dataKey="getExhibitorsByProject"
+            columns={[
+              {
+                key: "companyName",
+                label: "Details",
+                type: "avatar",
+                subTextKey: "website",
+              },
+              { key: "description", label: "Description", type: "text" },
+              { key: "linkedin", label: "LinkedIn", type: "link" },
+              { key: "status", label: "Status", type: "badge" },
+              { key: "createdAt", label: "Created At", type: "date" },
+            ]}
+          />
         </div>
       </div>
     </div>

@@ -8,11 +8,13 @@ import { useMutation } from "@apollo/client";
 import {
   CreateSpeakerDocument,
   CreateSpeakerInput,
+  DeleteSpeakerDocument,
   GetSpeakersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
-import SpeakersTable from "../tables/speakersTable";
+import EntityTable from "../tables/entityTable";
+import SpeakersModal from "../modals/speakersModal";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
@@ -29,7 +31,7 @@ const validationSchema = Yup.object().shape({
   designation: Yup.string().required("Designation is required"),
 });
 const SpeakersComponent = () => {
-  const {projectId,projectName} = useSelector((state: any) => state.project);
+  const { projectId, projectName } = useSelector((state: any) => state.project);
   const [createMediaPartner] = useMutation(CreateSpeakerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
@@ -90,7 +92,26 @@ const SpeakersComponent = () => {
           </Button>
         </div>
         <div className="space-y-6">
-          <SpeakersTable formik={formik} modal={modal} />
+          <EntityTable
+            title="Speakers"
+            query={GetSpeakersByProjectDocument}
+            deleteMutation={DeleteSpeakerDocument}
+            formik={formik}
+            modal={modal}
+            ModalComponent={SpeakersModal}
+            dataKey="getSpeakersByProject"
+            columns={[
+              {
+                key: "name",
+                label: "Details",
+                type: "avatar",
+                subTextKey: "designation",
+              },
+              { key: "companyName", label: "Organization", type: "text" },
+              { key: "status", label: "Status", type: "badge" },
+              { key: "createdAt", label: "Created At", type: "date" },
+            ]}
+          />
         </div>
       </div>
     </div>

@@ -93,7 +93,7 @@ const AppSidebar: React.FC = () => {
         {
           name: "Sponsors",
           path: `/projects/sponsors`,
-          draft: true,
+          draft: false,
         },
       ],
     },

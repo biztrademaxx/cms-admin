@@ -8,6 +8,7 @@ import { useMutation } from "@apollo/client";
 import {
   CreateMediaPartnerDocument,
   CreateSupportingPartnerDocument,
+  DeleteSupportingPartnerDocument,
   GetMediaPartnersByProjectDocument,
   GetSupportingPartnersByProjectDocument,
 } from "@/gql_generated/graphql";
@@ -15,6 +16,8 @@ import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
 import MediaPartnersTable from "../../tables/mediaPartnersTable";
 import SupportingPartnerTable from "@/components/tables/supportingPartnersTable";
+import EntityTable from "@/components/tables/entityTable";
+import SupportingPartnersModal from "@/components/modals/supportingPartnersModal";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
@@ -27,19 +30,22 @@ const validationSchema = Yup.object().shape({
     .url("Enter a valid URL"),
 });
 const SupportingPartnersComponent = () => {
- const {projectId,projectName} = useSelector((state: any) => state.project);
-  const [createSupportingPartner] = useMutation(CreateSupportingPartnerDocument, {
-    onCompleted: (data) => {
-      console.log("Exhibitor created:", data);
-      modal.closeModal();
-    },
-    refetchQueries: [
-      {
-        query: GetSupportingPartnersByProjectDocument,
-        variables: { projectId },
+  const { projectId, projectName } = useSelector((state: any) => state.project);
+  const [createSupportingPartner] = useMutation(
+    CreateSupportingPartnerDocument,
+    {
+      onCompleted: (data) => {
+        console.log("Exhibitor created:", data);
+        modal.closeModal();
       },
-    ],
-  });
+      refetchQueries: [
+        {
+          query: GetSupportingPartnersByProjectDocument,
+          variables: { projectId },
+        },
+      ],
+    }
+  );
 
   const modal = useModal();
 
@@ -78,13 +84,35 @@ const SupportingPartnersComponent = () => {
     <div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
-          <PageBreadcrumb pageTitle="Supporting Partners" projectName={projectName} />
+          <PageBreadcrumb
+            pageTitle="Supporting Partners"
+            projectName={projectName}
+          />
           <Button size="sm" onClick={modal.openModal}>
             + Add Supporting Partner
           </Button>
         </div>
         <div className="space-y-6">
-          <SupportingPartnerTable formik={formik} modal={modal} />
+          <EntityTable
+            title="Supporting Partners"
+            query={GetSupportingPartnersByProjectDocument}
+            deleteMutation={DeleteSupportingPartnerDocument}
+            formik={formik}
+            modal={modal}
+            ModalComponent={SupportingPartnersModal}
+            dataKey="getSupportingPartnersByProject"
+            columns={[
+              {
+                key: "name",
+                label: "Details",
+                type: "avatar",
+                subTextKey: "website",
+              },
+              { key: "description", label: "Description", type: "text" },
+              { key: "status", label: "Status", type: "badge" },
+              { key: "createdAt", label: "Created At", type: "date" },
+            ]}
+          />
         </div>
       </div>
     </div>

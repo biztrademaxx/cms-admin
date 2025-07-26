@@ -6,38 +6,36 @@ import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateSpeakerDocument,
   CreateSpeakerInput,
+  CreateSponsorDocument,
+  CreateSponsorInput,
+  DeleteExhibitorDocument,
   GetSpeakersByProjectDocument,
+  GetSponsorByProjectDocument,
+  SponsorStatus,
+  SponsorType,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
-import SpeakersTable from "../tables/speakersTable";
+import EntityTable from "../tables/entityTable";
+import SponsorsModal from "../modals/sponsorsModal";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
-  companyName: Yup.string().required("Company name is required"),
-  linkedinUrl: Yup.string()
-    .required("Linkedin URL is required")
-    .url("Enter a valid URL"),
-  image: Yup.string()
-    .required("Profile picture URL is required")
-    .url("Enter a valid URL"),
-  companyLogo: Yup.string()
-    .required("Logo URL is required")
-    .url("Enter a valid URL"),
-  designation: Yup.string().required("Designation is required"),
+  type: Yup.string().required("Type is required"),
+  logoUrl: Yup.string().required("Logo URL is required"),
+  address: Yup.string().required("Address is required"),
 });
 const SponsorsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
-  const [createMediaPartner] = useMutation(CreateSpeakerDocument, {
+  const [createSponsor] = useMutation(CreateSponsorDocument, {
     onCompleted: (data) => {
-      console.log("Exhibitor created:", data);
+      console.log("Sponsor created:", data);
       modal.closeModal();
     },
     refetchQueries: [
       {
-        query: GetSpeakersByProjectDocument,
+        query: GetSponsorByProjectDocument,
         variables: { projectId },
       },
     ],
@@ -49,29 +47,32 @@ const SponsorsComponent = () => {
     initialValues: {
       id: "",
       name: "",
-      linkedinUrl: "",
-      image: "",
-      designation: "",
-      companyLogo: "",
-      companyName: "",
+      boothNumber: "",
+      imageUrl: "",
+      type: SponsorType.Supporting,
+      logoUrl: "",
+      status: SponsorStatus.Active,
+      address: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      const input: CreateSpeakerInput = {
+      const input: CreateSponsorInput = {
         projectId,
         name: values.name,
-        linkedinUrl: values.linkedinUrl,
-        image: values.image,
-        designation: values.designation,
-        companyLogo: values.companyLogo,
-        companyName: values.companyName,
+        priority: 0,
+        status: values.status,
+        boothNumber: values.boothNumber,
+        imageUrl: values.imageUrl,
+        type: values.type,
+        logoUrl: values.logoUrl,
+        address: values.address,
       };
 
       if (values.id) {
         input.id = values.id;
       }
 
-      await createMediaPartner({
+      await createSponsor({
         variables: {
           input,
         },
@@ -90,7 +91,28 @@ const SponsorsComponent = () => {
           </Button>
         </div>
         <div className="space-y-6">
-          <SpeakersTable formik={formik} modal={modal} />
+          <EntityTable
+            title="Sponsors"
+            query={GetSponsorByProjectDocument}
+            deleteMutation={DeleteExhibitorDocument}
+            formik={formik}
+            modal={modal}
+            ModalComponent={SponsorsModal}
+            dataKey="getExhibitorsByProject"
+            columns={[
+              {
+                key: "name",
+                label: "Details",
+                type: "avatar",
+                subTextKey: "website",
+              },
+              { key: "boothNumber", label: "Booth", type: "text" },
+              { key: "type", label: "Type", type: "text" },
+              { key: "address", label: "Address", type: "text" },
+              { key: "status", label: "Status", type: "badge" },
+              { key: "createdAt", label: "Created At", type: "date" },
+            ]}
+          />
         </div>
       </div>
     </div>
