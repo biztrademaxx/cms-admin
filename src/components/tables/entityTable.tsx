@@ -230,11 +230,11 @@ export default function EntityTable({
               </TableBody>
             </Table>
           </div>
-          <Pagination
+          {/* <Pagination
             currentPage={1}
             totalPages={2}
             onPageChange={() => {}}
-          />
+          /> */}
         </div>
       )}
       <ModalComponent
