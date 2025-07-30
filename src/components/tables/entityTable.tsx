@@ -16,7 +16,7 @@ import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
 import Pagination from "./pagination";
 
-type ColumnType = "avatar" | "text" | "link" | "badge" | "date";
+type ColumnType = "avatar" | "text" | "link" | "badge" | "date" | "email";
 
 interface ColumnConfig {
   key: string;
@@ -128,6 +128,14 @@ export default function EntityTable({
             {col.label || "—"}
           </span>
         );
+      case "email":
+        return (
+          <a href={`mailto:${value}`} target="_blank">
+            <span className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-sm truncate cursor-pointer">
+              {col.label || "—"}
+            </span>
+          </a>
+        );
       case "badge":
         const badgeColor =
           value === "Active"
@@ -196,8 +204,8 @@ export default function EntityTable({
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {tableData.map((item: any) => (
-                  <TableRow key={item.id}>
+                {tableData.map((item: any, index: number) => (
+                  <TableRow key={index}>
                     {columns.map((col) => (
                       <TableCell
                         key={col.key}

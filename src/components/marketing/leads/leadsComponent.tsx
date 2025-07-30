@@ -8,18 +8,12 @@ import { useMutation } from "@apollo/client";
 import {
   // CreateExhibitorDocument,
   DeleteExhibitorDocument,
-  GetExhibitorsByProjectDocument,
   GetLeadsByProjectIdDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
-import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import SearchField from "@/components/form/input/SearchField";
-import Button from "@/components/ui/button/Button";
-// import ExhibitorsTable from "@/components/tables/exhibitorsTable";
-import LeadsTable from "./leadsTable";
+
 import EntityTable from "@/components/tables/entityTable";
-import ExhibitorsModal from "@/components/modals/exhibitorsModal";
 import DelegatesModal from "@/components/modals/delegatesModal";
 
 const validationSchema = Yup.object().shape({
@@ -48,7 +42,7 @@ const LeadsComponent = () => {
   //   ],
   // });
 
-  const modal = useModal();
+  // const modal = useModal();
 
   // const formik = useFormik({
   //   initialValues: {
@@ -112,8 +106,12 @@ const LeadsComponent = () => {
                 subTextKey: "jobTitle",
               },
               { key: "companyName", label: "Company", type: "text" },
+              { key: "leadType", label: "Lead Type", type: "badge" },
               { key: "phone", label: "Phone", type: "text" },
+              { key: "message", label: "Message", type: "text" },
               { key: "status", label: "Status", type: "badge" },
+              { key: "email", label: "Email", type: "email" },
+               { key: "quantity", label: "Quantity", type: "text" },
               { key: "createdAt", label: "Created At", type: "date" },
             ]}
           />
