@@ -1,0 +1,19 @@
+query GetLeadsByProjectId($projectId: String!) {
+  getLeadsByProjectId(projectId: $projectId) {
+    awardCategory
+    companyName
+    createdAt
+    email
+    industry
+    jobTitle
+    leadType
+    message
+    name
+    phone
+    price
+    projectId
+    quantity
+    status
+    utmId
+  }
+}

@@ -5,13 +5,14 @@ import {
   TableBody,
   TableHeader,
   TableRow,
-  TableCell
+  TableCell,
 } from "@/components/ui/table";
 import Image from "next/image";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   DeleteExhibitorDocument,
   GetExhibitorsByProjectDocument,
+  GetLeadsByProjectIdDocument,
 } from "@/gql_generated/graphql";
 import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
@@ -20,12 +21,11 @@ import Badge from "@/components/ui/badge/Badge";
 import ExhibitorsModal from "@/components/modals/exhibitorsModal";
 import WarningModal from "@/components/modals/warningModal";
 
-
 export default function LeadsTable({
-  formik,
+  // formik,
   modal,
 }: {
-  formik: any;
+  // formik: any;
   modal: any;
 }) {
   const { openModal } = modal;
@@ -46,17 +46,17 @@ export default function LeadsTable({
     ],
   });
 
-  const { data, error, loading } = useQuery(GetExhibitorsByProjectDocument, {
+  const { data, error, loading } = useQuery(GetLeadsByProjectIdDocument, {
     variables: { projectId },
     skip: !projectId,
   });
 
-  const tableData = data?.getExhibitorsByProject || [];
+  const tableData = data?.getLeadsByProjectId || [];
 
   const handleEdit = (Exhibitor: any) => {
     setEditingItem(Exhibitor);
     openModal();
-    formik.setValues(Exhibitor);
+    // formik.setValues(Exhibitor);
   };
 
   const handleDelete = async (Exhibitor: any) => {
@@ -126,14 +126,14 @@ export default function LeadsTable({
                         </div>
                         <div>
                           <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                            {Exhibitor?.companyName || "N/A"}
+                            {Exhibitor?.name || "N/A"}
                           </span>
 
                           <span
                             className="block text-gray-500 text-theme-xs dark:text-gray-400 cursor-pointer "
                             onClick={() => router.push(Exhibitor?.website)}
                           >
-                            {Exhibitor?.website || "N/A"}
+                            {Exhibitor?.companyName || "N/A"}
                           </span>
                         </div>
                       </div>
@@ -196,7 +196,7 @@ export default function LeadsTable({
       )}
       <ExhibitorsModal
         modal={modal}
-        formik={formik}
+        formik={() => {}}
         editingItem={editingItem}
         setEditingItem={setEditingItem}
       />

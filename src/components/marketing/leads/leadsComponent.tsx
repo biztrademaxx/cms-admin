@@ -6,16 +6,21 @@ import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateExhibitorDocument,
+  // CreateExhibitorDocument,
+  DeleteExhibitorDocument,
   GetExhibitorsByProjectDocument,
+  GetLeadsByProjectIdDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import SearchField from "@/components/form/input/SearchField";
 import Button from "@/components/ui/button/Button";
-import ExhibitorsTable from "@/components/tables/exhibitorsTable";
+// import ExhibitorsTable from "@/components/tables/exhibitorsTable";
 import LeadsTable from "./leadsTable";
+import EntityTable from "@/components/tables/entityTable";
+import ExhibitorsModal from "@/components/modals/exhibitorsModal";
+import DelegatesModal from "@/components/modals/delegatesModal";
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
@@ -30,59 +35,59 @@ const validationSchema = Yup.object().shape({
 });
 const LeadsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
-  const [createExhibitor] = useMutation(CreateExhibitorDocument, {
-    onCompleted: (data) => {
-      console.log("Exhibitor created:", data);
-      modal.closeModal();
-    },
-    refetchQueries: [
-      {
-        query: GetExhibitorsByProjectDocument,
-        variables: { projectId },
-      },
-    ],
-  });
+  // const [createExhibitor] = useMutation(CreateExhibitorDocument, {
+  //   onCompleted: (data) => {
+  //     console.log("Exhibitor created:", data);
+  //     modal.closeModal();
+  //   },
+  //   refetchQueries: [
+  //     {
+  //       query: GetExhibitorsByProjectDocument,
+  //       variables: { projectId },
+  //     },
+  //   ],
+  // });
 
   const modal = useModal();
 
-  const formik = useFormik({
-    initialValues: {
-      id: "",
-      companyName: "",
-      description: "",
-      linkedin: "",
-      logoUrl: "",
-      website: "",
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      let logoFileOrUrl = formik.values.logoUrl;
-      if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
-        const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
-        logoFileOrUrl = await uploadImageToCloud(file);
-      }
-      const input: any = {
-        projectId,
-        companyName: values.companyName,
-        description: values.description,
-        linkedin: values.linkedin,
-        logoUrl: logoFileOrUrl,
-        website: values.website,
-      };
+  // const formik = useFormik({
+  //   initialValues: {
+  //     id: "",
+  //     companyName: "",
+  //     description: "",
+  //     linkedin: "",
+  //     logoUrl: "",
+  //     website: "",
+  //   },
+  //   validationSchema,
+  //   onSubmit: async (values) => {
+  //     let logoFileOrUrl = formik.values.logoUrl;
+  //     if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
+  //       const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
+  //       logoFileOrUrl = await uploadImageToCloud(file);
+  //     }
+  //     const input: any = {
+  //       projectId,
+  //       companyName: values.companyName,
+  //       description: values.description,
+  //       linkedin: values.linkedin,
+  //       logoUrl: logoFileOrUrl,
+  //       website: values.website,
+  //     };
 
-      if (values.id) {
-        input.id = values.id;
-      }
+  //     if (values.id) {
+  //       input.id = values.id;
+  //     }
 
-      await createExhibitor({
-        variables: {
-          input,
-        },
-      });
+  //     await createExhibitor({
+  //       variables: {
+  //         input,
+  //       },
+  //     });
 
-      console.log(values);
-    },
-  });
+  //     console.log(values);
+  //   },
+  // });
 
   return (
     <div>
@@ -91,7 +96,27 @@ const LeadsComponent = () => {
           <PageBreadcrumb pageTitle="Leads" projectName={projectName} />
         </div>
         <div className="space-y-6">
-          <LeadsTable formik={formik} modal={modal} />
+          <EntityTable
+            title="Leads"
+            query={GetLeadsByProjectIdDocument}
+            deleteMutation={DeleteExhibitorDocument}
+            formik={{}}
+            modal={DelegatesModal}
+            ModalComponent={() => null}
+            dataKey="getLeadsByProjectId"
+            columns={[
+              {
+                key: "name",
+                label: "Details",
+                type: "avatar",
+                subTextKey: "jobTitle",
+              },
+              { key: "companyName", label: "Company", type: "text" },
+              { key: "phone", label: "Phone", type: "text" },
+              { key: "status", label: "Status", type: "badge" },
+              { key: "createdAt", label: "Created At", type: "date" },
+            ]}
+          />
         </div>
       </div>
     </div>

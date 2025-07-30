@@ -108,10 +108,10 @@ export default function UtmModal({
             value={generateUTM(formik.values)}
           />
 
-          <div className="mt-3 flex justify-between">
-            <Button type="button" variant="outline" onClick={handleCopy}>
+          <div className="mt-3 flex justify-end">
+            {/* <Button type="button" variant="outline" onClick={handleCopy}>
               Copy to Clipboard
-            </Button>
+            </Button> */}
             <div className="flex gap-2">
               <Button
                 size="sm"

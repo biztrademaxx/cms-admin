@@ -12,7 +12,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   CreateProjectDocument,
   GetProjectBySlugDocument,
-
 } from "@/gql_generated/graphql";
 import { useRouter, useSearchParams } from "next/navigation";
 import { convertD24HrToISO, formatIsoToCustom } from "@/utils/dateUtils";
@@ -58,7 +57,7 @@ export default function CreateProjectForm() {
       id: projectData?.getProjectBySlug?.id || "",
       name: projectData?.getProjectBySlug?.name || "",
       slug: projectData?.getProjectBySlug?.slug || "",
-      year: projectData?.getProjectBySlug?.year || 2026,
+      year: projectData?.getProjectBySlug?.year || 2025,
       startDate: projectData?.getProjectBySlug?.startDate
         ? formatIsoToCustom(projectData?.getProjectBySlug?.startDate)
         : "",
@@ -76,9 +75,15 @@ export default function CreateProjectForm() {
       try {
         const startDateIso = convertD24HrToISO(values.startDate);
         const endDateIso = convertD24HrToISO(values.endDate);
+        const yearToNum = Number(values.year);
         await CreateProject({
           variables: {
-            input: { ...values, startDate: startDateIso, endDate: endDateIso },
+            input: {
+              ...values,
+              startDate: startDateIso,
+              endDate: endDateIso,
+              year: yearToNum,
+            },
           },
         });
       } catch (error) {
@@ -261,7 +266,7 @@ export default function CreateProjectForm() {
             Cancel
           </Button>
           <Button type="submit" disabled={!formik.isValid || loading}>
-           {projectId ? "Update" : "Create"} Project
+            {projectId ? "Update" : "Create"} Project
           </Button>
         </div>
       </form>

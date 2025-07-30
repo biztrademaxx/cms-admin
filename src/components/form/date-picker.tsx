@@ -33,6 +33,7 @@ export default function DatePicker({
       dateFormat: "d-m-Y H:i",
       defaultDate,
       onClose: onChange as Hook,
+       disableMobile: true,
     });
 
     return () => {

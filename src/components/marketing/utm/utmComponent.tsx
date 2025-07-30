@@ -28,7 +28,6 @@ const UtmComponent = () => {
   const [SaveUTM] = useMutation(CreateUtmDocument, {
     onCompleted: (data) => {
       console.log("UTM saved successfully:", data);
-      alert("UTM saved successfully!");
       modal.closeModal();
     },
     refetchQueries: [

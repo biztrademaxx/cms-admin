@@ -19,13 +19,15 @@ const ProjectCard = ({
   project,
   Icon,
   onClick,
+  years = [],
 }: {
   project: any;
   Icon: React.ComponentType<{ className?: string }>;
-  onClick: (id: string, name: string) => void;
+  onClick: (year: number, name: string) => void;
+  years: number[];
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedYear, setSelectedYear] = useState("2025");
+  const [selectedYear, setSelectedYear] = useState(years[0] || 2025);
   const [showDeleteModal, setShowEditModal] = useState(false);
   const router = useRouter();
 
@@ -34,7 +36,7 @@ const ProjectCard = ({
     setShowDropdown(!showDropdown);
   };
 
-  const handleYearChange = (value: string) => {
+  const handleYearChange = (value: number) => {
     setSelectedYear(value);
     setShowDropdown(false);
   };
@@ -44,7 +46,7 @@ const ProjectCard = ({
       className="cursor-pointer rounded-2xl border bg-white p-5 hover:border-brand-500 hover:dark:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 relative"
       onClick={(e) => {
         e.stopPropagation();
-        onClick(project.id, project.name);
+        onClick(selectedYear, project.name);
       }}
     >
       <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
@@ -65,50 +67,24 @@ const ProjectCard = ({
             <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
               Select Year
             </label>
-            {/* 
-            <div className="flex items-center gap-2 text-gray-700 dark:text-white">
-              <ChevronLeft
-                size={16}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const idx = YEAR_OPTIONS.findIndex(
-                    (y) => y.value === selectedYear
-                  );
-                  if (idx > 0) setSelectedYear(YEAR_OPTIONS[idx - 1].value);
-                }}
-                className="hover:text-brand-500"
-              />
-              <span>{selectedYear}</span>
-              <ChevronRight
-                size={16}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const idx = YEAR_OPTIONS.findIndex(
-                    (y) => y.value === selectedYear
-                  );
-                  if (idx < YEAR_OPTIONS.length - 1)
-                    setSelectedYear(YEAR_OPTIONS[idx + 1].value);
-                }}
-                className="hover:text-brand-500"
-              />
-            </div> */}
 
             <select
               value={selectedYear}
-              onChange={(e) => handleYearChange(e.target.value)}
+              onChange={(e) => handleYearChange(Number(e.target.value))}
               onClick={(e) => e.stopPropagation()}
               className="appearance-none bg-none focus:outline-none p-2 pr-8 leading-tight text-gray-700 dark:text-gray-400"
             >
-              {YEAR_OPTIONS.map((year) => (
+              {years.map((year, index) => (
                 <option
-                  key={year.value}
-                  value={year.value}
+                  key={index}
+                  value={year}
                   className="text-gray-700 dark:bg-gray-900 rounded-2xl dark:text-gray-400"
                 >
-                  {year.value}
+                  {year}
                 </option>
               ))}
             </select>
+
             <div className="absolute inset-y-0 flex items-center text-gray-700 pointer-events-none bg-none right-3 dark:text-gray-400">
               <svg
                 className="stroke-current"

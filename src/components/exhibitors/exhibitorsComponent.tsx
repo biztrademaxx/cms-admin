@@ -2,7 +2,6 @@
 import * as Yup from "yup";
 import React from "react";
 import Button from "../ui/button/Button";
-import ExhibitorsTable from "../tables/exhibitorsTable";
 import { useModal } from "@/hooks/useModal";
 import ExhibitorsModal from "../modals/exhibitorsModal";
 import { useFormik } from "formik";
