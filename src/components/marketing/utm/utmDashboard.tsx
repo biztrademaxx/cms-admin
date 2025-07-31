@@ -19,24 +19,6 @@ import { useSelector } from "react-redux";
 import UtmMetrics from "./utmMetrics";
 import { GetUtmByProjectIdDocument } from "@/gql_generated/graphql";
 
-const utmMetrics = [
-  {
-    title: "Total Visits",
-    value: "3,289",
-    icon: BarChart3,
-  },
-  {
-    title: "Unique Clicks",
-    value: "2,115",
-    icon: Link2,
-  },
-  {
-    title: "Total Campaigns",
-    value: "6",
-    icon: Eye,
-  },
-];
-
 export default function UTMDashboard({
   modal,
   formik,
@@ -53,6 +35,7 @@ export default function UTMDashboard({
     skip: !projectId,
     variables: {
       id: projectId,
+      groupBy: "email",
     },
   });
   const handleCopy = async (entry: UTMEntry | any) => {
@@ -73,6 +56,46 @@ export default function UTMDashboard({
     openModal();
     setSelectedEntry(entry);
   };
+  let uniqueClicks = 0;
+  let visits = 0;
+  if (utmData?.getLeadsGroupedByField) {
+    const unknown = utmData?.getLeadsGroupedByField.find(
+      (item: any) => item.group === "Unknown"
+    );
+    if (unknown) {
+      utmData.getLeadsGroupedByField.splice(
+        utmData.getLeadsGroupedByField.indexOf(unknown),
+        1
+      );
+    }
+    visits = utmData?.getLeadsGroupedByField.reduce(
+      (acc: number, item: any) => acc + item.count,
+      0
+    );
+    uniqueClicks = utmData?.getLeadsGroupedByField.length;
+    visits = utmData?.getLeadsGroupedByField.reduce(
+      (acc: number, item: any) => acc + item.count,
+      0
+    );
+  }
+  const utmMetrics = [
+    {
+      title: "Total Visits",
+      value: visits || 0,
+      icon: BarChart3,
+    },
+    {
+      title: "Unique Clicks",
+      value: uniqueClicks || 0,
+      icon: Link2,
+    },
+    {
+      title: "Total Campaigns",
+      value: utmData?.getUtmByProject.length || 0,
+      icon: Eye,
+    },
+  ];
+
   return (
     <div className="space-y-8">
       {/* Metric Cards */}
@@ -198,7 +221,12 @@ export default function UTMDashboard({
           </div>
         </div>
       </div>
-      <UtmModal modal={modal} editingItem={selectedEntry} setEditingItem={setSelectedEntry} formik={formik} />
+      <UtmModal
+        modal={modal}
+        editingItem={selectedEntry}
+        setEditingItem={setSelectedEntry}
+        formik={formik}
+      />
     </div>
   );
 }

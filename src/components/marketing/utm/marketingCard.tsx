@@ -13,7 +13,7 @@ const MarketingCard = ({ count, name }: { count: number; name: string }) => {
       }}
     >
       <div className="my-3 space-y-3 text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400">{name}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{name}</p>
         <h4 className="font-bold text-title-sm text-gray-800 dark:text-white/90 text-center">
           {count || "0"}
         </h4>

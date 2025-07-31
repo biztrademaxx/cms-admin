@@ -28,11 +28,12 @@ type Documents = {
     "query GetAllProjects {\n  getAllProjects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n    year\n  }\n}": typeof types.GetAllProjectsDocument,
     "query GetExhibitorsByProject($projectId: String!) {\n  getExhibitorsByProject(projectId: $projectId) {\n    companyName\n    createdAt\n    description\n    id\n    linkedin\n    logoUrl\n    projectId\n    updatedAt\n    website\n  }\n}": typeof types.GetExhibitorsByProjectDocument,
     "query GetLeadsByProjectId($projectId: String!) {\n  getLeadsByProjectId(projectId: $projectId) {\n    awardCategory\n    companyName\n    createdAt\n    email\n    industry\n    jobTitle\n    leadType\n    message\n    name\n    phone\n    price\n    projectId\n    quantity\n    status\n    utmId\n  }\n}": typeof types.GetLeadsByProjectIdDocument,
+    "query GetLeadsGroupedByField($input: GroupLeadsInput!) {\n  getLeadsGroupedByField(input: $input) {\n    count\n    group\n    leads {\n      awardCategory\n      companyName\n      createdAt\n      email\n      industry\n      jobTitle\n      leadType\n      message\n      name\n      phone\n      price\n      projectId\n      quantity\n      status\n      utmId\n    }\n  }\n}": typeof types.GetLeadsGroupedByFieldDocument,
     "query GetMediaPartnersByProject($projectId: String!) {\n  getMediaPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": typeof types.GetMediaPartnersByProjectDocument,
     "query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    id\n    image\n    linkedinUrl\n    name\n    projectId\n  }\n}": typeof types.GetSpeakersByProjectDocument,
     "query GetSponsorByProject($projectId: String!) {\n  getSponsorsByProject(projectId: $projectId) {\n    address\n    boothNumber\n    createdAt\n    name\n    id\n    logoUrl\n    priority\n    status\n    type\n  }\n}": typeof types.GetSponsorByProjectDocument,
     "query GetSupportingPartnersByProject($projectId: String!) {\n  getSupportingPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": typeof types.GetSupportingPartnersByProjectDocument,
-    "query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": typeof types.GetUtmByProjectIdDocument,
+    "query GetUtmByProjectId($id: String!, $groupBy: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n  getLeadsGroupedByField(input: {projectId: $id, groupBy: $groupBy}) {\n    count\n    group\n  }\n}": typeof types.GetUtmByProjectIdDocument,
     "query getProjectBySlug($id: String!) {\n  getProjectBySlug(id: $id) {\n    id\n    name\n    description\n    slug\n    startDate\n    currency\n    endDate\n    venue\n    website\n    year\n  }\n}": typeof types.GetProjectBySlugDocument,
 };
 const documents: Documents = {
@@ -50,11 +51,12 @@ const documents: Documents = {
     "query GetAllProjects {\n  getAllProjects {\n    id\n    name\n    slug\n    description\n    startDate\n    endDate\n    year\n  }\n}": types.GetAllProjectsDocument,
     "query GetExhibitorsByProject($projectId: String!) {\n  getExhibitorsByProject(projectId: $projectId) {\n    companyName\n    createdAt\n    description\n    id\n    linkedin\n    logoUrl\n    projectId\n    updatedAt\n    website\n  }\n}": types.GetExhibitorsByProjectDocument,
     "query GetLeadsByProjectId($projectId: String!) {\n  getLeadsByProjectId(projectId: $projectId) {\n    awardCategory\n    companyName\n    createdAt\n    email\n    industry\n    jobTitle\n    leadType\n    message\n    name\n    phone\n    price\n    projectId\n    quantity\n    status\n    utmId\n  }\n}": types.GetLeadsByProjectIdDocument,
+    "query GetLeadsGroupedByField($input: GroupLeadsInput!) {\n  getLeadsGroupedByField(input: $input) {\n    count\n    group\n    leads {\n      awardCategory\n      companyName\n      createdAt\n      email\n      industry\n      jobTitle\n      leadType\n      message\n      name\n      phone\n      price\n      projectId\n      quantity\n      status\n      utmId\n    }\n  }\n}": types.GetLeadsGroupedByFieldDocument,
     "query GetMediaPartnersByProject($projectId: String!) {\n  getMediaPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": types.GetMediaPartnersByProjectDocument,
     "query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    id\n    image\n    linkedinUrl\n    name\n    projectId\n  }\n}": types.GetSpeakersByProjectDocument,
     "query GetSponsorByProject($projectId: String!) {\n  getSponsorsByProject(projectId: $projectId) {\n    address\n    boothNumber\n    createdAt\n    name\n    id\n    logoUrl\n    priority\n    status\n    type\n  }\n}": types.GetSponsorByProjectDocument,
     "query GetSupportingPartnersByProject($projectId: String!) {\n  getSupportingPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}": types.GetSupportingPartnersByProjectDocument,
-    "query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}": types.GetUtmByProjectIdDocument,
+    "query GetUtmByProjectId($id: String!, $groupBy: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n  getLeadsGroupedByField(input: {projectId: $id, groupBy: $groupBy}) {\n    count\n    group\n  }\n}": types.GetUtmByProjectIdDocument,
     "query getProjectBySlug($id: String!) {\n  getProjectBySlug(id: $id) {\n    id\n    name\n    description\n    slug\n    startDate\n    currency\n    endDate\n    venue\n    website\n    year\n  }\n}": types.GetProjectBySlugDocument,
 };
 
@@ -131,6 +133,10 @@ export function gql(source: "query GetLeadsByProjectId($projectId: String!) {\n 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "query GetLeadsGroupedByField($input: GroupLeadsInput!) {\n  getLeadsGroupedByField(input: $input) {\n    count\n    group\n    leads {\n      awardCategory\n      companyName\n      createdAt\n      email\n      industry\n      jobTitle\n      leadType\n      message\n      name\n      phone\n      price\n      projectId\n      quantity\n      status\n      utmId\n    }\n  }\n}"): (typeof documents)["query GetLeadsGroupedByField($input: GroupLeadsInput!) {\n  getLeadsGroupedByField(input: $input) {\n    count\n    group\n    leads {\n      awardCategory\n      companyName\n      createdAt\n      email\n      industry\n      jobTitle\n      leadType\n      message\n      name\n      phone\n      price\n      projectId\n      quantity\n      status\n      utmId\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "query GetMediaPartnersByProject($projectId: String!) {\n  getMediaPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}"): (typeof documents)["query GetMediaPartnersByProject($projectId: String!) {\n  getMediaPartnersByProject(projectId: $projectId) {\n    id\n    logoUrl\n    name\n    description\n    createdAt\n    logoUrl\n    website\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -147,7 +153,7 @@ export function gql(source: "query GetSupportingPartnersByProject($projectId: St
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}"): (typeof documents)["query GetUtmByProjectId($id: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n}"];
+export function gql(source: "query GetUtmByProjectId($id: String!, $groupBy: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n  getLeadsGroupedByField(input: {projectId: $id, groupBy: $groupBy}) {\n    count\n    group\n  }\n}"): (typeof documents)["query GetUtmByProjectId($id: String!, $groupBy: String!) {\n  getUtmByProject(id: $id) {\n    id\n    source\n    medium\n    campaign\n    term\n    content\n    url\n  }\n  getLeadsGroupedByField(input: {projectId: $id, groupBy: $groupBy}) {\n    count\n    group\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
