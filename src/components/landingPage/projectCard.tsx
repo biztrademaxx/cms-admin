@@ -20,8 +20,10 @@ const ProjectCard = ({
   Icon,
   onClick,
   years = [],
+  idMap = [],
 }: {
   project: any;
+  idMap?: Record<number, string>;
   Icon: React.ComponentType<{ className?: string }>;
   onClick: (year: number, name: string) => void;
   years: number[];
@@ -118,7 +120,7 @@ const ProjectCard = ({
       <WarningModal
         isOpen={showDeleteModal}
         onClose={() => setShowEditModal(false)}
-        onConfirm={() => router.push(`/projects/add?p=${project.id}`)}
+        onConfirm={() => router.push(`/projects/add?p=${idMap[selectedYear]}`)}
         title="Edit Project"
         message="Are you sure you want to edit this project?"
         confirmText="Edit"

@@ -87,6 +87,7 @@ export const ProjectsMetrics = () => {
           project={project}
           years={years}
           Icon={index % 2 === 0 ? GroupIcon : BoxIconLine}
+          idMap={idMap}
           onClick={(year, name) => handleProjectClick(year, name, idMap)}
         />
       ))}
