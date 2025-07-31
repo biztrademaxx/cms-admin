@@ -41,8 +41,8 @@ export default function SignInForm() {
         setTimeout(() => {
           setIsLoading(false);
           setIsChecked(false);
-          router.push("/");
-        }, 1000);
+          window.location.href = "/";
+        }, 300);
       } else {
         if (data.error === "Invalid credentials") {
           formik.setFieldError("email", `${" "}`);
