@@ -4,7 +4,6 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
-import Dropzone from "react-dropzone";
 import DropzoneComponent from "../form/DropZone";
 import Select from "../form/Select";
 import { SponsorStatus } from "@/gql_generated/graphql";
@@ -73,7 +72,7 @@ const SponsorsModal = ({
               />
             </div>
           )}
-          {!formik.values.imageUrl && (
+          {/* {!formik.values.imageUrl && (
             <div className="mb-6 ">
               <Label>Sponsor Cover Image</Label>
               <DropzoneComponent
@@ -82,7 +81,7 @@ const SponsorsModal = ({
                 }}
               />
             </div>
-          )}
+          )} */}
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             {formik.values.logoUrl && (
               <div>
@@ -103,7 +102,7 @@ const SponsorsModal = ({
                 </div>
               </div>
             )}
-            {formik.values.imageUrl && (
+            {/* {formik.values.imageUrl && (
               <div>
                 <Label>Sponsor Logo</Label>
                 <div className="mt-3 flex items-start gap-4">
@@ -121,7 +120,7 @@ const SponsorsModal = ({
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
             <div>
               <Label>Company Name</Label>
               <Input

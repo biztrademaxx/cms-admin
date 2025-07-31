@@ -6,11 +6,9 @@ import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateSpeakerInput,
   CreateSponsorDocument,
   CreateSponsorInput,
   DeleteExhibitorDocument,
-  GetSpeakersByProjectDocument,
   GetSponsorByProjectDocument,
   SponsorStatus,
   SponsorType,
@@ -48,7 +46,7 @@ const SponsorsComponent = () => {
       id: "",
       name: "",
       boothNumber: "",
-      imageUrl: "",
+      // imageUrl: "",
       type: SponsorType.Supporting,
       logoUrl: "",
       status: SponsorStatus.Active,
@@ -62,7 +60,6 @@ const SponsorsComponent = () => {
         priority: 0,
         status: values.status,
         boothNumber: values.boothNumber,
-        imageUrl: values.imageUrl,
         type: values.type,
         logoUrl: values.logoUrl,
         address: values.address,

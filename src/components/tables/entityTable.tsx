@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
-import Pagination from "./pagination";
 
 type ColumnType = "avatar" | "text" | "link" | "badge" | "date" | "email";
 

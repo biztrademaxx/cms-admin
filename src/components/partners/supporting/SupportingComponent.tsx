@@ -14,8 +14,6 @@ import {
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
-import MediaPartnersTable from "../../tables/mediaPartnersTable";
-import SupportingPartnerTable from "@/components/tables/supportingPartnersTable";
 import EntityTable from "@/components/tables/entityTable";
 import SupportingPartnersModal from "@/components/modals/supportingPartnersModal";
 
