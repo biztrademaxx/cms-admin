@@ -206,7 +206,7 @@ export default function EntityTable({
       : true;
 
     const matchesStatus = filters.status
-      ? String(item.status).toUpperCase() === filters.status.toUpperCase()
+      ? String(item.status).toUpperCase() === filters.status.toUpperCase() 
       : true;
 
     return matchesSearch && matchesStatus;
