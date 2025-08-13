@@ -29,59 +29,6 @@ const validationSchema = Yup.object().shape({
 });
 const LeadsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
-  // const [createExhibitor] = useMutation(CreateExhibitorDocument, {
-  //   onCompleted: (data) => {
-  //     console.log("Exhibitor created:", data);
-  //     modal.closeModal();
-  //   },
-  //   refetchQueries: [
-  //     {
-  //       query: GetExhibitorsByProjectDocument,
-  //       variables: { projectId },
-  //     },
-  //   ],
-  // });
-
-  // const modal = useModal();
-
-  // const formik = useFormik({
-  //   initialValues: {
-  //     id: "",
-  //     companyName: "",
-  //     description: "",
-  //     linkedin: "",
-  //     logoUrl: "",
-  //     website: "",
-  //   },
-  //   validationSchema,
-  //   onSubmit: async (values) => {
-  //     let logoFileOrUrl = formik.values.logoUrl;
-  //     if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
-  //       const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
-  //       logoFileOrUrl = await uploadImageToCloud(file);
-  //     }
-  //     const input: any = {
-  //       projectId,
-  //       companyName: values.companyName,
-  //       description: values.description,
-  //       linkedin: values.linkedin,
-  //       logoUrl: logoFileOrUrl,
-  //       website: values.website,
-  //     };
-
-  //     if (values.id) {
-  //       input.id = values.id;
-  //     }
-
-  //     await createExhibitor({
-  //       variables: {
-  //         input,
-  //       },
-  //     });
-
-  //     console.log(values);
-  //   },
-  // });
 
   return (
     <div>
@@ -98,7 +45,9 @@ const LeadsComponent = () => {
             modal={DelegatesModal}
             ModalComponent={() => null}
             dataKey="getLeadsByProjectId"
+            actionSection={false}
             columns={[
+              { key: "id", label: "Order ID", type: "id", subTextKey: "leads" },
               {
                 key: "name",
                 label: "Details",
@@ -111,7 +60,7 @@ const LeadsComponent = () => {
               { key: "message", label: "Message", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "email", label: "Email", type: "email" },
-               { key: "quantity", label: "Quantity", type: "text" },
+              { key: "quantity", label: "Quantity", type: "text" },
               { key: "createdAt", label: "Created At", type: "date" },
             ]}
           />

@@ -15,7 +15,14 @@ import { convertISOtoNormal } from "@/utils/dateUtils";
 import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
 
-type ColumnType = "avatar" | "text" | "link" | "badge" | "date" | "email";
+type ColumnType =
+  | "avatar"
+  | "text"
+  | "link"
+  | "badge"
+  | "date"
+  | "email"
+  | "id";
 
 interface ColumnConfig {
   key: string;
@@ -33,6 +40,7 @@ interface EntityTableProps {
   ModalComponent: React.ComponentType<any>;
   dataKey: string;
   columns: ColumnConfig[];
+  actionSection?: Boolean;
 }
 
 export default function EntityTable({
@@ -43,12 +51,17 @@ export default function EntityTable({
   modal,
   ModalComponent,
   dataKey,
+  actionSection = true,
   columns,
 }: EntityTableProps) {
   const { openModal } = modal;
   const router = useRouter();
   const projectId = useSelector((state: any) => state.project.projectId);
 
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+  });
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
 
@@ -77,6 +90,15 @@ export default function EntityTable({
 
   const handleDelete = async (item: any) => {
     await deleteEntity({ variables: { id: item.id } });
+  };
+
+  const badgeColor = {
+    ACTIVE: "success",
+    PENDING: "warning",
+    SPONSOR: "success",
+    EXHIBITOR: "info",
+    DELEGATE: "error",
+    INACTIVE: "error",
   };
 
   const renderCell = (item: any, col: ColumnConfig) => {
@@ -127,6 +149,15 @@ export default function EntityTable({
             {col.label || "—"}
           </span>
         );
+      case "id":
+        return (
+          <span
+            onClick={() => router.push(`${col.subTextKey}/${item.id}` || value)}
+            className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-xs truncate cursor-pointer"
+          >
+            {value || "—"}
+          </span>
+        );
       case "email":
         return (
           <a href={`mailto:${value}`} target="_blank">
@@ -136,14 +167,8 @@ export default function EntityTable({
           </a>
         );
       case "badge":
-        const badgeColor =
-          value === "Active"
-            ? "success"
-            : value === "Pending"
-            ? "warning"
-            : "error";
         return (
-          <Badge size="sm" color={badgeColor}>
+          <Badge size="sm" color={badgeColor[value?.toUpperCase()]}>
             {value ?? "Active"}
           </Badge>
         );
@@ -173,9 +198,58 @@ export default function EntityTable({
       </p>
     );
 
+  const filteredData = tableData.filter((item: any) => {
+    const matchesSearch = filters.search
+      ? Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(filters.search.toLowerCase())
+        )
+      : true;
+
+    const matchesStatus = filters.status
+      ? String(item.status).toUpperCase() === filters.status.toUpperCase()
+      : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      {!tableData?.length ? (
+      <div className="flex flex-wrap items-center gap-3 p-4 border-b border-gray-200 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
+        {/* Search box */}
+        <input
+          type="text"
+          placeholder="Search..."
+          value={filters.search}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, search: e.target.value }))
+          }
+          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+
+        {/* Status dropdown */}
+        <select
+          value={filters.status}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, status: e.target.value }))
+          }
+          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="">All Status</option>
+          <option value="l">Active</option>
+          <option value="PENDING">Pending</option>
+          <option value="INACTIVE">Inactive</option>
+        </select>
+
+        {/* Clear button */}
+        <button
+          onClick={() => setFilters({ search: "", status: "" })}
+          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.05]"
+        >
+          Reset
+        </button>
+      </div>
+
+      {!filteredData?.length ? (
         <p className="p-4 text-sm text-gray-500 text-center dark:text-white">
           No {title.toLowerCase()} found.
         </p>
@@ -194,16 +268,19 @@ export default function EntityTable({
                       {col.label}
                     </TableCell>
                   ))}
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                  >
-                    Actions
-                  </TableCell>
+                  {actionSection && (
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Actions
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHeader>
+
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {tableData.map((item: any, index: number) => (
+                {filteredData.map((item: any, index: number) => (
                   <TableRow key={index}>
                     {columns.map((col) => (
                       <TableCell
@@ -213,25 +290,27 @@ export default function EntityTable({
                         {renderCell(item, col)}
                       </TableCell>
                     ))}
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(item)}
-                          className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            setEditingItem(item);
-                            setDeleteModalOpen(true);
-                          }}
-                          className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </TableCell>
+                    {actionSection && (
+                      <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingItem(item);
+                              setDeleteModalOpen(true);
+                            }}
+                            className="px-2 py-1 rounded-full border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

@@ -14,7 +14,7 @@ import PageBreadcrumb from "../../common/PageBreadCrumb";
 import UTMDashboard from "./utmDashboard";
 
 const validationSchema = Yup.object().shape({
-  url: Yup.string().url("Enter a valid URL").required("URL is required"),
+  url: Yup.string().required("URL is required"),
   source: Yup.string().required("Source is required"),
   medium: Yup.string().required("Medium is required"),
   campaign: Yup.string().required("Campaign is required"),

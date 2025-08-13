@@ -21,12 +21,10 @@ const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
   linkedin: Yup.string()
-    .required("Linkedin is required")
-    .url("Enter a valid URL"),
+    .required("Linkedin is required"),
   logoUrl: Yup.string().required("Logo URL is required"),
   website: Yup.string()
-    .required("Website is required")
-    .url("Enter a valid URL"),
+    .required("Website is required"),
 });
 const ExhibitorsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
@@ -90,7 +88,7 @@ const ExhibitorsComponent = () => {
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="Exhibitors" projectName={projectName} />
           <div className="flex items-center gap-2">
-            <SearchField inputRef={null} />
+            {/* <SearchField inputRef={null} /> */}
             <Button size="sm" onClick={modal.openModal}>
               + Add Exhibitor
             </Button>

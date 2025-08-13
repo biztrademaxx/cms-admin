@@ -25,7 +25,6 @@ const validationSchema = Yup.object().shape({
     .url("Enter a valid URL"),
   website: Yup.string()
     .required("Website is required")
-    .url("Enter a valid URL"),
 });
 const SupportingPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);

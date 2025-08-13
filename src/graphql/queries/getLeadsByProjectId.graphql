@@ -1,5 +1,6 @@
 query GetLeadsByProjectId($projectId: String!) {
   getLeadsByProjectId(projectId: $projectId) {
+    id
     awardCategory
     companyName
     createdAt

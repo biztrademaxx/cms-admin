@@ -20,14 +20,11 @@ const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
   companyName: Yup.string().required("Company name is required"),
   linkedinUrl: Yup.string()
-    .required("Linkedin URL is required")
-    .url("Enter a valid URL"),
+    .required("Linkedin URL is required"),
   image: Yup.string()
-    .required("Profile picture URL is required")
-    .url("Enter a valid URL"),
+    .required("Profile picture URL is required"),
   companyLogo: Yup.string()
-    .required("Logo URL is required")
-    .url("Enter a valid URL"),
+    .required("Logo URL is required"),
   designation: Yup.string().required("Designation is required"),
 });
 const SpeakersComponent = () => {
