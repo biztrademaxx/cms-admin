@@ -92,14 +92,23 @@ export default function EntityTable({
     await deleteEntity({ variables: { id: item.id } });
   };
 
-  const badgeColor = {
-    ACTIVE: "success",
-    PENDING: "warning",
-    SPONSOR: "success",
-    EXHIBITOR: "info",
-    DELEGATE: "error",
-    INACTIVE: "error",
-  };
+  type BadgeColor=
+    | "error"
+    | "success"
+    | "warning"
+    | "info"
+    
+const badgeColor: Record<
+  "ACTIVE" | "PENDING" | "SPONSOR" | "EXHIBITOR" | "DELEGATE" | "INACTIVE",
+  BadgeColor
+> = {
+  ACTIVE: "success",
+  PENDING: "warning",
+  SPONSOR: "success",
+  EXHIBITOR: "info",
+  DELEGATE: "error",
+  INACTIVE: "error",
+};
 
   const renderCell = (item: any, col: ColumnConfig) => {
     const value = item[col.key];
@@ -168,8 +177,11 @@ export default function EntityTable({
         );
       case "badge":
         return (
-          <Badge size="sm" color={badgeColor[value?.toUpperCase()]}>
-            {value ?? "Active"}
+          <Badge
+            size="sm"
+            color={badgeColor[value?.toUpperCase() as keyof typeof badgeColor]}
+          >
+            {value ?? "_"}
           </Badge>
         );
       case "date":
@@ -206,7 +218,7 @@ export default function EntityTable({
       : true;
 
     const matchesStatus = filters.status
-      ? String(item.status).toUpperCase() === filters.status.toUpperCase() 
+      ? String(item.status).toUpperCase() === filters.status.toUpperCase()
       : true;
 
     return matchesSearch && matchesStatus;
