@@ -1,5 +1,5 @@
 
-  query getProjectBySlug($id: String!) {
+  query getProjectById($id: String!) {
     getProjectBySlug(id: $id) {
       id
       name
