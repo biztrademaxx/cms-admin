@@ -73,11 +73,11 @@ const ProjectCard = ({
           <h4 className="font-bold text-title-sm text-gray-800 dark:text-white/90">
             {project.name}
           </h4>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-h-[lg] truncate">
             {project.description || "No description"}
           </p>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-auto">
           <div className="relative">
             <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
               Select Year

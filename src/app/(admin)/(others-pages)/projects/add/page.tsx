@@ -11,12 +11,14 @@ import DatePicker from "@/components/form/date-picker";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   CreateProjectDocument,
+  GetAllProjectsDocument,
   GetProjectByIdDocument,
 } from "@/gql_generated/graphql";
 import { useRouter, useSearchParams } from "next/navigation";
 import { convertD24HrToISO, formatIsoToCustom } from "@/utils/dateUtils";
 import DropzoneComponent from "@/components/form/DropZone";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
+import Image from "next/image";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Project name is required"),
@@ -33,6 +35,11 @@ export default function CreateProjectForm() {
   const projectId = params.get("p") || "";
 
   const [CreateProject, { loading }] = useMutation(CreateProjectDocument, {
+    refetchQueries:[
+      {
+        query: GetAllProjectsDocument,
+      }
+    ],
     onCompleted: (data) => {
       console.log("Project created:", data);
       router.push("/");

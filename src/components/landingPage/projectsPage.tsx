@@ -27,6 +27,15 @@ const ProjectsPage = () => {
     <div className="grid grid-cols-12 gap-4 md:gap-6">
       {/* Project Details */}
       <div className="col-span-12 space-y-4">
+        {project?.logoUrl && (
+          <div className="w-auto h-[80px] flex items-center justify-start ">
+            <img
+              src={project.logoUrl}
+              alt={project.name}
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+        )}
         <h1 className="text-3xl font-bold leading-relaxed tracking-tight text-gray-900 md:text-4xl dark:text-white">
           {project?.name || projectName}
         </h1>
@@ -73,12 +82,7 @@ const ProjectsPage = () => {
       </div>
 
       {/* Marketing Cards */}
-      <div className="col-span-12 grid grid-cols-1 sm:grid-cols-4 md:gap-6 space-y-2">
-        <MarketingCard count={2} name="Participants" />
-        <MarketingCard count={32} name="Exhibitors" />
-        <MarketingCard count={23} name="Delegates" />
-        <MarketingCard count={21} name="Sponsors" />
-      </div>
+
 
       {/* Statistics Chart */}
       <div className="col-span-12">
