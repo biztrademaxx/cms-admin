@@ -124,9 +124,9 @@ const AppHeader: React.FC = () => {
             </svg>
           </button>
 
-          <div className="hidden lg:block">
+          {/* <div className="hidden lg:block">
             <SearchField inputRef={inputRef} />
-          </div>
+          </div> */}
         </div>
         <div
           className={`${

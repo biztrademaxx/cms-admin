@@ -11,13 +11,16 @@ import DatePicker from "@/components/form/date-picker";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   CreateProjectDocument,
-  GetProjectBySlugDocument,
+  GetProjectByIdDocument,
 } from "@/gql_generated/graphql";
 import { useRouter, useSearchParams } from "next/navigation";
 import { convertD24HrToISO, formatIsoToCustom } from "@/utils/dateUtils";
+import DropzoneComponent from "@/components/form/DropZone";
+import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Project name is required"),
+  logoUrl: Yup.string().required("Logo URL is required"),
   slug: Yup.string().required("Slug is required"),
   year: Yup.string().required("Year is required"),
   startDate: Yup.string().required("Start date is required"),
@@ -41,7 +44,7 @@ export default function CreateProjectForm() {
   });
 
   const { data: projectData, loading: projectLoading } = useQuery(
-    GetProjectBySlugDocument,
+    GetProjectByIdDocument,
     {
       variables: {
         id: projectId,
@@ -58,6 +61,7 @@ export default function CreateProjectForm() {
       name: projectData?.getProjectBySlug?.name || "",
       slug: projectData?.getProjectBySlug?.slug || "",
       year: projectData?.getProjectBySlug?.year || 2025,
+      logoUrl: projectData?.getProjectBySlug?.logoUrl || "",
       startDate: projectData?.getProjectBySlug?.startDate
         ? formatIsoToCustom(projectData?.getProjectBySlug?.startDate)
         : "",
@@ -73,6 +77,11 @@ export default function CreateProjectForm() {
     validationSchema,
     onSubmit: async (values) => {
       try {
+        let logoFileOrUrl = formik.values.logoUrl;
+        if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
+          const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
+          logoFileOrUrl = await uploadImageToCloud(file);
+        }
         const startDateIso = convertD24HrToISO(values.startDate);
         const endDateIso = convertD24HrToISO(values.endDate);
         const yearToNum = Number(values.year);
@@ -80,6 +89,7 @@ export default function CreateProjectForm() {
           variables: {
             input: {
               ...values,
+              logoUrl: logoFileOrUrl,
               startDate: startDateIso,
               endDate: endDateIso,
               year: yearToNum,
@@ -114,6 +124,34 @@ export default function CreateProjectForm() {
         onSubmit={formik.handleSubmit}
         className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03] lg:p-10"
       >
+        {formik.values.logoUrl ? (
+          <div>
+            <Label>Project Logo</Label>
+            <div className="my-3 flex items-start gap-4">
+              <img
+                src={formik.values.logoUrl}
+                alt="Logo Preview"
+                className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
+              />
+              <button
+                type="button"
+                onClick={() => formik.setFieldValue("logoUrl", "")}
+                className="text-sm text-red-500 underline hover:text-red-600"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-6 ">
+            <Label>Project Logo</Label>
+            <DropzoneComponent
+              onImageUpload={(url) => {
+                formik.setFieldValue("logoUrl", url);
+              }}
+            />
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Project Name */}
           <div>
@@ -144,7 +182,7 @@ export default function CreateProjectForm() {
               <p className="text-xs text-red-500 mt-1">{formik.errors.slug}</p>
             )}
             <p className="text-xs text-gray-400 mt-1">
-              This will be used in the URL: /projects/[slug]
+              This will be used version management
             </p>
           </div>
 

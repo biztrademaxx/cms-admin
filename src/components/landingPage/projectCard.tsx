@@ -4,6 +4,7 @@ import {
   ChevronDown,
   Trash,
   Pencil,
+  Star,
 } from "lucide-react";
 import { useState } from "react";
 import WarningModal from "../modals/warningModal";
@@ -21,12 +22,16 @@ const ProjectCard = ({
   onClick,
   years = [],
   idMap = [],
+  isBookmarked = false,
+  onToggleBookmark = () => {},
 }: {
   project: any;
   idMap?: Record<number, string>;
   Icon: React.ComponentType<{ className?: string }>;
   onClick: (year: number, name: string) => void;
   years: number[];
+  isBookmarked?: boolean;
+  onToggleBookmark?: (projectId: string) => void;
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedYear, setSelectedYear] = useState(years[0] || 2025);
@@ -52,7 +57,15 @@ const ProjectCard = ({
       }}
     >
       <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-        <Icon className="text-gray-800 size-6 dark:text-white/90" />
+        {project?.logoUrl ? (
+          <img
+            src={project?.logoUrl}
+            alt={project.name}
+            className="w-full h-full object-contain"
+          />
+        ) : (
+          <Icon className="text-gray-800 size-6 dark:text-white/90" />
+        )}
       </div>
 
       <div className="mt-5 space-y-3">
@@ -106,15 +119,32 @@ const ProjectCard = ({
               </svg>
             </div>
           </div>
-
-          <Pencil
-            size={16}
-            className="text-black dark:text-white hover:text-brand-500"
-            onClick={(e) => {
-              setShowEditModal(true);
-              e.stopPropagation();
-            }}
-          />
+          <div className="flex gap-2 items-center justify-center">
+            <Pencil
+              size={16}
+              className="text-black dark:text-white hover:text-brand-500"
+              onClick={(e) => {
+                setShowEditModal(true);
+                e.stopPropagation();
+              }}
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleBookmark?.(project.id);
+              }}
+              className="p-1"
+            >
+              <Star
+                size={18}
+                className={`${
+                  isBookmarked
+                    ? "fill-yellow-400 text-yellow-500"
+                    : "text-black"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </div>
       <WarningModal

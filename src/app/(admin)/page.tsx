@@ -16,9 +16,7 @@ export default function Projects() {
       <div className="col-span-12 space-y-6">
         <ProjectsMetrics />
       </div>
-        <div className="col-span-12">
-        <StatisticsChart />
-      </div>
+   
     </div>
   );
 }

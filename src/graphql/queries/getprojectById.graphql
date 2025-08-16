@@ -5,6 +5,7 @@
       name
       description
       slug
+      logoUrl
       startDate
       currency
       endDate

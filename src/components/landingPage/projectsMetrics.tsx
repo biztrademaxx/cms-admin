@@ -17,10 +17,35 @@ export const ProjectsMetrics = () => {
     nextFetchPolicy: "cache-first",
   });
 
-  interface ProjectWithYears {
-    proj: typeof rawProjects[number];
-    years?: number[];
-  }
+  const [bookmarks, setBookmarks] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    const saved = JSON.parse(
+      localStorage.getItem("bookmarkedProjects") || "[]"
+    );
+    setBookmarks(saved);
+  }, []);
+
+  const toggleBookmark = (id: string) => {
+    setBookmarks((prev) => {
+      const updated = prev.includes(id)
+        ? prev.filter((p) => p !== id)
+        : [...prev, id];
+      localStorage.setItem("bookmarkedProjects", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleToggleBookmark = (projectId: string) => {
+    setBookmarks((prev) => {
+      const updated = prev.includes(projectId)
+        ? prev.filter((id) => id !== projectId)
+        : [...prev, projectId];
+
+      localStorage.setItem("bookmarkedProjects", JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleProjectClick = (
     year: number,
@@ -45,19 +70,18 @@ export const ProjectsMetrics = () => {
 
   const rawProjects = data?.getAllProjects || [];
 
-  // Group by slug and pick latest year
+  // Group by slug
   const uniqueProjectsMap = new Map<
     string,
     {
       project: typeof rawProjects[number];
       years: number[];
-      idMap: Record<number, string>; // maps year -> projectId
+      idMap: Record<number, string>;
     }
   >();
 
   rawProjects.forEach((proj) => {
     const existing = uniqueProjectsMap.get(proj.slug);
-
     if (!existing) {
       uniqueProjectsMap.set(proj.slug, {
         project: proj,
@@ -69,8 +93,6 @@ export const ProjectsMetrics = () => {
         existing.years.push(proj.year);
         existing.idMap[proj.year] = proj.id;
       }
-
-      // Replace with latest project if current year is newer
       if (proj.year > existing.project.year) {
         existing.project = proj;
       }
@@ -79,18 +101,59 @@ export const ProjectsMetrics = () => {
 
   const uniqueProjects = Array.from(uniqueProjectsMap.values());
 
+  // Split bookmarked vs normal
+  const bookmarkedProjects = uniqueProjects.filter(({ project }) =>
+    bookmarks.includes(project.id)
+  );
+  const otherProjects = uniqueProjects.filter(
+    ({ project }) => !bookmarks.includes(project.id)
+  );
+
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
-      {uniqueProjects.map(({ project, years, idMap }, index) => (
-        <ProjectCard
-          key={project.id}
-          project={project}
-          years={years}
-          Icon={index % 2 === 0 ? GroupIcon : BoxIconLine}
-          idMap={idMap}
-          onClick={(year, name) => handleProjectClick(year, name, idMap)}
-        />
-      ))}
+    <div className="space-y-8">
+      {/* Bookmarked Section */}
+      {bookmarkedProjects.length > 0 && (
+        <div>
+          <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-white">
+            ⭐ Bookmarked Projects
+          </h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
+            {bookmarkedProjects.map(({ project, years, idMap }, index) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                years={years}
+                Icon={index % 2 === 0 ? GroupIcon : BoxIconLine}
+                idMap={idMap}
+                onClick={(year, name) => handleProjectClick(year, name, idMap)}
+                onToggleBookmark={toggleBookmark} // ✅ use correct prop
+                isBookmarked={bookmarks.includes(project.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* All Projects Section */}
+      <div>
+        <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-white">
+          All Projects
+        </h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
+          {otherProjects.map(({ project, years, idMap }, index) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              years={years}
+              Icon={index % 2 === 0 ? GroupIcon : BoxIconLine}
+              idMap={idMap}
+              onClick={(year, name) => handleProjectClick(year, name, idMap)}
+              onToggleBookmark={toggleBookmark} // ✅ use correct prop
+              isBookmarked={bookmarks.includes(project.id)}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

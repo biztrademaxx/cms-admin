@@ -3,6 +3,7 @@
     getAllProjects {
       id
       name
+      logoUrl
       slug
       description
       startDate
