@@ -15,16 +15,15 @@ import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
 import EntityTable from "../tables/entityTable";
 import SpeakersModal from "../modals/speakersModal";
+import { Plus } from "lucide-react";
+import ExportButton from "../common/exportButton";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
   companyName: Yup.string().required("Company name is required"),
-  linkedinUrl: Yup.string()
-    .required("Linkedin URL is required"),
-  image: Yup.string()
-    .required("Profile picture URL is required"),
-  companyLogo: Yup.string()
-    .required("Logo URL is required"),
+  linkedinUrl: Yup.string().required("Linkedin URL is required"),
+  image: Yup.string().required("Profile picture URL is required"),
+  companyLogo: Yup.string().required("Logo URL is required"),
   designation: Yup.string().required("Designation is required"),
 });
 const SpeakersComponent = () => {
@@ -84,9 +83,22 @@ const SpeakersComponent = () => {
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="Speakers" projectName={projectName} />
-          <Button size="sm" onClick={modal.openModal}>
-            + Add Speakers
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={modal.openModal}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Speaker
+            </Button>
+            <ExportButton
+              query={GetSpeakersByProjectDocument}
+              projectId={projectId}
+              dataKey="getSpeakersByProject"
+              fileName={`speakers_${projectName || projectId}`}
+              label="Export CSV"
+            />
+          </div>
         </div>
         <div className="space-y-6">
           <EntityTable

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import React from "react";
-import StatisticsChart from "../../../../../components/landingPage/statisticsChart";
-import { ProjectsMetrics } from "../../../../../components/landingPage/projectsMetrics";
 import MonthlyUtmChart from "../../../../../components/landingPage/monthlyUtmChart";
 import { MarketingMetrics } from "@/components/landingPage/marketingMetrics";
-import MonthlyTarget from "@/components/landingPage/monthlyTarget";
+import RevenueMetrics from "@/components/landingPage/RevenueMetrics";
+import IndustryWisePieChart from "@/components/marketing/leads/charts/industryWise";
+import CountryWisePieChart from "@/components/marketing/leads/charts/countryWise";
 
 export const metadata: Metadata = {
   title:
@@ -15,14 +15,18 @@ export const metadata: Metadata = {
 export default function Ecommerce() {
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-7">
+      <div className="col-span-12 space-y-6 ">
+        <RevenueMetrics/>
         <MarketingMetrics />
         <MonthlyUtmChart />
+        <IndustryWisePieChart/>
+        <CountryWisePieChart/>
+
       </div>
 
-      <div className="col-span-12 xl:col-span-5">
+      {/* <div className="col-span-12 xl:col-span-5">
         <MonthlyTarget />
-      </div>
+      </div> */}
 
       {/* <div className="col-span-12">
         <StatisticsChart />

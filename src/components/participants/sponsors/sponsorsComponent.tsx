@@ -17,6 +17,8 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import EntityTable from "@/components/tables/entityTable";
 import SponsorsModal from "@/components/modals/sponsorsModal";
+import { Plus } from "lucide-react";
+import ExportButton from "@/components/common/exportButton";
 
 
 const validationSchema = Yup.object().shape({
@@ -84,9 +86,22 @@ const SponsorsComponent = () => {
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="Sponsors" projectName={projectName} />
-          <Button size="sm" onClick={modal.openModal}>
-            + Add Sponsors
-          </Button>
+         <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={modal.openModal}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Sponsor
+            </Button>
+            <ExportButton
+              query={GetSponsorByProjectDocument}
+              projectId={projectId}
+              dataKey="getSponsorsByProject"
+              fileName={`sponsors_${projectName || projectId}`}
+              label="Export CSV"
+            />
+          </div>
         </div>
         <div className="space-y-6">
           <EntityTable
@@ -96,7 +111,7 @@ const SponsorsComponent = () => {
             formik={formik}
             modal={modal}
             ModalComponent={SponsorsModal}
-            dataKey="getExhibitorsByProject"
+            dataKey="getSponsorsByProject"
             columns={[
               {
                 key: "name",

@@ -15,6 +15,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 
 import EntityTable from "@/components/tables/entityTable";
 import DelegatesModal from "@/components/modals/delegatesModal";
+import ExportButton from "@/components/common/exportButton";
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
@@ -35,6 +36,13 @@ const LeadsComponent = () => {
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="Leads" projectName={projectName} />
+          <ExportButton
+            query={GetLeadsByProjectIdDocument}
+            projectId={projectId}
+            dataKey="getLeadsByProjectId"
+            fileName={`leads_${projectName || projectId}`}
+            label="Export CSV"
+          />
         </div>
         <div className="space-y-6">
           <EntityTable
@@ -63,6 +71,7 @@ const LeadsComponent = () => {
               { key: "quantity", label: "Quantity", type: "text" },
               { key: "createdAt", label: "Created At", type: "date" },
             ]}
+            
           />
         </div>
       </div>

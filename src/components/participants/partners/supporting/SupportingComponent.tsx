@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../../common/PageBreadCrumb";
 import EntityTable from "@/components/tables/entityTable";
 import SupportingPartnersModal from "@/components/modals/supportingPartnersModal";
+import ExportButton from "@/components/common/exportButton";
+import { Plus } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
@@ -23,8 +25,7 @@ const validationSchema = Yup.object().shape({
   logoUrl: Yup.string()
     .required("Logo URL is required")
     .url("Enter a valid URL"),
-  website: Yup.string()
-    .required("Website is required")
+  website: Yup.string().required("Website is required"),
 });
 const SupportingPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
@@ -85,9 +86,23 @@ const SupportingPartnersComponent = () => {
             pageTitle="Supporting Partners"
             projectName={projectName}
           />
-          <Button size="sm" onClick={modal.openModal}>
-            + Add Supporting Partner
-          </Button>
+
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={modal.openModal}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Supporting Partner
+            </Button>
+            <ExportButton
+              query={GetSupportingPartnersByProjectDocument}
+              projectId={projectId}
+              dataKey="getSupportingPartnersByProject"
+              fileName={`supporting_partners_${projectName || projectId}`}
+              label="Export CSV"
+            />
+          </div>
         </div>
         <div className="space-y-6">
           <EntityTable

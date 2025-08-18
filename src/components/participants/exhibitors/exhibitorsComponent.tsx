@@ -15,15 +15,15 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import EntityTable from "@/components/tables/entityTable";
 import ExhibitorsModal from "@/components/modals/exhibitorsModal";
+import ExportButton from "@/components/common/exportButton";
+import { Plus } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
-  linkedin: Yup.string()
-    .required("Linkedin is required"),
+  linkedin: Yup.string().required("Linkedin is required"),
   logoUrl: Yup.string().required("Logo URL is required"),
-  website: Yup.string()
-    .required("Website is required"),
+  website: Yup.string().required("Website is required"),
 });
 const ExhibitorsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
@@ -88,9 +88,20 @@ const ExhibitorsComponent = () => {
           <PageBreadcrumb pageTitle="Exhibitors" projectName={projectName} />
           <div className="flex items-center gap-2">
             {/* <SearchField inputRef={null} /> */}
-            <Button size="sm" onClick={modal.openModal}>
-              + Add Exhibitor
+            <Button
+              size="sm"
+              onClick={modal.openModal}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Exhibitor
             </Button>
+            <ExportButton
+              query={GetExhibitorsByProjectDocument}
+              projectId={projectId}
+              dataKey="getExhibitorsByProject"
+              fileName={`exhibitors_${projectName || projectId}`}
+              label="Export CSV"
+            />
           </div>
         </div>
         <div className="space-y-6">

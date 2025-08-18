@@ -12,6 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../common/PageBreadCrumb";
 import UTMDashboard from "./utmDashboard";
+import { Plus } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   url: Yup.string().required("URL is required"),
@@ -34,13 +35,14 @@ const UtmComponent = () => {
       {
         query: GetUtmByProjectIdDocument,
         variables: {
-          projectId: projectId,
+          id: projectId,
+          groupBy: "email",
         },
       },
     ], // Adjust this based on your query name
     onError: (error) => {
       console.error("Error saving UTM:", error);
-      alert("Failed to save UTM. Please try again.");
+      alert("Sorry!..." + error.message);
     },
   });
 
@@ -70,7 +72,7 @@ const UtmComponent = () => {
         });
       } catch (error) {
         console.error("Error saving UTM:", error);
-        alert("Failed to save UTM. Please try again.");
+        alert("Sorry!..." + error.message);
       }
     },
   });
@@ -81,8 +83,12 @@ const UtmComponent = () => {
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="UTM Builder" projectName={projectName} />
           <div className="flex items-center gap-2">
-            <Button size="sm" onClick={modal.openModal}>
-              + Add UTM
+            <Button
+              size="sm"
+              onClick={modal.openModal}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add UTM
             </Button>
           </div>
         </div>

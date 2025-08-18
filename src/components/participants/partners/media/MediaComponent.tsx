@@ -15,14 +15,14 @@ import PageBreadcrumb from "../../../common/PageBreadCrumb";
 import EntityTable from "@/components/tables/entityTable";
 import MediaPartnersModal from "@/components/modals/mediaPartnersModal";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
+import { Plus } from "lucide-react";
+import ExportButton from "@/components/common/exportButton";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
-  logoUrl: Yup.string()
-    .required("Logo URL is required"),
-  website: Yup.string()
-    .required("Website is required"),
+  logoUrl: Yup.string().required("Logo URL is required"),
+  website: Yup.string().required("Website is required"),
 });
 const MediaPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
@@ -51,7 +51,7 @@ const MediaPartnersComponent = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
-  let logoFileOrUrl = formik.values.logoUrl;
+      let logoFileOrUrl = formik.values.logoUrl;
       if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
         const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
         logoFileOrUrl = await uploadImageToCloud(file);
@@ -86,9 +86,22 @@ const MediaPartnersComponent = () => {
             pageTitle="Media Partners"
             projectName={projectName}
           />
-          <Button size="sm" onClick={modal.openModal}>
-            + Add Media Partner
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={modal.openModal}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Media Partner
+            </Button>
+            <ExportButton
+              query={GetMediaPartnersByProjectDocument}
+              projectId={projectId}
+              dataKey="getMediaPartnersByProject"
+              fileName={`media_partners_${projectName || projectId}`}
+              label="Export CSV"
+            />
+          </div>
         </div>
         <div className="space-y-6">
           <EntityTable
