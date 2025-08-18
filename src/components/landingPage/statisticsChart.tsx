@@ -9,7 +9,9 @@ import { GetProjectAnalyticsByIdDocument } from "@/gql_generated/graphql";
 import MarketingCard from "../marketing/utm/marketingCard";
 
 // Dynamically import ApexChart
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
 /** Categories shown in analytics */
 const CATEGORY_KEYS = [
@@ -73,8 +75,18 @@ const chartOptions: ApexOptions = {
   xaxis: {
     type: "category",
     categories: [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ],
     axisBorder: { show: false },
     axisTicks: { show: false },
@@ -100,7 +112,7 @@ export default function StatisticsChart() {
     if (!analytics?.monthlyData) return [];
     return CATEGORY_KEYS.map((key) => ({
       name: CATEGORY_LABELS[key],
-      data: analytics.monthlyData[key] ?? [],
+      data: analytics?.monthlyData?.[key] ? analytics?.monthlyData[key] : [],
     }));
   }, [analytics]);
 
