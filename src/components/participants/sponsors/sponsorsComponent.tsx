@@ -17,6 +17,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import EntityTable from "@/components/tables/entityTable";
 import SponsorsModal from "@/components/modals/sponsorsModal";
+import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import { Plus } from "lucide-react";
 import ExportButton from "@/components/common/exportButton";
 
@@ -57,14 +58,19 @@ const SponsorsComponent = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      const input: CreateSponsorInput = {
+      let logoFileOrUrl = formik.values.logoUrl;
+      if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
+        const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
+        logoFileOrUrl = await uploadImageToCloud(file);
+      }
+      const input: any = {
         projectId,
         name: values.name,
         priority: 0,
         status: values.status,
         boothNumber: values.boothNumber,
         type: values.type,
-        logoUrl: values.logoUrl,
+        logoUrl: logoFileOrUrl,
         address: values.address,
       };
 

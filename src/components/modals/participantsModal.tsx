@@ -6,15 +6,15 @@ import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
 import DropzoneComponent from "../form/DropZone";
 import Select from "../form/Select";
-import { SponsorStatus } from "@/gql_generated/graphql";
+// import { SponsorStatus } from "@/gql_generated/graphql";
 import { ChevronDownIcon } from "lucide-react";
 
-const options = [
-  { value: SponsorStatus.Active, label: "Active" },
-  { value: SponsorStatus.Inactive, label: "Inactive" },
-];
+// const options = [
+//   { value: ParticipantsStatus.Active, label: "Active" },
+//   { value: ParticipantsStatus.Inactive, label: "Inactive" },
+// ];
 
-type SponsorsModalProps = {
+type ParticipantsModalProps = {
   modal: {
     isOpen: boolean;
     openModal: () => void;
@@ -25,12 +25,12 @@ type SponsorsModalProps = {
   setEditingItem: (item: any | null) => void;
 };
 
-const SponsorsModal = ({
+const ParticipantsModal = ({
   modal,
   formik,
   editingItem,
   setEditingItem,
-}: SponsorsModalProps) => {
+}: ParticipantsModalProps) => {
   const { isOpen, closeModal } = modal;
   const handleClose = () => {
     formik.resetForm();
@@ -54,17 +54,17 @@ const SponsorsModal = ({
       >
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            {editingItem ? "Edit Sponsor" : "Add Sponsor"}
+            {editingItem ? "Edit Sponsor" : "Add Participant"}
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-            Fill out the Sponsor details below.
+            Fill out the Participants details below.
           </p>
         </div>
 
-        <div className="px-2  overflow-y-auto custom-scrollbar">
+        <div className="px-2 flex overflow-y-auto custom-scrollbar">
           {!formik.values.logoUrl && (
             <div className="mb-6 ">
-              <Label>Sponsor Company Logo</Label>
+              <Label>Participant Company Logo</Label>
               <DropzoneComponent
                 onImageUpload={(url) => {
                   formik.setFieldValue("logoUrl", url);
@@ -85,7 +85,7 @@ const SponsorsModal = ({
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             {formik.values.logoUrl && (
               <div>
-                <Label>Sponsor Logo</Label>
+                <Label>Participant Logo</Label>
                 <div className="mt-3 flex items-start gap-4">
                   <img
                     src={formik.values.logoUrl}
@@ -121,7 +121,7 @@ const SponsorsModal = ({
                 </div>
               </div>
             )} */}
-            <div>
+            {/* <div>
               <Label>Company Name</Label>
               <Input
                 type="text"
@@ -135,7 +135,7 @@ const SponsorsModal = ({
                 error={formik.touched.companyName && formik.errors.companyName}
                 onBlur={formik.handleBlur}
               />
-            </div>
+            </div> */}
             <div>
               <Label>Booth No</Label>
               <Input
@@ -164,7 +164,7 @@ const SponsorsModal = ({
                 onChange={formik.handleChange}
               />
             </div>
-            <div>
+            {/* <div>
               <Label>Status</Label>
               <div className="relative">
                 <Select
@@ -177,7 +177,7 @@ const SponsorsModal = ({
                   <ChevronDownIcon />
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="mt-6">
             <Label>Address</Label>
@@ -203,7 +203,7 @@ const SponsorsModal = ({
             Cancel
           </Button>
           <Button size="sm" type="submit" disabled={formik.isSubmitting}>
-            {editingItem ? "Update" : "Add"} Sponsor
+            {editingItem ? "Update" : "Add"} Participant
           </Button>
         </div>
       </form>
@@ -211,4 +211,4 @@ const SponsorsModal = ({
   );
 };
 
-export default SponsorsModal;
+export default ParticipantsModal;

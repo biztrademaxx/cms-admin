@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../../common/PageBreadCrumb";
 import EntityTable from "@/components/tables/entityTable";
 import SupportingPartnersModal from "@/components/modals/supportingPartnersModal";
+import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import ExportButton from "@/components/common/exportButton";
 import { Plus } from "lucide-react";
 
@@ -23,9 +24,9 @@ const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
   logoUrl: Yup.string()
-    .required("Logo URL is required")
-    .url("Enter a valid URL"),
-  website: Yup.string().required("Website is required"),
+    .required("Logo URL is required"),
+  website: Yup.string()
+    .required("Website is required")
 });
 const SupportingPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
@@ -33,7 +34,7 @@ const SupportingPartnersComponent = () => {
     CreateSupportingPartnerDocument,
     {
       onCompleted: (data) => {
-        console.log("Exhibitor created:", data);
+        console.log("Supporting Partner created:", data);
         modal.closeModal();
       },
       refetchQueries: [
@@ -57,11 +58,17 @@ const SupportingPartnersComponent = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      let logoFileOrUrl = formik.values.logoUrl;
+      if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
+        const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
+        logoFileOrUrl = await uploadImageToCloud(file);
+      }
       const input: any = {
         projectId,
         name: values.name,
         description: values.description,
-        logoUrl: values.logoUrl,
+        // linkedin: values.linkedin,
+        logoUrl: logoFileOrUrl,
         website: values.website,
       };
 

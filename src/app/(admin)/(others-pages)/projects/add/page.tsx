@@ -147,6 +147,9 @@ export default function CreateProjectForm() {
               >
                 Remove
               </button>
+               {formik.touched.logoUrl && formik.errors.logoUrl && (
+              <p className="text-xs text-red-500 mt-1">{formik.errors.logoUrl}</p>
+            )}
             </div>
           </div>
         ) : (

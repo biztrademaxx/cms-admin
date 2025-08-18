@@ -7,6 +7,6 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function SpeakerPage() {
+export default function ParticipantsPage() {
   return <ParticipantsComponent />;
 }

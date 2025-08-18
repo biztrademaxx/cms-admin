@@ -54,18 +54,7 @@ const ExhibitorsModal = ({
         </div>
 
         <div className="px-2 overflow-y-auto custom-scrollbar">
-          {!formik.values.logoUrl && (
-            <div className="mb-6 ">
-              <Label>Exhibitor Logo</Label>
-              <DropzoneComponent
-                onImageUpload={(url) => {
-                  formik.setFieldValue("logoUrl", url);
-                }}
-              />
-            </div>
-          )}
-          <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-            {formik.values.logoUrl && (
+          {formik.values.logoUrl ?  (
               <div>
                 <Label>Exhibitor Logo</Label>
                 <div className="mt-3 flex items-start gap-4">
@@ -83,7 +72,23 @@ const ExhibitorsModal = ({
                   </button>
                 </div>
               </div>
+            ):
+            (
+               <div className="mb-6 ">
+              <Label>Exhibitor Logo</Label>
+              <DropzoneComponent
+                onImageUpload={(url) => {
+                  formik.setFieldValue("logoUrl", url);
+                }}
+              />
+                 {formik.touched.logoUrl && formik.errors.logoUrl && (
+              <p className="text-xs text-red-500 mt-1">{formik.errors.logoUrl}</p>
             )}
+            </div>
+            )}
+         
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+         
             <div>
               <Label>Company Name</Label>
               <Input
