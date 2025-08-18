@@ -40,9 +40,9 @@ const UtmComponent = () => {
         },
       },
     ], // Adjust this based on your query name
-    onError: (error) => {
+    onError: (error:any) => {
       console.error("Error saving UTM:", error);
-      alert("Sorry!..." + error.message);
+      alert("Sorry!..." + error?.message);
     },
   });
 
@@ -70,9 +70,9 @@ const UtmComponent = () => {
             },
           },
         });
-      } catch (error) {
+      } catch (error:any) {
         console.error("Error saving UTM:", error);
-        alert("Sorry!..." + error.message);
+        alert("Sorry!..." + error?.message);
       }
     },
   });
