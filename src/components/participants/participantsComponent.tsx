@@ -15,6 +15,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import EntityTable from "@/components/tables/entityTable";
 import ExhibitorsModal from "@/components/modals/exhibitorsModal";
+import ParticipantsModal from "../modals/participantsModal";
 
 // const validationSchema = Yup.object().shape({
 //   companyName: Yup.string().required("Company name is required"),
@@ -29,7 +30,7 @@ const ParticipantsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
   const [createExhibitor] = useMutation(CreateExhibitorDocument, {
     onCompleted: (data) => {
-      console.log("Exhibitor created:", data);
+      console.log("Participant created:", data);
       modal.closeModal();
     },
     refetchQueries: [
@@ -100,7 +101,7 @@ const ParticipantsComponent = () => {
             deleteMutation={DeleteExhibitorDocument}
             formik={formik}
             modal={modal}
-            ModalComponent={ExhibitorsModal}
+            ModalComponent={ParticipantsModal}
             dataKey="getExhibitorsByProject"
             columns={[
               {

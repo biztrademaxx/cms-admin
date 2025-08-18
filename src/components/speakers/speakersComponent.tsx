@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
 import EntityTable from "../tables/entityTable";
 import SpeakersModal from "../modals/speakersModal";
+import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
@@ -22,9 +23,9 @@ const validationSchema = Yup.object().shape({
   linkedinUrl: Yup.string()
     .required("Linkedin URL is required"),
   image: Yup.string()
-    .required("Profile picture URL is required"),
+    .required("Profile picture is required"),
   companyLogo: Yup.string()
-    .required("Logo URL is required"),
+    .required("Logo is required"),
   designation: Yup.string().required("Designation is required"),
 });
 const SpeakersComponent = () => {
@@ -56,13 +57,24 @@ const SpeakersComponent = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      const input: CreateSpeakerInput = {
+      let logoFileOrUrl = formik.values.image;
+      let companyLogoFileOrUrl = formik.values.companyLogo;
+      if (typeof logoFileOrUrl  === "string" && isBase64(logoFileOrUrl)) {
+        const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
+        logoFileOrUrl = await uploadImageToCloud(file);
+      }
+
+       if (typeof companyLogoFileOrUrl  === "string" && isBase64(companyLogoFileOrUrl)) {
+        const file = base64ToFile(companyLogoFileOrUrl, "uploaded-image.png");
+        companyLogoFileOrUrl = await uploadImageToCloud(file);
+      }
+      const input: any = {
         projectId,
         name: values.name,
         linkedinUrl: values.linkedinUrl,
-        image: values.image,
+        image: logoFileOrUrl,
         designation: values.designation,
-        companyLogo: values.companyLogo,
+        companyLogo: companyLogoFileOrUrl,
         companyName: values.companyName,
       };
 
