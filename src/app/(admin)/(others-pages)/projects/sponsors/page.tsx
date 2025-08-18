@@ -1,5 +1,5 @@
-import MediaPartnersComponent from "@/components/partners/media/MediaComponent";
-import SponsorsComponent from "@/components/sponsors/sponsorsComponent";
+import MediaPartnersComponent from "@/components/participants/partners/media/MediaComponent";
+import SponsorsComponent from "@/components/participants/sponsors/sponsorsComponent";
 import { Metadata } from "next";
 import React from "react";
 

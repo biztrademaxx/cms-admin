@@ -1,7 +1,6 @@
 "use client";
 import * as Yup from "yup";
 import React from "react";
-import Button from "../ui/button/Button";
 import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
@@ -14,9 +13,11 @@ import {
   SponsorType,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
-import PageBreadcrumb from "../common/PageBreadCrumb";
-import EntityTable from "../tables/entityTable";
-import SponsorsModal from "../modals/sponsorsModal";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import Button from "@/components/ui/button/Button";
+import EntityTable from "@/components/tables/entityTable";
+import SponsorsModal from "@/components/modals/sponsorsModal";
+
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),

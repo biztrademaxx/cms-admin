@@ -1,7 +1,7 @@
 "use client";
 import * as Yup from "yup";
 import React from "react";
-import Button from "../../ui/button/Button";
+import Button from "../../../ui/button/Button";
 import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
@@ -13,7 +13,7 @@ import {
   GetSupportingPartnersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
-import PageBreadcrumb from "../../common/PageBreadCrumb";
+import PageBreadcrumb from "../../../common/PageBreadCrumb";
 import EntityTable from "@/components/tables/entityTable";
 import SupportingPartnersModal from "@/components/modals/supportingPartnersModal";
 

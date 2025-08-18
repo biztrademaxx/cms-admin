@@ -1,4 +1,4 @@
-import ExhibitorsComponent from "@/components/exhibitors/exhibitorsComponent";
+import ExhibitorsComponent from "@/components/participants/exhibitors/exhibitorsComponent";
 import { Metadata } from "next";
 import React from "react";
 

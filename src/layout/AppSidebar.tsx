@@ -76,6 +76,10 @@ const AppSidebar: React.FC = () => {
       name: "Participants",
       subItems: [
         {
+          name: "Overview",
+          path: `/projects/participants`,
+        },
+        {
           name: "Exhibitors",
           path: `/projects/exhibitors`,
           draft: false,

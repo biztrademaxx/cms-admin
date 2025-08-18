@@ -1,7 +1,7 @@
 "use client";
 import * as Yup from "yup";
 import React from "react";
-import Button from "../../ui/button/Button";
+import Button from "../../../ui/button/Button";
 import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
@@ -11,16 +11,16 @@ import {
   GetMediaPartnersByProjectDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
-import PageBreadcrumb from "../../common/PageBreadCrumb";
+import PageBreadcrumb from "../../../common/PageBreadCrumb";
 import EntityTable from "@/components/tables/entityTable";
 import MediaPartnersModal from "@/components/modals/mediaPartnersModal";
+import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
   logoUrl: Yup.string()
-    .required("Logo URL is required")
-    .url("Enter a valid URL"),
+    .required("Logo URL is required"),
   website: Yup.string()
     .required("Website is required"),
 });
@@ -51,11 +51,17 @@ const MediaPartnersComponent = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+  let logoFileOrUrl = formik.values.logoUrl;
+      if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
+        const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
+        logoFileOrUrl = await uploadImageToCloud(file);
+      }
+
       const input: any = {
         projectId,
         name: values.name,
         description: values.description,
-        logoUrl: values.logoUrl,
+        logoUrl: logoFileOrUrl,
         website: values.website,
       };
 

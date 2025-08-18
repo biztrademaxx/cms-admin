@@ -11,6 +11,7 @@ interface TextareaProps {
   hint?: string;
   onBlur?: React.ChangeEventHandler<HTMLTextAreaElement>;
   name: string;
+  readOnly?: boolean; // ✅ Added
 }
 
 const TextArea: React.FC<TextareaProps> = ({
@@ -24,6 +25,7 @@ const TextArea: React.FC<TextareaProps> = ({
   error = false,
   hint = "",
   onBlur,
+  readOnly = false, // ✅ Added
 }) => {
   let textareaClasses = `w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-hidden ${className}`;
 
@@ -45,6 +47,7 @@ const TextArea: React.FC<TextareaProps> = ({
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
+        readOnly={readOnly} // ✅ Forwarded
         className={textareaClasses}
       />
       {hint && (

@@ -1,4 +1,4 @@
-import SupportingPartnersComponent from "@/components/partners/supporting/SupportingComponent";
+import SupportingPartnersComponent from "@/components/participants/partners/supporting/SupportingComponent";
 import { Metadata } from "next";
 import React from "react";
 
