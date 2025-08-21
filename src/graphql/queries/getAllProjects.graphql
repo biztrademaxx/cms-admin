@@ -13,7 +13,6 @@
         slug
         startDate
         status
-        updatedAt
         website
         year
     }

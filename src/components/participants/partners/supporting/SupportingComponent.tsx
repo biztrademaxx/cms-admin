@@ -6,11 +6,11 @@ import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateMediaPartnerDocument,
-  CreateSupportingPartnerDocument,
-  DeleteSupportingPartnerDocument,
-  GetMediaPartnersByProjectDocument,
-  GetSupportingPartnersByProjectDocument,
+  CreatePartnerDocument,
+  DeletePartnerDocument,
+  GetPartnersByProjectDocument,
+  PartnerType,
+  Status,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../../common/PageBreadCrumb";
@@ -31,7 +31,7 @@ const validationSchema = Yup.object().shape({
 const SupportingPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
   const [createSupportingPartner] = useMutation(
-    CreateSupportingPartnerDocument,
+    CreatePartnerDocument,
     {
       onCompleted: (data) => {
         console.log("Supporting Partner created:", data);
@@ -39,7 +39,7 @@ const SupportingPartnersComponent = () => {
       },
       refetchQueries: [
         {
-          query: GetSupportingPartnersByProjectDocument,
+          query: GetPartnersByProjectDocument,
           variables: { projectId },
         },
       ],
@@ -68,6 +68,9 @@ const SupportingPartnersComponent = () => {
         name: values.name,
         description: values.description,
         // linkedin: values.linkedin,
+        partnerType: PartnerType.Supporting,
+        status: Status.Active,
+
         logoUrl: logoFileOrUrl,
         website: values.website,
       };
@@ -103,9 +106,10 @@ const SupportingPartnersComponent = () => {
               Add Supporting Partner
             </Button>
             <ExportButton
-              query={GetSupportingPartnersByProjectDocument}
+              query={GetPartnersByProjectDocument}
               projectId={projectId}
-              dataKey="getSupportingPartnersByProject"
+              queryVariables={{ input: { projectId, partnerType: PartnerType.Supporting } }}
+              dataKey="getPartnersByProject"
               fileName={`supporting_partners_${projectName || projectId}`}
               label="Export CSV"
             />
@@ -114,12 +118,13 @@ const SupportingPartnersComponent = () => {
         <div className="space-y-6">
           <EntityTable
             title="Supporting Partners"
-            query={GetSupportingPartnersByProjectDocument}
-            deleteMutation={DeleteSupportingPartnerDocument}
+            query={GetPartnersByProjectDocument}
+            deleteMutation={DeletePartnerDocument}
+            queryVariables={{ input: { projectId: projectId, partnerType: PartnerType.Supporting } }}
             formik={formik}
             modal={modal}
             ModalComponent={SupportingPartnersModal}
-            dataKey="getSupportingPartnersByProject"
+            dataKey="getPartnersByProject"
             columns={[
               {
                 key: "name",

@@ -6,9 +6,11 @@ import { useModal } from "@/hooks/useModal";
 import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
-  CreateMediaPartnerDocument,
-  DeleteMediaPartnerDocument,
-  GetMediaPartnersByProjectDocument,
+  CreatePartnerDocument,
+  DeletePartnerDocument,
+  GetPartnersByProjectDocument,
+  PartnerType,
+  Status,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../../../common/PageBreadCrumb";
@@ -26,14 +28,14 @@ const validationSchema = Yup.object().shape({
 });
 const MediaPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
-  const [createMediaPartner] = useMutation(CreateMediaPartnerDocument, {
+  const [createMediaPartner] = useMutation(CreatePartnerDocument, {
     onCompleted: (data) => {
       console.log("Exhibitor created:", data);
       modal.closeModal();
     },
     refetchQueries: [
       {
-        query: GetMediaPartnersByProjectDocument,
+        query: GetPartnersByProjectDocument,
         variables: { projectId },
       },
     ],
@@ -62,6 +64,8 @@ const MediaPartnersComponent = () => {
         name: values.name,
         description: values.description,
         logoUrl: logoFileOrUrl,
+        partnerType: PartnerType.Media,
+        status: Status.Active, 
         website: values.website,
       };
 
@@ -95,9 +99,10 @@ const MediaPartnersComponent = () => {
               Add Media Partner
             </Button>
             <ExportButton
-              query={GetMediaPartnersByProjectDocument}
+              query={GetPartnersByProjectDocument}
               projectId={projectId}
-              dataKey="getMediaPartnersByProject"
+              queryVariables={{ input: { projectId, partnerType: PartnerType.Media } }}
+              dataKey="getPartnersByProject"
               fileName={`media_partners_${projectName || projectId}`}
               label="Export CSV"
             />
@@ -106,12 +111,13 @@ const MediaPartnersComponent = () => {
         <div className="space-y-6">
           <EntityTable
             title="Media Partners"
-            query={GetMediaPartnersByProjectDocument}
-            deleteMutation={DeleteMediaPartnerDocument}
+            query={GetPartnersByProjectDocument}
+            deleteMutation={DeletePartnerDocument}
+            queryVariables={{input:{projectId : projectId ,partnerType: PartnerType.Media} }}
             formik={formik}
             modal={modal}
             ModalComponent={MediaPartnersModal}
-            dataKey="getMediaPartnersByProject"
+            dataKey="getPartnersByProject"
             columns={[
               {
                 key: "name",

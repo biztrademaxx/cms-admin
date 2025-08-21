@@ -7,7 +7,6 @@ query GetExhibitorsByProject($projectId: String!) {
     linkedin
     logoUrl
     projectId
-    updatedAt
     website
   }
 }

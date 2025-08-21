@@ -23,7 +23,6 @@ import Image from "next/image";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Project name is required"),
-  logoUrl: Yup.string().required("Logo URL is required"),
   slug: Yup.string().required("Slug is required"),
   year: Yup.string().required("Year is required"),
   currency: Yup.string().required("Currency is required"),
@@ -79,7 +78,7 @@ export default function CreateProjectForm() {
       location: projectData?.getProjectById?.location || "",
       currency: projectData?.getProjectById?.currency || "INR",
       website: projectData?.getProjectById?.website || "",
-      projectStatus: projectData?.getProjectById?.status || "ONGOING",
+      status: projectData?.getProjectById?.status || "ONGOING",
       description: projectData?.getProjectById?.description || "",
     },
     enableReinitialize: true,
@@ -110,6 +109,7 @@ export default function CreateProjectForm() {
               endDate: endDateIso,
               year: yearToNum,
               bannerUrl: bannerFileOrUrl,
+              status: values.status as ProjectStatus,
             },
           },
         });
@@ -264,7 +264,7 @@ export default function CreateProjectForm() {
               <Select
                 options={statusOptions}
                 placeholder="Select an option"
-                defaultValue={formik.values.projectStatus}
+                defaultValue={formik.values.status}
                 onChange={(e) => handleSelectChange("projectStatus", e)}
                 className="dark:bg-dark-900"
               />
@@ -272,9 +272,9 @@ export default function CreateProjectForm() {
                 <ChevronDownIcon />
               </span>
             </div>
-            {formik.touched.projectStatus && formik.errors.projectStatus && (
+            {formik.touched.status && formik.errors.status && (
               <p className="text-xs text-red-500 mt-1">
-                {formik.errors.projectStatus}
+                {formik.errors.status}
               </p>
             )}
           </div>
