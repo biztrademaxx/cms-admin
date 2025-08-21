@@ -1,14 +1,21 @@
 
   query GetAllProjects{
     getAllProjects {
-      id
-      name
-      logoUrl
-      slug
-      description
-      startDate
-      endDate
-      year
+       bannerUrl
+        createdAt
+        currency
+        description
+        endDate
+        id
+        location
+        logoUrl
+        name
+        slug
+        startDate
+        status
+        updatedAt
+        website
+        year
     }
   }
 

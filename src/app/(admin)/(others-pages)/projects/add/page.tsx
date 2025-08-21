@@ -6,13 +6,14 @@ import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import Select from "@/components/form/Select";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Currency } from "lucide-react";
 import DatePicker from "@/components/form/date-picker";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   CreateProjectDocument,
   GetAllProjectsDocument,
   GetProjectByIdDocument,
+  ProjectStatus,
 } from "@/gql_generated/graphql";
 import { useRouter, useSearchParams } from "next/navigation";
 import { convertD24HrToISO, formatIsoToCustom } from "@/utils/dateUtils";
@@ -25,8 +26,7 @@ const validationSchema = Yup.object().shape({
   logoUrl: Yup.string().required("Logo URL is required"),
   slug: Yup.string().required("Slug is required"),
   year: Yup.string().required("Year is required"),
-  startDate: Yup.string().required("Start date is required"),
-  endDate: Yup.string().required("End date is required"),
+  currency: Yup.string().required("Currency is required"),
 });
 
 export default function CreateProjectForm() {
@@ -35,10 +35,10 @@ export default function CreateProjectForm() {
   const projectId = params.get("p") || "";
 
   const [CreateProject, { loading }] = useMutation(CreateProjectDocument, {
-    refetchQueries:[
+    refetchQueries: [
       {
         query: GetAllProjectsDocument,
-      }
+      },
     ],
     onCompleted: (data) => {
       console.log("Project created:", data);
@@ -64,33 +64,42 @@ export default function CreateProjectForm() {
 
   const formik = useFormik({
     initialValues: {
-      id: projectData?.getProjectBySlug?.id || "",
-      name: projectData?.getProjectBySlug?.name || "",
-      slug: projectData?.getProjectBySlug?.slug || "",
-      year: projectData?.getProjectBySlug?.year || 2025,
-      logoUrl: projectData?.getProjectBySlug?.logoUrl || "",
-      startDate: projectData?.getProjectBySlug?.startDate
-        ? formatIsoToCustom(projectData?.getProjectBySlug?.startDate)
+      id: projectData?.getProjectById?.id || "",
+      name: projectData?.getProjectById?.name || "",
+      slug: projectData?.getProjectById?.slug || "",
+      bannerUrl: projectData?.getProjectById?.bannerUrl || "",
+      year: projectData?.getProjectById?.year || 2025,
+      logoUrl: projectData?.getProjectById?.logoUrl || "",
+      startDate: projectData?.getProjectById?.startDate
+        ? formatIsoToCustom(projectData?.getProjectById?.startDate)
         : "",
-      endDate: projectData?.getProjectBySlug?.endDate
-        ? formatIsoToCustom(projectData?.getProjectBySlug?.endDate)
+      endDate: projectData?.getProjectById?.endDate
+        ? formatIsoToCustom(projectData?.getProjectById?.endDate)
         : "",
-      venue: projectData?.getProjectBySlug?.venue || "",
-      currency: projectData?.getProjectBySlug?.currency || "INR",
-      website: projectData?.getProjectBySlug?.website || "",
-      description: projectData?.getProjectBySlug?.description || "",
+      location: projectData?.getProjectById?.location || "",
+      currency: projectData?.getProjectById?.currency || "INR",
+      website: projectData?.getProjectById?.website || "",
+      projectStatus: projectData?.getProjectById?.status || "ONGOING",
+      description: projectData?.getProjectById?.description || "",
     },
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
       try {
         let logoFileOrUrl = formik.values.logoUrl;
+        let bannerFileOrUrl = formik.values.bannerUrl;
+
         if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
           const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
           logoFileOrUrl = await uploadImageToCloud(file);
         }
-        const startDateIso = convertD24HrToISO(values.startDate);
-        const endDateIso = convertD24HrToISO(values.endDate);
+
+        if (typeof bannerFileOrUrl === "string" && isBase64(bannerFileOrUrl)) {
+          const file = base64ToFile(bannerFileOrUrl, "uploaded-image.png");
+          bannerFileOrUrl = await uploadImageToCloud(file);
+        }
+        const startDateIso = new Date(values.startDate);
+        const endDateIso = new Date(values.endDate);
         const yearToNum = Number(values.year);
         await CreateProject({
           variables: {
@@ -100,6 +109,7 @@ export default function CreateProjectForm() {
               startDate: startDateIso,
               endDate: endDateIso,
               year: yearToNum,
+              bannerUrl: bannerFileOrUrl,
             },
           },
         });
@@ -117,8 +127,15 @@ export default function CreateProjectForm() {
     { value: "INR", label: "INR" },
   ];
 
-  const handleSelectChange = (selectedOption: any) => {
-    formik.setFieldValue("currency", selectedOption.value);
+  const statusOptions = [
+    { value: "ONGOING", label: "Ongoing" },
+    { value: "COMPLETED", label: "Completed" },
+    { value: "UPCOMING", label: "Upcoming" },
+    { value: "CANCELLED", label: "Cancelled" },
+  ];
+
+  const handleSelectChange = (type: string, selectedOption: any) => {
+    formik.setFieldValue(type, selectedOption.value);
   };
 
   if (projectId && projectLoading) {
@@ -131,37 +148,74 @@ export default function CreateProjectForm() {
         onSubmit={formik.handleSubmit}
         className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03] lg:p-10"
       >
-        {formik.values.logoUrl ? (
-          <div>
-            <Label>Project Logo</Label>
-            <div className="my-3 flex items-start gap-4">
-              <img
-                src={formik.values.logoUrl}
-                alt="Logo Preview"
-                className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
-              />
-              <button
-                type="button"
-                onClick={() => formik.setFieldValue("logoUrl", "")}
-                className="text-sm text-red-500 underline hover:text-red-600"
-              >
-                Remove
-              </button>
-               {formik.touched.logoUrl && formik.errors.logoUrl && (
-              <p className="text-xs text-red-500 mt-1">{formik.errors.logoUrl}</p>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {formik.values.logoUrl ? (
+            <div>
+              <Label>Project Logo</Label>
+              <div className="my-3 flex items-start gap-4">
+                <img
+                  src={formik.values.logoUrl}
+                  alt="Logo Preview"
+                  className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
+                />
+                <button
+                  type="button"
+                  onClick={() => formik.setFieldValue("logoUrl", "")}
+                  className="text-sm text-red-500 underline hover:text-red-600"
+                >
+                  Remove
+                </button>
+                {formik.touched.logoUrl && formik.errors.logoUrl && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {formik.errors.logoUrl}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="mb-6 ">
-            <Label>Project Logo</Label>
-            <DropzoneComponent
-              onImageUpload={(url) => {
-                formik.setFieldValue("logoUrl", url);
-              }}
-            />
-          </div>
-        )}
+          ) : (
+            <div className="mb-6 ">
+              <Label>Project Logo</Label>
+              <DropzoneComponent
+                onImageUpload={(url) => {
+                  formik.setFieldValue("logoUrl", url);
+                }}
+              />
+            </div>
+          )}
+          {formik.values.bannerUrl ? (
+            <div>
+              <Label>Project Banner</Label>
+              <div className="my-3 flex items-start gap-4">
+                <img
+                  src={formik.values.bannerUrl}
+                  alt="banner Preview"
+                  className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
+                />
+                <button
+                  type="button"
+                  onClick={() => formik.setFieldValue("bannerUrl", "")}
+                  className="text-sm text-red-500 underline hover:text-red-600"
+                >
+                  Remove
+                </button>
+                {formik.touched.bannerUrl && formik.errors.bannerUrl && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {formik.errors.bannerUrl}
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="mb-6 ">
+              <Label>Project Banner</Label>
+              <DropzoneComponent
+                onImageUpload={(url) => {
+                  formik.setFieldValue("bannerUrl", url);
+                }}
+              />
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Project Name */}
           <div>
@@ -191,9 +245,6 @@ export default function CreateProjectForm() {
             {formik.touched.slug && formik.errors.slug && (
               <p className="text-xs text-red-500 mt-1">{formik.errors.slug}</p>
             )}
-            <p className="text-xs text-gray-400 mt-1">
-              This will be used version management
-            </p>
           </div>
 
           {/* Year */}
@@ -207,15 +258,36 @@ export default function CreateProjectForm() {
             />
           </div>
 
-          {/* Venue */}
           <div>
-            <Label>Venue</Label>
+            <Label>Status</Label>
+            <div className="relative">
+              <Select
+                options={statusOptions}
+                placeholder="Select an option"
+                defaultValue={formik.values.projectStatus}
+                onChange={(e) => handleSelectChange("projectStatus", e)}
+                className="dark:bg-dark-900"
+              />
+              <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                <ChevronDownIcon />
+              </span>
+            </div>
+            {formik.touched.projectStatus && formik.errors.projectStatus && (
+              <p className="text-xs text-red-500 mt-1">
+                {formik.errors.projectStatus}
+              </p>
+            )}
+          </div>
+
+          {/* location */}
+          <div>
+            <Label>location</Label>
             <Input
-              name="venue"
+              name="location"
               placeholder="e.g. ExCeL London"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.venue}
+              value={formik.values.location}
             />
           </div>
 
@@ -269,13 +341,18 @@ export default function CreateProjectForm() {
                 options={options}
                 placeholder="Select an option"
                 defaultValue={formik.values.currency}
-                onChange={handleSelectChange}
+                onChange={(e) => handleSelectChange("currency", e)}
                 className="dark:bg-dark-900"
               />
               <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
                 <ChevronDownIcon />
               </span>
             </div>
+            {formik.touched.currency && formik.errors.currency && (
+              <p className="text-xs text-red-500 mt-1">
+                {formik.errors.currency}
+              </p>
+            )}
           </div>
 
           {/* Website */}

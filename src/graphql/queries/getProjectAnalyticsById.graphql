@@ -1,22 +1,21 @@
 query GetProjectAnalyticsById($input:ProjectAnalyticsInput!) {
   getProjectAnalyticsById(input:$input) {
-    exhibitors
-    id
-    leads
-    mediaPartners
-    name
-    speakers
-    sponsors
-    supportingPartners
-    utms
-    monthlyData {
-      exhibitors
-      leads
-      mediaPartners
-      speakers
-      sponsors
-      supportingPartners
-      utms
-    }
+   exhibitors
+        id
+        leads
+        mediaPartners
+        name
+        speakers
+        sponsors
+        supportingPartners
+        utms
+        monthlyData {
+            exhibitors
+            leads
+            partners
+            speakers
+            sponsors
+            utms
+        }
   }
 }

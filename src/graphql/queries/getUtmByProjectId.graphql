@@ -1,11 +1,13 @@
 query GetUtmByProjectId($id: String!, $groupBy: String!) {
   getUtmByProject(id: $id) {
-    id
-    source
-    medium
     campaign
-    term
     content
+    createdAt
+    id
+    medium
+    projectId
+    source
+    term
     url
   }
   getLeadsGroupedByField(input: { projectId: $id, groupBy: $groupBy }) {

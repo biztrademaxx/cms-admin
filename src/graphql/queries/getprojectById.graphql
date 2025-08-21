@@ -1,17 +1,20 @@
 
   query getProjectById($id: String!) {
-    getProjectBySlug(id: $id) {
-      id
-      name
-      description
-      slug
-      logoUrl
-      startDate
-      currency
-      endDate
-      venue
-      website
-      year
+    getProjectById(id: $id) {
+      createdAt
+        currency
+        description
+        endDate
+        id
+        location
+        logoUrl
+        bannerUrl
+        name
+        slug
+        startDate
+        status
+        website
+        year
     }
   }
 

@@ -1,5 +1,5 @@
-query GetSponsorByProject($projectId: String!) {
-  getSponsorsByProject(projectId: $projectId) {
+query GetPartnersByProject($input:GetPartnersByProjectInput!) {
+  getPartnersByProject(input:$input) {
     address
     boothNumber
     contactEmail
@@ -7,14 +7,21 @@ query GetSponsorByProject($projectId: String!) {
     contactTitle
     createdAt
     description
+    facebookUrl
     featured
     hideFromParticipant
     id
+    instagramUrl
+    linkedinUrl
     logoUrl
     name
+    partnerType
+    phone
     projectId
     seqNo
     status
-    type
+    website
+    xUrl
+    youtubeUrl
   }
 }
