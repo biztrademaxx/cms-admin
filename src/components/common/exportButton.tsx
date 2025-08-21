@@ -34,17 +34,19 @@ interface ExportButtonProps {
   fileName: string;
   label?: string;
   projectId: string;
+  queryVariables?: Record<string, any>;
 }
 
 const ExportButton: React.FC<ExportButtonProps> = ({
   query,
   dataKey,
   fileName,
+  queryVariables,
   label,
   projectId,
 }) => {
   const [getQueryData, { loading, data }] = useLazyQuery(query, {
-    variables: { projectId },
+    variables: queryVariables ? queryVariables : { projectId },
     fetchPolicy: "network-only",
   });
 

@@ -41,6 +41,7 @@ interface EntityTableProps {
   dataKey: string;
   columns: ColumnConfig[];
   actionSection?: Boolean;
+  queryVariables?: Record<string, any>;
 }
 
 export default function EntityTable({
@@ -53,6 +54,7 @@ export default function EntityTable({
   dataKey,
   actionSection = true,
   columns,
+  queryVariables
 }: EntityTableProps) {
   const { openModal } = modal;
   const router = useRouter();
@@ -70,8 +72,9 @@ export default function EntityTable({
     refetchQueries: [{ query, variables: { projectId } }],
   });
 
+  console.log("Query Variables:", queryVariables);
   const { data, loading, error } = useQuery(query, {
-    variables: { projectId },
+    variables: queryVariables ? queryVariables : { projectId },
     skip: !projectId,
   });
 
