@@ -3,11 +3,8 @@ query GetProjectAnalyticsById($input:ProjectAnalyticsInput!) {
    exhibitors
         id
         leads
-        mediaPartners
-        name
         speakers
         sponsors
-        supportingPartners
         utms
         monthlyData {
             exhibitors

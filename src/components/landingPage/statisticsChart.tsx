@@ -18,15 +18,13 @@ const CATEGORY_KEYS = [
   "exhibitors",
   "speakers",
   "sponsors",
-  "mediaPartners",
-  "supportingPartners",
+  "partners",
 ] as const;
 
 const MARKET_KEYS = [
   "leads",
   "exhibitors",
-  "mediaPartners",
-  "supportingPartners",
+  "partners",
   "speakers",
   "sponsors",
   "utms",
@@ -36,8 +34,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   exhibitors: "Exhibitors",
   speakers: "Speakers",
   sponsors: "Sponsors",
-  mediaPartners: "Media Partners",
-  supportingPartners: "Supporting Partners",
+  partners: "Partners",
   leads: "Leads",
   utms: "UTMs",
 };
@@ -121,7 +118,7 @@ export default function StatisticsChart() {
     if (!analytics) return [];
     return MARKET_KEYS.map((key) => ({
       name: CATEGORY_LABELS[key],
-      count: analytics[key] ?? 0,
+      count: (analytics as any)[key] ?? 0
     }));
   }, [analytics]);
 
@@ -150,7 +147,7 @@ export default function StatisticsChart() {
               Statistics
             </h3>
             <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-              Exhibitors, Speakers, Sponsors, Media & Supporting Partners
+              Exhibitors, Speakers, Sponsors, Partners(Media & Supporting)
             </p>
           </div>
         </div>
