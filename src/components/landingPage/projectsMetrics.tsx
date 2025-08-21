@@ -82,18 +82,19 @@ export const ProjectsMetrics = () => {
 
   rawProjects.forEach((proj) => {
     const existing = uniqueProjectsMap.get(proj.slug);
+    const year = proj.year ?? new Date(proj.startDate || "").getFullYear();
     if (!existing) {
       uniqueProjectsMap.set(proj.slug, {
         project: proj,
-        years: [proj.year],
-        idMap: { [proj.year]: proj.id },
+        years: [year],
+        idMap: { [year]: proj.id  },
       });
     } else {
-      if (!existing.years.includes(proj.year)) {
-        existing.years.push(proj.year);
-        existing.idMap[proj.year] = proj.id;
+      if (!existing.years.includes(year)) {
+        existing.years.push(year);
+        existing.idMap[year] = proj.id;
       }
-      if (proj.year > existing.project.year) {
+      if (year > (existing.project.year ?? 0)) {
         existing.project = proj;
       }
     }

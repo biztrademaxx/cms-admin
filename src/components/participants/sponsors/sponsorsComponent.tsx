@@ -9,8 +9,8 @@ import {
   CreateSponsorInput,
   DeleteExhibitorDocument,
   GetSponsorByProjectDocument,
-  SponsorStatus,
   SponsorType,
+  Status,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -26,7 +26,9 @@ const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
   type: Yup.string().required("Type is required"),
   logoUrl: Yup.string().required("Logo URL is required"),
-  address: Yup.string().required("Address is required"),
+  status: Yup.string().required("Status is required"),
+  description: Yup.string().required("Description is required"),
+  website: Yup.string().required("Website is required"),
 });
 const SponsorsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
@@ -50,13 +52,19 @@ const SponsorsComponent = () => {
       id: "",
       name: "",
       boothNumber: "",
-      // imageUrl: "",
-      type: SponsorType.Supporting,
-      logoUrl: "",
-      status: SponsorStatus.Active,
+      type: SponsorType.Silver,
+      logoUrl: "",   
+      linkedinUrl: "",
+      website: "",
+      contactEmail: "",
+      contactTitle: "",
+      contactName: "",
+      description:"",
+      status: Status.Active,
       address: "",
     },
     validationSchema,
+
     onSubmit: async (values) => {
       let logoFileOrUrl = formik.values.logoUrl;
       if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
@@ -66,12 +74,18 @@ const SponsorsComponent = () => {
       const input: any = {
         projectId,
         name: values.name,
-        priority: 0,
         status: values.status,
         boothNumber: values.boothNumber,
         type: values.type,
         logoUrl: logoFileOrUrl,
         address: values.address,
+        description: values.description,
+        linkedinUrl: values.linkedinUrl,
+        website: values.website,
+        contactEmail: values.contactEmail,
+        contactName: values.contactName,
+        contactTitle: values.contactTitle,
+
       };
 
       if (values.id) {
@@ -126,6 +140,7 @@ const SponsorsComponent = () => {
                 subTextKey: "website",
               },
               { key: "boothNumber", label: "Booth", type: "text" },
+              { key:"linkedinUrl",label:"Linkedin",type:"link"},
               { key: "type", label: "Type", type: "text" },
               { key: "address", label: "Address", type: "text" },
               { key: "status", label: "Status", type: "badge" },
