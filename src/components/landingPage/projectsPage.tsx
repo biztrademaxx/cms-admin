@@ -21,7 +21,7 @@ const ProjectsPage = () => {
     variables: { id: projectId },
   });
 
-  const project = data?.getProjectBySlug || null;
+  const project = data?.getProjectById || null;
 
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
@@ -45,7 +45,7 @@ const ProjectsPage = () => {
           </div>
         )}
         <div className="space-y-1">
-          {project?.venue && <h4 className={textStyle}>{project.venue}</h4>}
+          {project?.location && <h4 className={textStyle}>{project.location}</h4>}
 
           {project?.startDate && (
             <h4 className={textStyle}>
