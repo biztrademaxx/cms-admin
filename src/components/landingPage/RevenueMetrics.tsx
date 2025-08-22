@@ -1,8 +1,13 @@
 "use client";
 
+import { LeadScalarFieldEnum, LeadType } from "@/gql_generated/graphql";
 import { TrendingUp } from "lucide-react";
 
-const RevenueMetrics = () => {
+const RevenueMetrics = ({ data }: any) => {
+  const revenueData = data ?? [];
+  const totalRevenue =
+    revenueData.find((item: any) => item.group === LeadType?.Delegate)
+      ?.totalPrice ?? 0;
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6  dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="flex items-center justify-between">
@@ -16,7 +21,7 @@ const RevenueMetrics = () => {
 
       <div className="mt-4">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          ₹1,00,000
+          $ {totalRevenue}
         </h1>
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           Revenue from website only, excluding direct payments

@@ -1,23 +1,31 @@
 query GetLeadsGroupedByField($input: GroupLeadsInput!) {
   getLeadsGroupedByField(input: $input) {
-    count
-    group
-    leads {
-      awardCategory
-      companyName
-      createdAt
-      email
-      industry
-      jobTitle
-      leadType
-      message
-      name
-      phone
-      price
-      projectId
-      quantity
-      status
-      utmId
+       field
+        groups {
+            avgPrice
+            count
+            group
+            totalPrice
+            leads {
+                awardCategory
+                companyName
+                country
+                createdAt
+                email
+                id
+                industry
+                jobTitle
+                leadType
+                message
+                name
+                phone
+                price
+                projectId
+                quantity
+                status
+                updatedAt
+                utmId
+            }
+        }
     }
-  }
 }

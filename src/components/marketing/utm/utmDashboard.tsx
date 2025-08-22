@@ -17,7 +17,10 @@ import { UTMEntry } from "./utm.types";
 import { generateUTM } from "./common";
 import { useSelector } from "react-redux";
 import UtmMetrics from "./utmMetrics";
-import { GetUtmByProjectIdDocument } from "@/gql_generated/graphql";
+import {
+  GetUtmByProjectIdDocument,
+  LeadScalarFieldEnum,
+} from "@/gql_generated/graphql";
 
 export default function UTMDashboard({
   modal,
@@ -35,7 +38,10 @@ export default function UTMDashboard({
     skip: !projectId,
     variables: {
       id: projectId,
-      groupBy: "email",
+      input: {
+        groupBy: [LeadScalarFieldEnum.UtmSource, LeadScalarFieldEnum.UtmMedium],
+        projectId,
+      },
     },
   });
   const handleCopy = async (entry: UTMEntry | any) => {
