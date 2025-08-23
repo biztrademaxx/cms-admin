@@ -5,7 +5,16 @@ import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
 import DropzoneComponent from "../form/DropZone";
+import Select from "../form/Select";
+import { ChevronDownIcon } from "lucide-react";
+import { Status } from "@/gql_generated/graphql";
 
+
+const options = [
+  { value: Status.Active, label: "Active" },
+  { value: Status.Inactive, label: "Inactive" },
+  { value: Status.Pending, label: "Pending" },
+];  
 type SupportingPartnersModalProps = {
   modal: {
     isOpen: boolean;
@@ -105,6 +114,8 @@ const SupportingPartnersModal = ({
               />
             </div>
 
+
+
             <div>
               <Label>Website</Label>
               <Input
@@ -116,6 +127,140 @@ const SupportingPartnersModal = ({
                 onBlur={formik.handleBlur}
                 hint={formik.touched.website ? formik.errors.website : ""}
                 error={formik.touched.website && formik.errors.website}
+              />
+            </div>
+
+                        <div>
+              <Label>Linkedin</Label>
+              <Input
+                type="text"
+                name="linkedinUrl"
+                placeholder="https://linkedin.com"
+                value={formik.values.linkedinUrl}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                hint={formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""}
+                error={formik.touched.linkedinUrl && formik.errors.linkedinUrl}
+              />
+            </div>
+
+                        <div>
+              <Label>Address</Label>
+              <Input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                hint={formik.touched.address ? formik.errors.address : ""}
+                error={formik.touched.address && formik.errors.address}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+
+            <div>
+              <Label>Booth Number</Label>
+              <Input
+                type="text"
+                name="boothNumber"
+                placeholder="Booth Number"
+                value={formik.values.boothNumber}
+                onChange={formik.handleChange}
+                hint={formik.touched.boothNumber ? formik.errors.boothNumber : ""}
+                error={formik.touched.boothNumber && formik.errors.boothNumber}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+             <div>
+              <Label>Status</Label>
+              <div className="relative">
+                <Select
+                  options={options}
+                  placeholder="Select Status"
+                  defaultValue={formik.values.status}
+                  onChange={formik.handleChange}
+                />
+                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                  <ChevronDownIcon />
+                </span>
+              </div>
+            </div>
+
+
+
+            {/* / */}
+
+             <div>
+              <Label>Contact Email</Label>
+              <Input
+                type="text"
+                name="contactEmail"
+                placeholder="Contact Email"
+                value={formik.values.contactEmail}
+                onChange={formik.handleChange}
+                hint={formik.touched.contactEmail ? formik.errors.contactEmail : ""}
+                error={formik.touched.contactEmail && formik.errors.contactEmail}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+                                  <div>
+              <Label>Contact Name</Label>
+              <Input
+                type="text"
+                name="contactName"
+                placeholder="Contact Name"
+                value={formik.values.contactName}
+                onChange={formik.handleChange}
+                hint={formik.touched.contactName ? formik.errors.contactName : ""}
+                error={formik.touched.contactName && formik.errors.contactName}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+                                  <div>
+              <Label>Contact Title</Label>
+              <Input
+                type="text"
+                name="contactTitle"
+                placeholder="Contact Title"
+                value={formik.values. contactTitle}
+                onChange={formik.handleChange}
+                hint={formik.touched. contactTitle ? formik.errors.  contactTitle : ""}
+                error={formik.touched.  contactTitle && formik.errors.  contactTitle}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+            
+                                  <div>
+              <Label>Featured</Label>
+              <Input
+                type="text"
+                name="featured"
+                placeholder="Featured"
+                value={formik.values. featured}
+                onChange={formik.handleChange}
+                hint={formik.touched. featured ? formik.errors.  featured : ""}
+                error={formik.touched.  featured && formik.errors.  featured}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+            
+                                  <div>
+              <Label>Hide From Participants</Label>
+              <Input
+                type="text"
+                name="hideFromParticipants"
+                placeholder="Hide From Participants"
+                value={formik.values. hideFromParticipant}
+                onChange={formik.handleChange}
+                hint={formik.touched. hideFromParticipant ? formik.errors.  hideFromParticipant : ""}
+                error={formik.touched.  hideFromParticipant && formik.errors.  hideFromParticipant}
+                onBlur={formik.handleBlur}
               />
             </div>
           </div>
@@ -132,6 +277,14 @@ const SupportingPartnersModal = ({
               error={formik.touched.description && formik.errors.description}
             />
           </div>
+
+    
+
+
+                     
+
+
+
         </div>
 
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">

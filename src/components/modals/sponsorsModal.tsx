@@ -238,18 +238,34 @@ const SponsorsModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
-             <div>
-              <Label>Booth No</Label>
+
+                         <div>
+              <Label>Contact Email</Label>
               <Input
                 type="text"
                 name="contactEmail"
-                placeholder="Contact Email"
+                placeholder="example@gmail.com" 
                 value={formik.values.contactEmail}
                 onChange={formik.handleChange}
                 hint={
                   formik.touched.contactEmail ? formik.errors.contactEmail : ""
                 }
                 error={formik.touched.contactEmail && formik.errors.contactEmail}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+             <div>
+              <Label>Hide From Participant</Label>
+              <Input
+                type="text"
+                name="hideFromParticipant"
+                placeholder="Hide From Participant"
+                value={formik.values.hideFromParticipant}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.hideFromParticipant ? formik.errors.hideFromParticipant : ""
+                }
+                error={formik.touched.hideFromParticipant && formik.errors.hideFromParticipant}
                 onBlur={formik.handleBlur}
               />
             </div>

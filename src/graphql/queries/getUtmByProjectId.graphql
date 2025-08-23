@@ -1,4 +1,4 @@
-query GetUtmByProjectId($id: String!, $groupBy: String!) {
+query GetUtmByProjectId($id: String!, $input:  GroupLeadsInput!) {
   getUtmByProject(id: $id) {
     campaign
     content
@@ -10,8 +10,14 @@ query GetUtmByProjectId($id: String!, $groupBy: String!) {
     term
     url
   }
-  getLeadsGroupedByField(input: { projectId: $id, groupBy: $groupBy }) {
-    count
-    group
-  }
+  getLeadsGroupedByField(input: $input) {
+    field
+        groups {
+            avgPrice
+            count
+            group
+            totalPrice
+      }
+    
+    }
 }

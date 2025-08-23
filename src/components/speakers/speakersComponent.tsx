@@ -18,6 +18,7 @@ import SpeakersModal from "../modals/speakersModal";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import { Plus } from "lucide-react";
 import ExportButton from "../common/exportButton";
+import { stat } from "fs";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
@@ -56,6 +57,9 @@ const SpeakersComponent = () => {
       designation: "",
       companyLogo: "",
       companyName: "",
+      status: "ACTIVE",
+
+
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -78,6 +82,7 @@ const SpeakersComponent = () => {
         designation: values.designation,
         companyLogo: companyLogoFileOrUrl,
         companyName: values.companyName,
+        status: values.status,
       };
 
       if (values.id) {
@@ -134,6 +139,13 @@ const SpeakersComponent = () => {
               { key: "companyName", label: "Organization", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
+              { key: "designation", label: "Designation", type: "text" },
+              { key: "linkedinUrl", label: "LinkedIn", type: "link" },
+
+            
+             
+
+
             ]}
           />
         </div>

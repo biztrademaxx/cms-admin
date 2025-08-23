@@ -62,6 +62,7 @@ const SponsorsComponent = () => {
       description:"",
       status: Status.Active,
       address: "",
+      hideFromParticipant: false
     },
     validationSchema,
 
@@ -85,6 +86,7 @@ const SponsorsComponent = () => {
         contactEmail: values.contactEmail,
         contactName: values.contactName,
         contactTitle: values.contactTitle,
+        hideFromParticipant: values.hideFromParticipant,
 
       };
 
@@ -145,6 +147,14 @@ const SponsorsComponent = () => {
               { key: "address", label: "Address", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
+          
+           
+  
+              { key: "description", label: "Description", type: "text" },
+              { key: "website", label: "Website", type: "link" },
+              // { key: "contactName", label: "Contact Name", type: "text" },
+              // { key: "contactTitle", label: "Contact Title", type: "text" },
+              { key: "contactEmail", label: "Contact Email", type: "text" },
             ]}
           />
         </div>

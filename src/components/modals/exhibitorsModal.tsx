@@ -6,6 +6,15 @@ import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
 import Dropzone from "react-dropzone";
 import DropzoneComponent from "../form/DropZone";
+import Select from "../form/Select";
+import {  Status } from "@/gql_generated/graphql";
+import { ChevronDownIcon } from "lucide-react";
+
+const options = [
+  { value: Status.Active, label: "Active" },
+  { value: Status.Inactive, label: "Inactive" },
+  { value: Status.Pending, label: "Pending" },
+]; 
 
 type ExhibitorsModalProps = {
   modal: {
@@ -85,6 +94,7 @@ const ExhibitorsModal = ({
               <p className="text-xs text-red-500 mt-1">{formik.errors.logoUrl}</p>
             )}
             </div>
+
             )}
          
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
@@ -104,19 +114,100 @@ const ExhibitorsModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
+
+                      <div>
+              <Label>Status</Label>
+              <div className="relative">
+                <Select
+                  options={options}
+                  placeholder="Select Status"
+                  defaultValue={formik.values.status}
+                  onChange={formik.handleChange}
+                />
+                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                  <ChevronDownIcon />
+                </span>
+              </div>
+          </div>
+
             <div>
               <Label>LinkedIn URL</Label>
               <Input
                 type="text"
-                name="linkedin"
+                name="linkedinUrl"
                 placeholder="https://linkedin.com/"
-                value={formik.values.linkedin}
+                value={formik.values.linkedinUrl}
                 onChange={formik.handleChange}
-                hint={formik.touched.linkedin ? formik.errors.linkedin : ""}
-                error={formik.touched.linkedin && formik.errors.linkedin}
+                hint={formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""}
+                error={formik.touched.linkedinUrl && formik.errors.linkedinUrl}
                 onBlur={formik.handleBlur}
               />
             </div>
+
+            <div>
+              <Label>Contact Email</Label>
+              <Input
+                type="text"
+                name="contactEmail"
+                placeholder="companyemail.com"
+                value={formik.values.contactEmail}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.contactEmail ? formik.errors.contactEmail : ""
+                }
+                error={formik.touched.contactEmail && formik.errors.contactEmail}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+            
+           <div>
+              <Label>Contact Name</Label>
+              <Input
+                type="text"
+                name="contactName"
+                placeholder="Contact Name"
+                value={formik.values.contactName}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.contactName ? formik.errors.contactName : ""
+                }
+                error={formik.touched.contactName && formik.errors.contactName}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+                       <div>
+              <Label>Booth Number</Label>
+              <Input
+                type="text"
+                name="boothNumber"
+                placeholder="Booth Number"
+                value={formik.values.boothNumber}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.boothNumber ? formik.errors.boothNumber : ""
+                }
+                error={formik.touched.boothNumber && formik.errors.boothNumber}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
+           <div>
+              <Label>Contact Title</Label>
+              <Input
+                type="text"
+                name="contactTitle"
+                placeholder="Company Name"
+                value={formik.values.contactTitle}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.contactTitle ? formik.errors.contactTitle : ""
+                }
+                error={formik.touched.contactTitle && formik.errors.contactTitle}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+           
             <div>
               <Label>Website</Label>
               <Input
@@ -129,8 +220,11 @@ const ExhibitorsModal = ({
                 value={formik.values.website}
                 onChange={formik.handleChange}
               />
-            </div>
-          </div>
+              </div>
+       </div>
+ 
+
+
           <div className="mt-6">
             <Label>Description</Label>
             <TextArea
@@ -143,6 +237,24 @@ const ExhibitorsModal = ({
               onChange={formik.handleChange}
             />
           </div>
+                    
+                       
+          <div>
+              <Label>Address</Label>
+              <Input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.address ? formik.errors.address : ""
+                }
+                error={formik.touched.address && formik.errors.address}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
         </div>
 
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
@@ -161,6 +273,7 @@ const ExhibitorsModal = ({
       </form>
     </Modal>
   );
+  
 };
 
 export default ExhibitorsModal;
