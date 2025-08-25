@@ -6,7 +6,7 @@ import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
 import DropzoneComponent from "../form/DropZone";
 import Select from "../form/Select";
-import {  Status } from "@/gql_generated/graphql";
+import { Status } from "@/gql_generated/graphql";
 import { ChevronDownIcon } from "lucide-react";
 
 const options = [
@@ -137,25 +137,23 @@ const SponsorsModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
-             <div>
-                        <Label>Website</Label>
-                        <Input
-                          name="website"
-                          placeholder="https://example.com"
+            <div>
+              <Label>Website</Label>
+              <Input
+                name="website"
+                placeholder="https://example.com"
                 value={formik.values.website}
                 onChange={formik.handleChange}
-                hint={
-                  formik.touched.website ? formik.errors.website : ""
-                }
+                hint={formik.touched.website ? formik.errors.website : ""}
                 error={formik.touched.website && formik.errors.website}
                 onBlur={formik.handleBlur}
-                        />
-                      </div>
-                       <div>
-            <Label>Linkedin Url</Label>
-            <Input
-              name="linkedinUrl"
-              placeholder="https://example.com"
+              />
+            </div>
+            <div>
+              <Label>Linkedin Url</Label>
+              <Input
+                name="linkedinUrl"
+                placeholder="https://example.com"
                 value={formik.values.linkedinUrl}
                 onChange={formik.handleChange}
                 hint={
@@ -163,10 +161,9 @@ const SponsorsModal = ({
                 }
                 error={formik.touched.linkedinUrl && formik.errors.linkedinUrl}
                 onBlur={formik.handleBlur}
-            />
-          </div>
+              />
+            </div>
             <div>
-
               <Label>Booth No</Label>
               <Input
                 type="text"
@@ -201,14 +198,14 @@ const SponsorsModal = ({
                   options={options}
                   placeholder="Select Status"
                   defaultValue={formik.values.status}
-                  onChange={formik.handleChange}
+                  onChange={(e) => formik.setFieldValue("status", e)}
                 />
                 <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
                   <ChevronDownIcon />
                 </span>
               </div>
             </div>
-             <div>
+            <div>
               <Label>Contact Name</Label>
               <Input
                 type="text"
@@ -223,38 +220,42 @@ const SponsorsModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
-             <div>
+            <div>
               <Label>Contact Title</Label>
               <Input
                 type="text"
                 name="contactTitle"
-                placeholder="Contact Title" 
+                placeholder="Contact Title"
                 value={formik.values.contactTitle}
                 onChange={formik.handleChange}
                 hint={
                   formik.touched.contactTitle ? formik.errors.contactTitle : ""
                 }
-                error={formik.touched.contactTitle && formik.errors.contactTitle}
+                error={
+                  formik.touched.contactTitle && formik.errors.contactTitle
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                         <div>
+            <div>
               <Label>Contact Email</Label>
               <Input
                 type="text"
                 name="contactEmail"
-                placeholder="example@gmail.com" 
+                placeholder="example@gmail.com"
                 value={formik.values.contactEmail}
                 onChange={formik.handleChange}
                 hint={
                   formik.touched.contactEmail ? formik.errors.contactEmail : ""
                 }
-                error={formik.touched.contactEmail && formik.errors.contactEmail}
+                error={
+                  formik.touched.contactEmail && formik.errors.contactEmail
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
-             <div>
+            <div>
               <Label>Hide From Participant</Label>
               <Input
                 type="text"
@@ -263,9 +264,14 @@ const SponsorsModal = ({
                 value={formik.values.hideFromParticipant}
                 onChange={formik.handleChange}
                 hint={
-                  formik.touched.hideFromParticipant ? formik.errors.hideFromParticipant : ""
+                  formik.touched.hideFromParticipant
+                    ? formik.errors.hideFromParticipant
+                    : ""
                 }
-                error={formik.touched.hideFromParticipant && formik.errors.hideFromParticipant}
+                error={
+                  formik.touched.hideFromParticipant &&
+                  formik.errors.hideFromParticipant
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
