@@ -133,7 +133,7 @@ export function gql(source: "query GetProjectAnalyticsById($input: ProjectAnalyt
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    id\n    image\n    linkedinUrl\n    name\n    projectId\n  }\n}"): (typeof documents)["query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    id\n    image\n    linkedinUrl\n    name\n    projectId\n  }\n}"];
+export function gql(source: "query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    facebookUrl\n    hideFromParticipant\n    id\n    image\n    instagramUrl\n    linkedinUrl\n    name\n    projectId\n    seqNo\n    status\n    updatedAt\n    website\n    xUrl\n    youtubeUrl\n  }\n}"): (typeof documents)["query getSpeakersByProject($projectId: String!) {\n  getSpeakersByProject(projectId: $projectId) {\n    companyLogo\n    companyName\n    createdAt\n    designation\n    facebookUrl\n    hideFromParticipant\n    id\n    image\n    instagramUrl\n    linkedinUrl\n    name\n    projectId\n    seqNo\n    status\n    updatedAt\n    website\n    xUrl\n    youtubeUrl\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
