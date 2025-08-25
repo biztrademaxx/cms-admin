@@ -8,6 +8,7 @@ import {
   CreateExhibitorDocument,
   DeleteExhibitorDocument,
   GetExhibitorsByProjectDocument,
+  Status,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
@@ -21,7 +22,7 @@ import { Plus } from "lucide-react";
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
   description: Yup.string().required("Description is required"),
-  linkedin: Yup.string().required("Linkedin is required"),
+  linkedinUrl: Yup.string().required("Linkedin is required"),
   logoUrl: Yup.string().required("Logo URL is required"),
   website: Yup.string().required("Website is required"),
 });
@@ -47,9 +48,17 @@ const ExhibitorsComponent = () => {
       id: "",
       companyName: "",
       description: "",
-      linkedin: "",
+      linkedinUrl: "",
       logoUrl: "",
       website: "",
+      address: "",
+      contactEmail: "",
+      contactName: "",
+      contactTitle: "",
+      boothNumber: "",
+      status: Status.Active,
+
+
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -62,9 +71,16 @@ const ExhibitorsComponent = () => {
         projectId,
         companyName: values.companyName,
         description: values.description,
-        linkedin: values.linkedin,
+        linkedinUrl: values.linkedinUrl,
         logoUrl: logoFileOrUrl,
         website: values.website,
+        address: values.address,
+        contactEmail: values.contactEmail,
+        contactName: values.contactName,
+        contactTitle: values.contactTitle,
+        boothNumber: values.boothNumber,
+        status: values.status,
+
       };
 
       if (values.id) {
@@ -114,16 +130,16 @@ const ExhibitorsComponent = () => {
             ModalComponent={ExhibitorsModal}
             dataKey="getExhibitorsByProject"
             columns={[
-              {
-                key: "companyName",
-                label: "Details",
-                type: "avatar",
-                subTextKey: "website",
-              },
+              { key: "companyName", label: "Details", type: "avatar",subTextKey: "website", },
               { key: "description", label: "Description", type: "text" },
-              { key: "linkedin", label: "LinkedIn", type: "link" },
+              { key: "linkedinUrl", label: "LinkedIn", type: "link" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
+              { key: "boothNumber", label: "Booth Number", type: "text" },
+              // { key: "website", label: "Website", type: "link" },
+
+
+
             ]}
           />
         </div>
