@@ -6,23 +6,14 @@ import dynamic from "next/dynamic";
 import React from "react";
 import { useSelector } from "react-redux";
 
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
-export default function CountryWisePieChart() {
-  const projectId = useSelector((state: any) => state.project.projectId);
-
-  const { data, loading } = useQuery(GetLeadsGroupedByFieldDocument, {
-    variables: {
-      input: {
-        projectId: projectId,
-        groupBy: "country", // 👈 change groupBy to country
-      },
-    },
-  });
-
-  const dataArray = data?.getLeadsGroupedByField || [];
-  const countries = dataArray.map((item: any) => item.group) ?? [];
-  const counts = dataArray.map((item: any) => item.count) ?? [];
+export default function CountryWisePieChart({ data }: any) {
+  const countryWiseData = data ?? [];
+  const countries = countryWiseData.map((item: any) => item.group) ?? [];
+  const counts = countryWiseData.map((item: any) => item.count) ?? [];
 
   const options: ApexOptions = {
     chart: {
@@ -82,13 +73,13 @@ export default function CountryWisePieChart() {
   const series = counts;
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
       <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
         Country-wise Leads
       </h3>
-      {loading ? (
-        <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
-          Loading...
+      {countryWiseData.length === 0 ? (
+        <div className="col-span-full p-6 text-center text-gray-500 dark:text-white/70">
+          No data available
         </div>
       ) : (
         <ReactApexChart

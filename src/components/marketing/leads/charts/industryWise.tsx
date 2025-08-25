@@ -1,30 +1,18 @@
 "use client";
-import { GetLeadsGroupedByFieldDocument } from "@/gql_generated/graphql";
-import { useQuery } from "@apollo/client";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import React from "react";
-import { useSelector } from "react-redux";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function IndustryWisePieChart() {
-  const projectId = useSelector((state: any) => state.project.projectId);
-  const { data, loading } = useQuery(GetLeadsGroupedByFieldDocument, {
-    variables: {
-      input: {
-        projectId: projectId,
-        groupBy: "industry",
-      },
-    },
-  });
+export default function IndustryWisePieChart({ data }: any) {
+  const industryData = data ?? [];
+  const industries = industryData.map((item: any) => item.group) ?? [];
+  const counts = industryData.map((item: any) => item.count) ?? [];
 
-  const dataArray = data?.getLeadsGroupedByField || [];
-  const industries = dataArray.map((item: any) => item.group) ?? [];
-  const counts = dataArray.map((item: any) => item.count) ?? [];
-  console.log(industries);
+  console.log(industryData, industries, counts);
   const options: ApexOptions = {
     chart: {
       type: "donut",
@@ -84,16 +72,22 @@ export default function IndustryWisePieChart() {
   const series = counts; // Replace with API data
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
       <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">
         Industry-wise Leads
       </h3>
-      <ReactApexChart
-        options={options}
-        series={series}
-        type="donut"
-        height={320}
-      />
+      {industryData.length === 0 ? (
+        <div className="col-span-full p-6 text-center text-gray-500 dark:text-white/70">
+          No data available
+        </div>
+      ) : (
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="donut"
+          height={320}
+        />
+      )}
     </div>
   );
 }
