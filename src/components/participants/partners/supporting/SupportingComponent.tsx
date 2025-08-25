@@ -22,28 +22,25 @@ import { Plus } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
-  logoUrl: Yup.string()
-    .required("Logo URL is required"),
-  website: Yup.string()
-    .required("Website is required")
+  logoUrl: Yup.string().required("Logo URL is required"),
+  website: Yup.string().required("Website is required"),
 });
 const SupportingPartnersComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
-  const [createSupportingPartner] = useMutation(
-    CreatePartnerDocument,
-    {
-      onCompleted: (data) => {
-        console.log("Supporting Partner created:", data);
-        modal.closeModal();
-      },
-      refetchQueries: [
-        {
-          query: GetPartnersByProjectDocument,
-          variables: { projectId },
+  const [createSupportingPartner] = useMutation(CreatePartnerDocument, {
+    onCompleted: (data) => {
+      console.log("Supporting Partner created:", data);
+      modal.closeModal();
+    },
+    refetchQueries: [
+      {
+        query: GetPartnersByProjectDocument,
+        variables: {
+          input: { projectId: projectId, partnerType: PartnerType.Supporting },
         },
-      ],
-    }
-  );
+      },
+    ],
+  });
 
   const modal = useModal();
 
@@ -88,7 +85,6 @@ const SupportingPartnersComponent = () => {
         hideFromParticipant: values.hideFromParticipant || false,
         linkedinUrl: values.linkedinUrl,
         featured: values.featured,
-        
       };
 
       if (values.id) {
@@ -124,7 +120,9 @@ const SupportingPartnersComponent = () => {
             <ExportButton
               query={GetPartnersByProjectDocument}
               projectId={projectId}
-              queryVariables={{ input: { projectId, partnerType: PartnerType.Supporting } }}
+              queryVariables={{
+                input: { projectId, partnerType: PartnerType.Supporting },
+              }}
               dataKey="getPartnersByProject"
               fileName={`supporting_partners_${projectName || projectId}`}
               label="Export CSV"
@@ -136,7 +134,12 @@ const SupportingPartnersComponent = () => {
             title="Supporting Partners"
             query={GetPartnersByProjectDocument}
             deleteMutation={DeletePartnerDocument}
-            queryVariables={{ input: { projectId: projectId, partnerType: PartnerType.Supporting } }}
+            queryVariables={{
+              input: {
+                projectId: projectId,
+                partnerType: PartnerType.Supporting,
+              },
+            }}
             formik={formik}
             modal={modal}
             ModalComponent={SupportingPartnersModal}
@@ -154,17 +157,12 @@ const SupportingPartnersComponent = () => {
 
               { key: "website", label: "Website", type: "link" },
               { key: "linkedinUrl", label: "Linkedin", type: "link" },
-        
 
               { key: "contactName", label: "Contact Name", type: "text" },
-            
-              { key: "contactEmail", label: "Contact Email", type: "text" },
-          
-          
-              { key: "boothNumber", label: "Booth Number", type: "text" },
-        
-          
 
+              { key: "contactEmail", label: "Contact Email", type: "text" },
+
+              { key: "boothNumber", label: "Booth Number", type: "text" },
             ]}
           />
         </div>

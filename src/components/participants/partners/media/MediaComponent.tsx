@@ -36,7 +36,9 @@ const MediaPartnersComponent = () => {
     refetchQueries: [
       {
         query: GetPartnersByProjectDocument,
-        variables: { projectId },
+        variables: {
+          input: { projectId: projectId, partnerType: PartnerType.Media },
+        },
       },
     ],
   });
