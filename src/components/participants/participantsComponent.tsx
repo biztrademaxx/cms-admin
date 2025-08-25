@@ -16,6 +16,7 @@ import Button from "@/components/ui/button/Button";
 import EntityTable from "@/components/tables/entityTable";
 import ExhibitorsModal from "@/components/modals/exhibitorsModal";
 import ParticipantsModal from "../modals/participantsModal";
+import { Plus } from "lucide-react";
 
 // const validationSchema = Yup.object().shape({
 //   companyName: Yup.string().required("Company name is required"),
@@ -30,7 +31,6 @@ const ParticipantsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
   const [createExhibitor] = useMutation(CreateExhibitorDocument, {
     onCompleted: (data) => {
-      console.log("Participant created:", data);
       modal.closeModal();
     },
     refetchQueries: [
@@ -77,8 +77,6 @@ const ParticipantsComponent = () => {
           input,
         },
       });
-
-      console.log(values);
     },
   });
 
@@ -90,7 +88,7 @@ const ParticipantsComponent = () => {
           <div className="flex items-center gap-2">
             {/* <SearchField inputRef={null} /> */}
             <Button size="sm" onClick={modal.openModal}>
-              + Add Participants
+              startIcon={<Plus className="w-4 h-4" />} Add Participants
             </Button>
           </div>
         </div>

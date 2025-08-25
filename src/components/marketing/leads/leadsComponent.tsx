@@ -16,6 +16,8 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import EntityTable from "@/components/tables/entityTable";
 import DelegatesModal from "@/components/modals/delegatesModal";
 import ExportButton from "@/components/common/exportButton";
+import Button from "@/components/ui/button/Button";
+import { Plus } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required("Company name is required"),
@@ -36,13 +38,24 @@ const LeadsComponent = () => {
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <div className="flex flex-wrap justify-between items-center p-2">
           <PageBreadcrumb pageTitle="Leads" projectName={projectName} />
-          <ExportButton
-            query={GetLeadsByProjectIdDocument}
-            projectId={projectId}
-            dataKey="getLeadsByProjectId"
-            fileName={`leads_${projectName || projectId}`}
-            label="Export CSV"
-          />
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => {}}
+              disabled
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              {" "}
+              Add Bulk Leads
+            </Button>
+            <ExportButton
+              query={GetLeadsByProjectIdDocument}
+              projectId={projectId}
+              dataKey="getLeadsByProjectId"
+              fileName={`leads_${projectName || projectId}`}
+              label="Export CSV"
+            />
+          </div>
         </div>
         <div className="space-y-6">
           <EntityTable
@@ -71,7 +84,6 @@ const LeadsComponent = () => {
               { key: "quantity", label: "Quantity", type: "text" },
               { key: "createdAt", label: "Created At", type: "date" },
             ]}
-            
           />
         </div>
       </div>

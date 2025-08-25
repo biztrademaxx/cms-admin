@@ -1,24 +1,19 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import MarketingCard from "../marketing/utm/marketingCard";
-import {
-  GetLeadsGroupedByFieldDocument,
-  LeadScalarFieldEnum,
-} from "@/gql_generated/graphql";
-import { useSelector } from "react-redux";
-import { useQuery } from "@apollo/client";
 
 export const MarketingMetrics = ({ data }: any) => {
-  const MarketingData = data ?? [];
+  const MarketingData = Array.isArray(data)
+    ? [...data].sort((a: any, b: any) => b.count - a.count)?.slice(0, 10)
+    : [];
+
   const marketingDataArray = MarketingData.map((item: any) => {
     return {
       name: item.group,
       count: item.count,
     };
   });
-  console.log("MarketingData", marketingDataArray);
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5  dark:border-gray-800 dark:bg-white/[0.03]">

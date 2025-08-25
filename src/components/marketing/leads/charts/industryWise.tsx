@@ -8,11 +8,15 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 export default function IndustryWisePieChart({ data }: any) {
-  const industryData = data ?? [];
-  const industries = industryData.map((item: any) => item.group) ?? [];
+  const industryData = Array.isArray(data)
+    ? [...data].sort((a: any, b: any) => b.count - a.count)?.slice(0, 10)
+    : [];
+
+  const industries =
+    industryData.map((item: any) => (item.group ? item.group : "UNKNOWN")) ??
+    [];
   const counts = industryData.map((item: any) => item.count) ?? [];
 
-  console.log(industryData, industries, counts);
   const options: ApexOptions = {
     chart: {
       type: "donut",

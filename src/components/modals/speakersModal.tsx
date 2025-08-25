@@ -4,6 +4,7 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import DropzoneComponent from "../form/DropZone";
+import TextArea from "../form/input/TextArea";
 
 type SpeakersModalProps = {
   modal: {
@@ -54,47 +55,45 @@ const SpeakersModal = ({
         </div>
 
         <div className="px-2 overflow-y-auto custom-scrollbar">
-<div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-
-
-        <div>
-            {/* Profile Picture */}
-          {formik.values.image ? (
-            <div className="mb-6">
-              <Label>Profile Picture</Label>
-              <div className="mt-3 flex items-start gap-4">
-                <img
-                  src={formik.values.image}
-                  alt="Profile Preview"
-                  className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
-                />
-                <button
-                  type="button"
-                  onClick={() => formik.setFieldValue("image", "")}
-                  className="text-sm text-red-500 underline hover:text-red-600"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="mb-6">
-              <Label>Profile Picture</Label>
-              <DropzoneComponent
-                onImageUpload={(url) => {
-                  formik.setFieldValue("image", url);
-                }}
-              />
-              {formik.touched.image && formik.errors.image && (
-                <p className="text-xs text-red-500 mt-1">
-                  {formik.errors.image}
-                </p>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+            <div>
+              {/* Profile Picture */}
+              {formik.values.image ? (
+                <div className="mb-6">
+                  <Label>Profile Picture</Label>
+                  <div className="mt-3 flex items-start gap-4">
+                    <img
+                      src={formik.values.image}
+                      alt="Profile Preview"
+                      className="rounded max-w-[160px] max-h-[100px] object-contain border border-gray-200 dark:border-gray-700"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => formik.setFieldValue("image", "")}
+                      className="text-sm text-red-500 underline hover:text-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <Label>Profile Picture</Label>
+                  <DropzoneComponent
+                    onImageUpload={(url) => {
+                      formik.setFieldValue("image", url);
+                    }}
+                  />
+                  {formik.touched.image && formik.errors.image && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {formik.errors.image}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
-          )}
-      </div>
 
-                      <div>
+            <div>
               {/* Organization Logo */}
               {formik.values.companyLogo ? (
                 <div className="mb-6">
@@ -130,8 +129,7 @@ const SpeakersModal = ({
                 </div>
               )}
             </div>
-</div>
-
+          </div>
 
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
@@ -156,7 +154,9 @@ const SpeakersModal = ({
                 placeholder="Designation"
                 value={formik.values.designation}
                 onChange={formik.handleChange}
-                hint={formik.touched.designation ? formik.errors.designation : ""}
+                hint={
+                  formik.touched.designation ? formik.errors.designation : ""
+                }
                 error={formik.touched.designation && formik.errors.designation}
                 onBlur={formik.handleBlur}
               />
@@ -170,13 +170,13 @@ const SpeakersModal = ({
                 placeholder="Company Name"
                 value={formik.values.companyName}
                 onChange={formik.handleChange}
-                hint={formik.touched.companyName ? formik.errors.companyName : ""}
+                hint={
+                  formik.touched.companyName ? formik.errors.companyName : ""
+                }
                 error={formik.touched.companyName && formik.errors.companyName}
                 onBlur={formik.handleBlur}
               />
             </div>
-
-
 
             <div>
               <Label>LinkedIn URL</Label>
@@ -193,6 +193,18 @@ const SpeakersModal = ({
                 onChange={formik.handleChange}
               />
             </div>
+          </div>
+          <div className="mt-6">
+            <Label>Description</Label>
+            <TextArea
+              name="description"
+              placeholder="Short description about the Media Partner"
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              hint={formik.touched.description ? formik.errors.description : ""}
+              error={formik.touched.description && formik.errors.description}
+              onBlur={formik.handleBlur}
+            />
           </div>
         </div>
 

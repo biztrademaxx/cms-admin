@@ -55,6 +55,7 @@ const SpeakersComponent = () => {
       image: "",
       designation: "",
       companyLogo: "",
+      description:"",
       companyName: "",
     },
     validationSchema,
@@ -78,6 +79,7 @@ const SpeakersComponent = () => {
         designation: values.designation,
         companyLogo: companyLogoFileOrUrl,
         companyName: values.companyName,
+        description:values.description
       };
 
       if (values.id) {
@@ -132,6 +134,8 @@ const SpeakersComponent = () => {
                 subTextKey: "designation",
               },
               { key: "companyName", label: "Organization", type: "text" },
+              { key: "linkedinUrl", label: "Linkedin", type: "link" },
+              { key: "description", label: "Description", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
             ]}

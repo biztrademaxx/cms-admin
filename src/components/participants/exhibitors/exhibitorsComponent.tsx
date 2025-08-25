@@ -29,7 +29,6 @@ const ExhibitorsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
   const [createExhibitor] = useMutation(CreateExhibitorDocument, {
     onCompleted: (data) => {
-      console.log("Exhibitor created:", data);
       modal.closeModal();
     },
     refetchQueries: [

@@ -11,7 +11,9 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 export default function CountryWisePieChart({ data }: any) {
-  const countryWiseData = data ?? [];
+  const countryWiseData = Array.isArray(data)
+    ? [...data].sort((a: any, b: any) => b.count - a.count)?.slice(0, 10)
+    : [];
   const countries = countryWiseData.map((item: any) => item.group) ?? [];
   const counts = countryWiseData.map((item: any) => item.count) ?? [];
 

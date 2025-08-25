@@ -5,13 +5,31 @@ import { MoreDotIcon } from "@/icons";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
+import { LeadGroupOutput } from "@/gql_generated/graphql";
 
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function MonthlyUtmChart() {
+function getMonthlyCounts(groups: LeadGroupOutput[]) {
+  const monthlyCounts = Array(12).fill(0);
+
+  groups.forEach((item) => {
+    if (!item.group) return;
+
+    const date = new Date(Number(item.group)); // convert epoch string → Date
+    const monthIndex = date.getMonth(); // 0 (Jan) - 11 (Dec)
+
+    monthlyCounts[monthIndex] += item.count;
+  });
+
+  return monthlyCounts;
+}
+
+export default function MonthlyUtmChart({ data }: any) {
+  const monthlyData = getMonthlyCounts(data);
+  console.log("createdData", data);
   const options: ApexOptions = {
     colors: ["#465fff"],
     chart: {
@@ -94,7 +112,7 @@ export default function MonthlyUtmChart() {
   const series = [
     {
       name: "Enquiries",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      data: monthlyData,
     },
   ];
   const [isOpen, setIsOpen] = useState(false);

@@ -72,7 +72,6 @@ export default function EntityTable({
     refetchQueries: [{ query, variables: { projectId } }],
   });
 
-  console.log("Query Variables:", queryVariables);
   const { data, loading, error } = useQuery(query, {
     variables: queryVariables ? queryVariables : { projectId },
     skip: !projectId,

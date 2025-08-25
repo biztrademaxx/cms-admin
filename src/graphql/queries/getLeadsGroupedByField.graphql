@@ -6,26 +6,6 @@ query GetLeadsGroupedByField($input: GroupLeadsInput!) {
             count
             group
             totalPrice
-            leads {
-                awardCategory
-                companyName
-                country
-                createdAt
-                email
-                id
-                industry
-                jobTitle
-                leadType
-                message
-                name
-                phone
-                price
-                projectId
-                quantity
-                status
-                updatedAt
-                utmId
-            }
         }
     }
 }

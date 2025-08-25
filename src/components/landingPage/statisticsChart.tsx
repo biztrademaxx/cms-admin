@@ -102,7 +102,7 @@ export default function StatisticsChart() {
     skip: !projectId,
   });
 
-  const analytics = data?.getProjectAnalyticsById;
+  const analytics = data?.getProjectAnalyticsById || null;
 
   /** Build monthly chart series */
   const series = useMemo(() => {
@@ -118,7 +118,7 @@ export default function StatisticsChart() {
     if (!analytics) return [];
     return MARKET_KEYS.map((key) => ({
       name: CATEGORY_LABELS[key],
-      count: (analytics as any)[key] ?? 0
+      count: (analytics as any)[key] ?? 0,
     }));
   }, [analytics]);
 
@@ -129,7 +129,6 @@ export default function StatisticsChart() {
       </div>
     );
   }
-
   return (
     <div>
       {/* Marketing Summary */}
@@ -154,12 +153,18 @@ export default function StatisticsChart() {
 
         <div className="max-w-full overflow-x-auto custom-scrollbar">
           <div className="min-w-[1000px] xl:min-w-full">
-            <ReactApexChart
-              options={chartOptions}
-              series={series}
-              type="area"
-              height={310}
-            />
+            {!analytics || !analytics.monthlyData ? (
+              <div className="p-6 text-center text-gray-500 dark:text-gray-400">
+                No statistics found.
+              </div>
+            ) : (
+              <ReactApexChart
+                options={chartOptions}
+                series={series}
+                type="area"
+                height={310}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -40,7 +40,6 @@ export default function CreateProjectForm() {
       },
     ],
     onCompleted: (data) => {
-      console.log("Project created:", data);
       router.push("/");
     },
 
@@ -119,7 +118,6 @@ export default function CreateProjectForm() {
     },
   });
 
-  console.log(formik.values.startDate);
   const options = [
     { value: "GBP", label: "GBP" },
     { value: "USD", label: "USD" },

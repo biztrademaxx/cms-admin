@@ -5,8 +5,8 @@ import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
-// import Logo from "@/../public/images/logo/logo.png";
-// import LogoDark from "@/../public/images/logo/logo-dark.png";
+import Logo from "@/../public/images/logo/logo.png";
+import LogoDark from "@/../public/images/logo/logo-dark.png";
 import React, { useState ,useEffect,useRef} from "react";
 
 
@@ -87,8 +87,7 @@ const AppHeader: React.FC = () => {
           </button>
 
           <Link href="/" className="lg:hidden">
-           <h1 className="font-bold text-2xl dark:text-white">Mateen's CRM</h1>
-            {/* <Image
+            <Image
               width={154}
               height={32}
               className="dark:hidden"
@@ -101,7 +100,7 @@ const AppHeader: React.FC = () => {
               className="hidden dark:block"
               src={LogoDark}
               alt="Logo"
-            /> */}
+            />
           </Link>
 
           <button

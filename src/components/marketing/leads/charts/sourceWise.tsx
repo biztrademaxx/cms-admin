@@ -1,8 +1,10 @@
 "use client";
 import React from "react";
 
-export default function CampaignWiseChart({ data,name }: any) {
-  const campaignWiseData = data ?? [];
+export default function CampaignWiseChart({ data, name }: any) {
+  const campaignWiseData = Array.isArray(data)
+    ? [...data].sort((a: any, b: any) => b.count - a.count)?.slice(0, 10)
+    : [];
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -24,10 +26,9 @@ export default function CampaignWiseChart({ data,name }: any) {
                 <th className="px-4 py-2 text-right">Revenue</th>
                 <th className="px-4 py-2 text-right">Average</th>
               </tr>
-
             </thead>
             <tbody>
-              {campaignWiseData.map((item: any, index: number) => (
+              {campaignWiseData?.map((item: any, index: number) => (
                 <tr
                   key={index}
                   className="border-t border-gray-200 dark:border-gray-700 text-sm"

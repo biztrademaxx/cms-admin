@@ -12,6 +12,7 @@ import CountryWisePieChart from "../marketing/leads/charts/countryWise";
 import { MarketingMetrics } from "./marketingMetrics";
 import RevenueMetrics from "./RevenueMetrics";
 import CampaignWiseChart from "../marketing/leads/charts/sourceWise";
+import MonthlyUtmChart from "./monthlyUtmChart";
 
 const LeadMetrics = () => {
   const projectId = useSelector((state: any) => state.project.projectId);
@@ -25,6 +26,8 @@ const LeadMetrics = () => {
           LeadScalarFieldEnum.UtmSource,
           LeadScalarFieldEnum.UtmMedium,
           LeadScalarFieldEnum.UtmCampaign,
+          LeadScalarFieldEnum.UtmId,
+          LeadScalarFieldEnum.CreatedAt,
         ],
         projectId,
       },
@@ -67,7 +70,18 @@ const LeadMetrics = () => {
       (item: any) => item.field === LeadScalarFieldEnum.LeadType
     )?.groups ?? [];
 
-  console.log("revenue", RevenueData);
+  const utmData =
+    data?.getLeadsGroupedByField?.find(
+      (item: any) => item.field === LeadScalarFieldEnum.UtmId
+    )?.groups ?? [];
+
+  const createdData =
+    data?.getLeadsGroupedByField?.find(
+      (item: any) => item.field === LeadScalarFieldEnum.CreatedAt
+    )?.groups ?? [];
+
+
+  console.log("utmData", utmData);
   if (loading) {
     <div className="col-span-full p-6 text-center text-gray-500 dark:text-white/70">
       Loading metrics...
@@ -84,6 +98,7 @@ const LeadMetrics = () => {
       <CampaignWiseChart data={sourceData} name="Source" />
       <CampaignWiseChart data={mediumData} name="Medium" />
       <CampaignWiseChart data={campaignData} name="Campaign" />
+      <MonthlyUtmChart data={createdData} />
     </div>
   );
 };

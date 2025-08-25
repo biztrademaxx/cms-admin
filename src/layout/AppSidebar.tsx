@@ -16,10 +16,11 @@ import {
   // TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-// import Logo from "@/../public/images/logo/logo.png";
-// import LogoDark from "@/../public/images/logo/logo-dark.png";
+import Logo from "@/../public/images/logo/logo.png";
+import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
 import { PieChartIcon } from "lucide-react";
+import Image from "next/image";
 
 type NavItem = {
   name: string;
@@ -78,6 +79,7 @@ const AppSidebar: React.FC = () => {
         {
           name: "Overview",
           path: `/projects/participants`,
+          draft: true,
         },
         {
           name: "Exhibitors",
@@ -112,6 +114,7 @@ const AppSidebar: React.FC = () => {
         {
           name: "Agenda",
           path: `/projects/agenda`,
+          draft: true,
         },
       ],
     },
@@ -222,6 +225,8 @@ const AppSidebar: React.FC = () => {
                     <Link
                       href={subItem.draft ? "#" : subItem.path}
                       className={`menu-dropdown-item ${
+                        subItem.draft ? "cursor-not-allowed" : "cursor-pointer"
+                      } ${
                         isActive(subItem.path)
                           ? "menu-dropdown-item-active"
                           : "menu-dropdown-item-inactive"
@@ -232,12 +237,16 @@ const AppSidebar: React.FC = () => {
                         {subItem.new && (
                           <span
                             className={`ml-auto ${
+                              subItem.draft
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer"
+                            } ${
                               isActive(subItem.path)
                                 ? "menu-dropdown-badge-active"
                                 : "menu-dropdown-badge-inactive"
                             } menu-dropdown-badge `}
                           >
-                            new
+                            Draft
                           </span>
                         )}
                         {subItem.draft && (
@@ -349,32 +358,29 @@ const AppSidebar: React.FC = () => {
       >
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
-            // <>
-
-            //  <Image
-            //     className="dark:hidden"
-            //     src={Logo}
-            //     alt="Logo"
-            //     width={150}
-            //     height={40}
-            //   />
-            //   <Image
-            //     className="hidden dark:block"
-            //     src={LogoDark}
-            //     alt="Logo"
-            //     width={150}
-            //     height={40}
-            //   />
-            // </>
-            <h1 className="font-bold text-2xl dark:text-white">Mateen's CRM</h1>
+            <>
+              <Image
+                className="dark:hidden"
+                src={Logo}
+                alt="Logo"
+                width={150}
+                height={40}
+              />
+              <Image
+                className="hidden dark:block"
+                src={LogoDark}
+                alt="Logo"
+                width={150}
+                height={40}
+              />
+            </>
           ) : (
-            // <Image
-            //   src="/images/logo/logo-icon.png"
-            //   alt="Logo"
-            //   width={32}
-            //   height={32}
-            // />
-            <h1 className="font-bold text-lg dark:text-white">MCRM</h1>
+            <Image
+              src="/images/logo/logo-icon.png"
+              alt="Logo"
+              width={32}
+              height={32}
+            />
           )}
         </Link>
       </div>
