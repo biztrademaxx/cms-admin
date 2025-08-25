@@ -7,7 +7,6 @@ import { useFormik } from "formik";
 import { useMutation } from "@apollo/client";
 import {
   CreateSpeakerDocument,
-  CreateSpeakerInput,
   DeleteSpeakerDocument,
   GetSpeakersByProjectDocument,
   Status,
@@ -19,7 +18,6 @@ import SpeakersModal from "../modals/speakersModal";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import { Plus } from "lucide-react";
 import ExportButton from "../common/exportButton";
-import { stat } from "fs";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),

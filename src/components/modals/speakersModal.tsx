@@ -69,7 +69,7 @@ const SpeakersModal = ({
               {/* Profile Picture */}
               {formik.values.image ? (
                 <div className="mb-6">
-                  <Label>Profile Picture</Label>
+                  <Label>Profile Picture *</Label>
                   <div className="mt-3 flex items-start gap-4">
                     <img
                       src={formik.values.image}
@@ -87,7 +87,7 @@ const SpeakersModal = ({
                 </div>
               ) : (
                 <div className="mb-6">
-                  <Label>Profile Picture</Label>
+                  <Label>Profile Picture *</Label>
                   <DropzoneComponent
                     onImageUpload={(url) => {
                       formik.setFieldValue("image", url);
@@ -106,7 +106,7 @@ const SpeakersModal = ({
               {/* Organization Logo */}
               {formik.values.companyLogo ? (
                 <div className="mb-6">
-                  <Label>Organization Logo</Label>
+                  <Label>Organization Logo *</Label>
                   <div className="mt-3 flex items-start gap-4">
                     <img
                       src={formik.values.companyLogo}
@@ -124,7 +124,7 @@ const SpeakersModal = ({
                 </div>
               ) : (
                 <div className="mb-6">
-                  <Label>Organization Logo</Label>
+                  <Label>Organization Logo *</Label>
                   <DropzoneComponent
                     onImageUpload={(url) => {
                       formik.setFieldValue("companyLogo", url);
@@ -142,7 +142,7 @@ const SpeakersModal = ({
 
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
-              <Label>Name</Label>
+              <Label>Name *</Label>
               <Input
                 type="text"
                 name="name"
@@ -171,9 +171,8 @@ const SpeakersModal = ({
               </div>
             </div>
 
-
             <div>
-              <Label>Designation</Label>
+              <Label>Designation *</Label>
               <Input
                 type="text"
                 name="designation"
@@ -189,7 +188,7 @@ const SpeakersModal = ({
             </div>
 
             <div>
-              <Label>Company Name</Label>
+              <Label>Company Name *</Label>
               <Input
                 type="text"
                 name="companyName"
@@ -205,7 +204,7 @@ const SpeakersModal = ({
             </div>
 
             <div>
-              <Label>LinkedIn URL</Label>
+              <Label>LinkedIn URL *</Label>
               <Input
                 type="text"
                 name="linkedinUrl"
@@ -224,7 +223,7 @@ const SpeakersModal = ({
             <Label>Description</Label>
             <TextArea
               name="description"
-              placeholder="Short description about the Media Partner"
+              placeholder="Short description/biography about the Speaker"
               value={formik.values.description}
               onChange={formik.handleChange}
               hint={formik.touched.description ? formik.errors.description : ""}

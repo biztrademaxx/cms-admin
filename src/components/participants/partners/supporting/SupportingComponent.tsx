@@ -22,7 +22,6 @@ import { Plus } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
-  description: Yup.string().required("Description is required"),
   logoUrl: Yup.string()
     .required("Logo URL is required"),
   website: Yup.string()
@@ -65,9 +64,6 @@ const SupportingPartnersComponent = () => {
       featured: false,
       PartnerType: PartnerType.Supporting,
       Status: Status.Active,
-
-
-
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -80,7 +76,6 @@ const SupportingPartnersComponent = () => {
         projectId,
         name: values.name,
         description: values.description,
-        // linkedin: values.linkedin,
         partnerType: PartnerType.Supporting,
         status: Status.Active,
         logoUrl: logoFileOrUrl,
@@ -90,7 +85,7 @@ const SupportingPartnersComponent = () => {
         contactName: values.contactName,
         contactTitle: values.contactTitle,
         boothNumber: values.boothNumber,
-        hideFromParticipant: values.hideFromParticipant,
+        hideFromParticipant: values.hideFromParticipant || false,
         linkedinUrl: values.linkedinUrl,
         featured: values.featured,
         

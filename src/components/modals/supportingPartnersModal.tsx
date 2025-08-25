@@ -9,12 +9,11 @@ import Select from "../form/Select";
 import { ChevronDownIcon } from "lucide-react";
 import { Status } from "@/gql_generated/graphql";
 
-
 const options = [
   { value: Status.Active, label: "Active" },
   { value: Status.Inactive, label: "Inactive" },
   { value: Status.Pending, label: "Pending" },
-];  
+];
 type SupportingPartnersModalProps = {
   modal: {
     isOpen: boolean;
@@ -67,7 +66,7 @@ const SupportingPartnersModal = ({
           {/* Logo Upload */}
           {formik.values.logoUrl ? (
             <div className="mb-6">
-              <Label>Supporting Partner Logo</Label>
+              <Label>Supporting Partner Logo * </Label>
               <div className="mt-3 flex items-start gap-4">
                 <img
                   src={formik.values.logoUrl}
@@ -83,25 +82,25 @@ const SupportingPartnersModal = ({
                 </button>
               </div>
             </div>
-          ):(
+          ) : (
             <div className="mb-6">
-              <Label>Supporting Partner Logo</Label>
+              <Label>Supporting Partner Logo *</Label>
               <DropzoneComponent
                 onImageUpload={(url) => {
                   formik.setFieldValue("logoUrl", url);
                 }}
               />
-               {formik.touched.logoUrl && formik.errors.logoUrl && (
-              <p className="text-xs text-red-500 mt-1">{formik.errors.logoUrl}</p>
-            )}
+              {formik.touched.logoUrl && formik.errors.logoUrl && (
+                <p className="text-xs text-red-500 mt-1">
+                  {formik.errors.logoUrl}
+                </p>
+              )}
             </div>
-          
-            
           )}
 
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
-              <Label>Name</Label>
+              <Label>Name *</Label>
               <Input
                 type="text"
                 name="name"
@@ -114,10 +113,8 @@ const SupportingPartnersModal = ({
               />
             </div>
 
-
-
             <div>
-              <Label>Website</Label>
+              <Label>Website *</Label>
               <Input
                 type="text"
                 name="website"
@@ -130,7 +127,7 @@ const SupportingPartnersModal = ({
               />
             </div>
 
-                        <div>
+            <div>
               <Label>Linkedin</Label>
               <Input
                 type="text"
@@ -139,12 +136,14 @@ const SupportingPartnersModal = ({
                 value={formik.values.linkedinUrl}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                hint={formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""}
+                hint={
+                  formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""
+                }
                 error={formik.touched.linkedinUrl && formik.errors.linkedinUrl}
               />
             </div>
 
-                        <div>
+            <div>
               <Label>Address</Label>
               <Input
                 type="text"
@@ -158,7 +157,6 @@ const SupportingPartnersModal = ({
               />
             </div>
 
-
             <div>
               <Label>Booth Number</Label>
               <Input
@@ -167,13 +165,15 @@ const SupportingPartnersModal = ({
                 placeholder="Booth Number"
                 value={formik.values.boothNumber}
                 onChange={formik.handleChange}
-                hint={formik.touched.boothNumber ? formik.errors.boothNumber : ""}
+                hint={
+                  formik.touched.boothNumber ? formik.errors.boothNumber : ""
+                }
                 error={formik.touched.boothNumber && formik.errors.boothNumber}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-             <div>
+            <div>
               <Label>Status</Label>
               <div className="relative">
                 <Select
@@ -188,11 +188,9 @@ const SupportingPartnersModal = ({
               </div>
             </div>
 
-
-
             {/* / */}
 
-             <div>
+            <div>
               <Label>Contact Email</Label>
               <Input
                 type="text"
@@ -200,13 +198,17 @@ const SupportingPartnersModal = ({
                 placeholder="Contact Email"
                 value={formik.values.contactEmail}
                 onChange={formik.handleChange}
-                hint={formik.touched.contactEmail ? formik.errors.contactEmail : ""}
-                error={formik.touched.contactEmail && formik.errors.contactEmail}
+                hint={
+                  formik.touched.contactEmail ? formik.errors.contactEmail : ""
+                }
+                error={
+                  formik.touched.contactEmail && formik.errors.contactEmail
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                                  <div>
+            <div>
               <Label>Contact Name</Label>
               <Input
                 type="text"
@@ -214,43 +216,47 @@ const SupportingPartnersModal = ({
                 placeholder="Contact Name"
                 value={formik.values.contactName}
                 onChange={formik.handleChange}
-                hint={formik.touched.contactName ? formik.errors.contactName : ""}
+                hint={
+                  formik.touched.contactName ? formik.errors.contactName : ""
+                }
                 error={formik.touched.contactName && formik.errors.contactName}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                                  <div>
+            <div>
               <Label>Contact Title</Label>
               <Input
                 type="text"
                 name="contactTitle"
                 placeholder="Contact Title"
-                value={formik.values. contactTitle}
+                value={formik.values.contactTitle}
                 onChange={formik.handleChange}
-                hint={formik.touched. contactTitle ? formik.errors.  contactTitle : ""}
-                error={formik.touched.  contactTitle && formik.errors.  contactTitle}
+                hint={
+                  formik.touched.contactTitle ? formik.errors.contactTitle : ""
+                }
+                error={
+                  formik.touched.contactTitle && formik.errors.contactTitle
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
 
-            
-                                  <div>
+            <div>
               <Label>Featured</Label>
               <Input
                 type="text"
                 name="featured"
                 placeholder="Featured"
-                value={formik.values. featured}
+                value={formik.values.featured}
                 onChange={formik.handleChange}
-                hint={formik.touched. featured ? formik.errors.  featured : ""}
-                error={formik.touched.  featured && formik.errors.  featured}
+                hint={formik.touched.featured ? formik.errors.featured : ""}
+                error={formik.touched.featured && formik.errors.featured}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-            
-                                  <div>
+            {/* <div>
               <Label>Hide From Participants</Label>
               <Input
                 type="text"
@@ -262,7 +268,7 @@ const SupportingPartnersModal = ({
                 error={formik.touched.  hideFromParticipant && formik.errors.  hideFromParticipant}
                 onBlur={formik.handleBlur}
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="mt-6">
@@ -277,14 +283,6 @@ const SupportingPartnersModal = ({
               error={formik.touched.description && formik.errors.description}
             />
           </div>
-
-    
-
-
-                     
-
-
-
         </div>
 
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">

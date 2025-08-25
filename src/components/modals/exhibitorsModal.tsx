@@ -65,7 +65,7 @@ const ExhibitorsModal = ({
         <div className="px-2 overflow-y-auto custom-scrollbar">
           {formik.values.logoUrl ?  (
               <div>
-                <Label>Exhibitor Logo</Label>
+                <Label>Exhibitor Logo *</Label>
                 <div className="mt-3 flex items-start gap-4">
                   <img
                     src={formik.values.logoUrl}
@@ -84,7 +84,7 @@ const ExhibitorsModal = ({
             ):
             (
                <div className="mb-6 ">
-              <Label>Exhibitor Logo</Label>
+              <Label>Exhibitor Logo *</Label>
               <DropzoneComponent
                 onImageUpload={(url) => {
                   formik.setFieldValue("logoUrl", url);
@@ -100,7 +100,7 @@ const ExhibitorsModal = ({
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
          
             <div>
-              <Label>Company Name</Label>
+              <Label>Company Name *</Label>
               <Input
                 type="text"
                 name="companyName"
@@ -131,7 +131,7 @@ const ExhibitorsModal = ({
           </div>
 
             <div>
-              <Label>LinkedIn URL</Label>
+              <Label>LinkedIn URL *</Label>
               <Input
                 type="text"
                 name="linkedinUrl"
@@ -145,7 +145,7 @@ const ExhibitorsModal = ({
             </div>
 
             <div>
-              <Label>Contact Email</Label>
+              <Label>Contact Email </Label>
               <Input
                 type="text"
                 name="contactEmail"
@@ -209,7 +209,7 @@ const ExhibitorsModal = ({
             </div>
            
             <div>
-              <Label>Website</Label>
+              <Label>Website *</Label>
               <Input
                 type="text"
                 name="website"
@@ -226,7 +226,7 @@ const ExhibitorsModal = ({
 
 
           <div className="mt-6">
-            <Label>Description</Label>
+            <Label>Description * </Label>
             <TextArea
               name="description"
               placeholder="Short description about the exhibitor"

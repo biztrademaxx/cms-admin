@@ -5,24 +5,16 @@ import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import TextArea from "../form/input/TextArea";
 import DropzoneComponent from "../form/DropZone";
-import {  PartnerType, Status } from "@/gql_generated/graphql";
+import { PartnerType, Status } from "@/gql_generated/graphql";
 import Select from "../form/Select";
 import { ChevronDownIcon } from "lucide-react";
-
 
 const options = [
   { value: Status.Active, label: "Active" },
   { value: Status.Inactive, label: "Inactive" },
   { value: Status.Pending, label: "Pending" },
-];  
-
-
-const partnerOptions = [
-  { value: PartnerType.Media, label: "Media" },
-  { value: PartnerType.Supporting, label: "Supporting" },
-  { value: PartnerType.Strategic, label: "Strategic" },
-  { value: PartnerType.Community, label: "Community" },
 ];
+
 type MediaPartnersModalProps = {
   modal: {
     isOpen: boolean;
@@ -75,7 +67,7 @@ const MediaPartnersModal = ({
           {/* Logo Upload */}
           {!formik.values.logoUrl && (
             <div className="mb-6">
-              <Label>Media Partner Logo</Label>
+              <Label>Media Partner Logo *</Label>
               <DropzoneComponent
                 onImageUpload={(url) => {
                   formik.setFieldValue("logoUrl", url);
@@ -86,7 +78,7 @@ const MediaPartnersModal = ({
 
           {formik.values.logoUrl && (
             <div className="mb-6">
-              <Label>Media Partner Logo</Label>
+              <Label>Media Partner Logo *</Label>
               <div className="mt-3 flex items-start gap-4">
                 <img
                   src={formik.values.logoUrl}
@@ -107,7 +99,7 @@ const MediaPartnersModal = ({
           {/* Name */}
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
             <div>
-              <Label>Name</Label>
+              <Label>Name *</Label>
               <Input
                 type="text"
                 name="name"
@@ -119,7 +111,7 @@ const MediaPartnersModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
-                        <div>
+            <div>
               <Label>Address</Label>
               <Input
                 type="text"
@@ -133,7 +125,7 @@ const MediaPartnersModal = ({
               />
             </div>
 
-                      <div>
+            <div>
               <Label>Status</Label>
               <div className="relative">
                 <Select
@@ -148,24 +140,7 @@ const MediaPartnersModal = ({
               </div>
             </div>
 
-                                  <div>
-              <Label>Partner Type</Label>
-              <div className="relative">
-                <Select
-                  options={partnerOptions}
-                  placeholder="Select Type Of Partner"
-                  defaultValue={formik.values.partnerType}
-                  onChange={formik.handleChange}
-                />
-                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-                  <ChevronDownIcon />
-                </span>
-              </div>
-            </div>
-
-   
-
-                        <div>
+            <div>
               <Label>Booth Number</Label>
               <Input
                 type="text"
@@ -173,13 +148,15 @@ const MediaPartnersModal = ({
                 placeholder="Booth Number"
                 value={formik.values.boothNumber}
                 onChange={formik.handleChange}
-                hint={formik.touched.boothNumber ? formik.errors.boothNumber : ""}
+                hint={
+                  formik.touched.boothNumber ? formik.errors.boothNumber : ""
+                }
                 error={formik.touched.boothNumber && formik.errors.boothNumber}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                        <div>
+            <div>
               <Label>Contact Email</Label>
               <Input
                 type="text"
@@ -187,13 +164,17 @@ const MediaPartnersModal = ({
                 placeholder="Contact Email"
                 value={formik.values.contactEmail}
                 onChange={formik.handleChange}
-                hint={formik.touched.contactEmail ? formik.errors.contactEmail : ""}
-                error={formik.touched.contactEmail && formik.errors.contactEmail}
+                hint={
+                  formik.touched.contactEmail ? formik.errors.contactEmail : ""
+                }
+                error={
+                  formik.touched.contactEmail && formik.errors.contactEmail
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                        <div>
+            <div>
               <Label>Contact Name</Label>
               <Input
                 type="text"
@@ -201,13 +182,15 @@ const MediaPartnersModal = ({
                 placeholder="Contact Name"
                 value={formik.values.contactName}
                 onChange={formik.handleChange}
-                hint={formik.touched.contactName ? formik.errors.contactName : ""}
+                hint={
+                  formik.touched.contactName ? formik.errors.contactName : ""
+                }
                 error={formik.touched.contactName && formik.errors.contactName}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                        <div>
+            <div>
               <Label>Contact Title</Label>
               <Input
                 type="text"
@@ -215,27 +198,44 @@ const MediaPartnersModal = ({
                 placeholder="Contact Title"
                 value={formik.values.contactTitle}
                 onChange={formik.handleChange}
-                hint={formik.touched.contactTitle ? formik.errors.contactTitle : ""}
-                error={formik.touched.contactTitle && formik.errors.contactTitle}
+                hint={
+                  formik.touched.contactTitle ? formik.errors.contactTitle : ""
+                }
+                error={
+                  formik.touched.contactTitle && formik.errors.contactTitle
+                }
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                        <div>
+            {/* <div>
               <Label>Hide From Participant</Label>
-              <Input
-                type="text"
-                name="hideFromParticipants"
-                placeholder="Hide From Participants"
-                value={formik.values.hideFromParticipant}
-                onChange={formik.handleChange}
-                hint={formik.touched.hideFromParticipant ? formik.errors.hideFromParticipant : ""}
-                error={formik.touched.hideFromParticipant && formik.errors.hideFromParticipant}
-                onBlur={formik.handleBlur}
-              />
-            </div>
+              <div className="relative">
+                <Select
+                  options={[
+                    { value: true, label: "Yes" },
+                    { value: false, label: "No" },
+                  ]}
+                  placeholder="Select Status"
+                  defaultValue={formik.values.hideFromParticipant}
+                  onChange={(e) =>
+                    formik.setFieldValue("hideFromParticipant", e)
+                  }
+                  className="dark:bg-dark-900"
+                />
+                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                  <ChevronDownIcon />
+                </span>
+                {formik.touched.hideFromParticipant &&
+                  formik.errors.hideFromParticipant && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {formik.errors.hideFromParticipant}
+                    </p>
+                  )}
+              </div>
+            </div> */}
 
-                        <div>
+            <div>
               <Label>Linkedin Url</Label>
               <Input
                 type="text"
@@ -243,13 +243,15 @@ const MediaPartnersModal = ({
                 placeholder="Linkedin Url"
                 value={formik.values.linkedinUrl}
                 onChange={formik.handleChange}
-                hint={formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""}
+                hint={
+                  formik.touched.linkedinUrl ? formik.errors.linkedinUrl : ""
+                }
                 error={formik.touched.linkedinUrl && formik.errors.linkedinUrl}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-                        {/* <div>
+            {/* <div>
               <Label>Partner Type</Label>
               <Input
                 type="text"
@@ -262,9 +264,6 @@ const MediaPartnersModal = ({
                 onBlur={formik.handleBlur}
               />
             </div> */}
-            
-
-            
 
             {/* Website */}
             <div>
@@ -295,12 +294,7 @@ const MediaPartnersModal = ({
               onBlur={formik.handleBlur}
             />
           </div>
-          
-          
         </div>
-
-        
-        
 
         {/* Footer Buttons */}
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">

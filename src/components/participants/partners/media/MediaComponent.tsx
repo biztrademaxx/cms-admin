@@ -42,7 +42,7 @@ const MediaPartnersComponent = () => {
   });
 
   const modal = useModal();
-console.log("koo",PartnerType.Media);
+  console.log("koo", PartnerType.Media);
   const formik = useFormik({
     initialValues: {
       id: "",
@@ -73,17 +73,16 @@ console.log("koo",PartnerType.Media);
         name: values.name,
         description: values.description,
         logoUrl: logoFileOrUrl,
-        partnerType: values.partnerType as PartnerType,
-        status: Status.Active, 
+        partnerType: PartnerType.Media,
+        status: values.status,
         website: values.website,
         address: values.address,
         contactEmail: values.contactEmail,
         contactName: values.contactName,
         contactTitle: values.contactTitle,
         boothNumber: values.boothNumber,
-        hideFromParticipant: values.hideFromParticipant,
-        linkedinUrl: values.linkedinUrl
-        
+        hideFromParticipant: values.hideFromParticipant || false,
+        linkedinUrl: values.linkedinUrl,
       };
 
       if (values.id) {
@@ -118,7 +117,9 @@ console.log("koo",PartnerType.Media);
             <ExportButton
               query={GetPartnersByProjectDocument}
               projectId={projectId}
-              queryVariables={{ input: { projectId, partnerType: PartnerType.Media } }}
+              queryVariables={{
+                input: { projectId, partnerType: PartnerType.Media },
+              }}
               dataKey="getPartnersByProject"
               fileName={`media_partners_${projectName || projectId}`}
               label="Export CSV"
@@ -130,7 +131,9 @@ console.log("koo",PartnerType.Media);
             title="Media Partners"
             query={GetPartnersByProjectDocument}
             deleteMutation={DeletePartnerDocument}
-            queryVariables={{input:{projectId : projectId ,partnerType: PartnerType.Media} }}
+            queryVariables={{
+              input: { projectId: projectId, partnerType: PartnerType.Media },
+            }}
             formik={formik}
             modal={modal}
             ModalComponent={MediaPartnersModal}
@@ -145,7 +148,7 @@ console.log("koo",PartnerType.Media);
               { key: "description", label: "Description", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
-             
+
               { key: "website", label: "Website", type: "link" },
               { key: "linkedinUrl", label: "Linkedin", type: "link" },
             ]}

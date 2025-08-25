@@ -85,7 +85,7 @@ const Select: React.FC<SelectProps> = ({
   placeholder = "Select an option",
   onChange,
   className = "",
-  defaultValue = "",
+  defaultValue = "" ,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
 
