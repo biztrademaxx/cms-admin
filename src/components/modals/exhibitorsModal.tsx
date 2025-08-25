@@ -163,6 +163,22 @@ const ExhibitorsModal = ({
               />
             </div>
 
+             <div>
+              <Label>Badge</Label>
+              <Input
+                type="badge"
+                name="badge"
+                placeholder="Badge"
+                value={formik.values.badge}
+                onChange={formik.handleChange}
+                hint={
+                  formik.touched.badge ? formik.errors.badge : ""
+                }
+                error={formik.touched.badge && formik.errors.badge}
+                onBlur={formik.handleBlur}
+              />
+            </div>
+
             <div>
               <Label>Contact Name</Label>
               <Input
@@ -226,6 +242,20 @@ const ExhibitorsModal = ({
                 onChange={formik.handleChange}
               />
             </div>
+
+            <div>
+            <Label>Address</Label>
+            <Input
+              type="text"
+              name="address"
+              placeholder="Address"
+              value={formik.values.address}
+              onChange={formik.handleChange}
+              hint={formik.touched.address ? formik.errors.address : ""}
+              error={formik.touched.address && formik.errors.address}
+              onBlur={formik.handleBlur}
+            />
+          </div>
           </div>
 
           <div className="mt-6">
@@ -241,19 +271,7 @@ const ExhibitorsModal = ({
             />
           </div>
 
-          <div>
-            <Label>Address</Label>
-            <Input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={formik.values.address}
-              onChange={formik.handleChange}
-              hint={formik.touched.address ? formik.errors.address : ""}
-              error={formik.touched.address && formik.errors.address}
-              onBlur={formik.handleBlur}
-            />
-          </div>
+          
         </div>
 
         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">

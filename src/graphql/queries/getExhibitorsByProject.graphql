@@ -2,6 +2,7 @@ query GetExhibitorsByProject($projectId: String!) {
   getExhibitorsByProject(projectId: $projectId) {
         address
         boothNumber
+        badge
         companyName
         contactEmail
         contactName

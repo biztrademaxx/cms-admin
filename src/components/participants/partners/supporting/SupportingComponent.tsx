@@ -61,6 +61,7 @@ const SupportingPartnersComponent = () => {
       featured: false,
       PartnerType: PartnerType.Supporting,
       Status: Status.Active,
+      badge: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -85,6 +86,7 @@ const SupportingPartnersComponent = () => {
         hideFromParticipant: values.hideFromParticipant || false,
         linkedinUrl: values.linkedinUrl,
         featured: values.featured,
+        badge: values.badge,
       };
 
       if (values.id) {
@@ -162,7 +164,10 @@ const SupportingPartnersComponent = () => {
 
               { key: "contactEmail", label: "Contact Email", type: "text" },
 
+
               { key: "boothNumber", label: "Booth Number", type: "text" },
+              { key: "badge", label: "Badge", type: "text" },
+              
             ]}
           />
         </div>

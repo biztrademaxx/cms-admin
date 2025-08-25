@@ -279,6 +279,20 @@ const MediaPartnersModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
+
+             <div>
+              <Label>Badge</Label>
+              <Input
+                type="text"
+                name="badge"
+                placeholder="Media Partner"
+                value={formik.values.badge}
+                onChange={formik.handleChange}
+                hint={formik.touched.badge ? formik.errors.badge : ""}
+                error={formik.touched.badge && formik.errors.badge}
+                onBlur={formik.handleBlur}
+              />
+            </div>
           </div>
 
           {/* Description */}

@@ -2,6 +2,7 @@ query GetPartnersByProject($input:GetPartnersByProjectInput!) {
   getPartnersByProject(input:$input) {
     address
     boothNumber
+    badge
     contactEmail
     contactName
     contactTitle
