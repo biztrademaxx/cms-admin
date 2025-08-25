@@ -18,6 +18,7 @@ query getSpeakersByProject($projectId: String!) {
         website
         xUrl
         youtubeUrl
+        description
 
     }
 }

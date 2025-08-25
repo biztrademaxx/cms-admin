@@ -141,7 +141,6 @@ const SpeakersComponent = () => {
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
               { key: "designation", label: "Designation", type: "text" },
-              { key: "linkedinUrl", label: "LinkedIn", type: "link" },
             ]}
           />
         </div>
