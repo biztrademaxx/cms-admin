@@ -19,10 +19,10 @@ import MediaPartnersModal from "@/components/modals/mediaPartnersModal";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import { Plus } from "lucide-react";
 import ExportButton from "@/components/common/exportButton";
+import { link } from "fs";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Company name is required"),
-  description: Yup.string().required("Description is required"),
   logoUrl: Yup.string().required("Logo URL is required"),
   website: Yup.string().required("Website is required"),
 });
@@ -42,7 +42,7 @@ const MediaPartnersComponent = () => {
   });
 
   const modal = useModal();
-
+console.log("koo",PartnerType.Media);
   const formik = useFormik({
     initialValues: {
       id: "",
@@ -50,6 +50,15 @@ const MediaPartnersComponent = () => {
       description: "",
       logoUrl: "",
       website: "",
+      address: "",
+      contactEmail: "",
+      contactName: "",
+      contactTitle: "",
+      boothNumber: "",
+      hideFromParticipant: false,
+      linkedinUrl: "",
+      partnerType: PartnerType.Media,
+      status: Status.Active,
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -64,9 +73,17 @@ const MediaPartnersComponent = () => {
         name: values.name,
         description: values.description,
         logoUrl: logoFileOrUrl,
-        partnerType: PartnerType.Media,
+        partnerType: values.partnerType as PartnerType,
         status: Status.Active, 
         website: values.website,
+        address: values.address,
+        contactEmail: values.contactEmail,
+        contactName: values.contactName,
+        contactTitle: values.contactTitle,
+        boothNumber: values.boothNumber,
+        hideFromParticipant: values.hideFromParticipant,
+        linkedinUrl: values.linkedinUrl
+        
       };
 
       if (values.id) {
@@ -128,6 +145,9 @@ const MediaPartnersComponent = () => {
               { key: "description", label: "Description", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
+             
+              { key: "website", label: "Website", type: "link" },
+              { key: "linkedinUrl", label: "Linkedin", type: "link" },
             ]}
           />
         </div>

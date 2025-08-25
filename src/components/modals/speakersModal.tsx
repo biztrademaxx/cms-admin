@@ -4,6 +4,15 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 import DropzoneComponent from "../form/DropZone";
+import Select from "../form/Select";
+import { ChevronDownIcon } from "lucide-react";
+import { Status } from "@/gql_generated/graphql";
+
+const options = [
+  { value: Status.Active, label: "Active" },
+  { value: Status.Inactive, label: "Inactive" },
+  { value: Status.Pending, label: "Pending" },
+];           
 import TextArea from "../form/input/TextArea";
 
 type SpeakersModalProps = {
@@ -145,6 +154,23 @@ const SpeakersModal = ({
                 onBlur={formik.handleBlur}
               />
             </div>
+
+            
+ <div>
+              <Label>Status</Label>
+              <div className="relative">
+                <Select
+                  options={options}
+                  placeholder="Select Status"
+                  defaultValue={formik.values.status}
+                  onChange={formik.handleChange}
+                />
+                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                  <ChevronDownIcon />
+                </span>
+              </div>
+            </div>
+
 
             <div>
               <Label>Designation</Label>

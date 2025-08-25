@@ -55,6 +55,19 @@ const SupportingPartnersComponent = () => {
       description: "",
       logoUrl: "",
       website: "",
+      address: "",
+      contactEmail: "",
+      contactName: "",
+      contactTitle: "",
+      boothNumber: "",
+      hideFromParticipant: false,
+      linkedinUrl: "",
+      featured: false,
+      PartnerType: PartnerType.Supporting,
+      Status: Status.Active,
+
+
+
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -70,9 +83,17 @@ const SupportingPartnersComponent = () => {
         // linkedin: values.linkedin,
         partnerType: PartnerType.Supporting,
         status: Status.Active,
-
         logoUrl: logoFileOrUrl,
         website: values.website,
+        address: values.address,
+        contactEmail: values.contactEmail,
+        contactName: values.contactName,
+        contactTitle: values.contactTitle,
+        boothNumber: values.boothNumber,
+        hideFromParticipant: values.hideFromParticipant,
+        linkedinUrl: values.linkedinUrl,
+        featured: values.featured,
+        
       };
 
       if (values.id) {
@@ -135,6 +156,20 @@ const SupportingPartnersComponent = () => {
               { key: "description", label: "Description", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
+
+              { key: "website", label: "Website", type: "link" },
+              { key: "linkedinUrl", label: "Linkedin", type: "link" },
+        
+
+              { key: "contactName", label: "Contact Name", type: "text" },
+            
+              { key: "contactEmail", label: "Contact Email", type: "text" },
+          
+          
+              { key: "boothNumber", label: "Booth Number", type: "text" },
+        
+          
+
             ]}
           />
         </div>

@@ -10,6 +10,7 @@ import {
   CreateSpeakerInput,
   DeleteSpeakerDocument,
   GetSpeakersByProjectDocument,
+  Status,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "../common/PageBreadCrumb";
@@ -18,16 +19,14 @@ import SpeakersModal from "../modals/speakersModal";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
 import { Plus } from "lucide-react";
 import ExportButton from "../common/exportButton";
+import { stat } from "fs";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Speaker name is required"),
   companyName: Yup.string().required("Company name is required"),
-  linkedinUrl: Yup.string()
-    .required("Linkedin URL is required"),
-  image: Yup.string()
-    .required("Profile picture is required"),
-  companyLogo: Yup.string()
-    .required("Logo is required"),
+  linkedinUrl: Yup.string().required("Linkedin URL is required"),
+  image: Yup.string().required("Profile picture is required"),
+  companyLogo: Yup.string().required("Logo is required"),
   designation: Yup.string().required("Designation is required"),
 });
 const SpeakersComponent = () => {
@@ -55,19 +54,23 @@ const SpeakersComponent = () => {
       image: "",
       designation: "",
       companyLogo: "",
-      description:"",
+      description: "",
       companyName: "",
+      status: Status.Active,
     },
     validationSchema,
     onSubmit: async (values) => {
       let logoFileOrUrl = formik.values.image;
       let companyLogoFileOrUrl = formik.values.companyLogo;
-      if (typeof logoFileOrUrl  === "string" && isBase64(logoFileOrUrl)) {
+      if (typeof logoFileOrUrl === "string" && isBase64(logoFileOrUrl)) {
         const file = base64ToFile(logoFileOrUrl, "uploaded-image.png");
         logoFileOrUrl = await uploadImageToCloud(file);
       }
 
-       if (typeof companyLogoFileOrUrl  === "string" && isBase64(companyLogoFileOrUrl)) {
+      if (
+        typeof companyLogoFileOrUrl === "string" &&
+        isBase64(companyLogoFileOrUrl)
+      ) {
         const file = base64ToFile(companyLogoFileOrUrl, "uploaded-image.png");
         companyLogoFileOrUrl = await uploadImageToCloud(file);
       }
@@ -79,7 +82,8 @@ const SpeakersComponent = () => {
         designation: values.designation,
         companyLogo: companyLogoFileOrUrl,
         companyName: values.companyName,
-        description:values.description
+        status: values.status,
+        description: values.description,
       };
 
       if (values.id) {
@@ -138,6 +142,8 @@ const SpeakersComponent = () => {
               { key: "description", label: "Description", type: "text" },
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
+              { key: "designation", label: "Designation", type: "text" },
+              { key: "linkedinUrl", label: "LinkedIn", type: "link" },
             ]}
           />
         </div>

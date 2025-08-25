@@ -1,4 +1,4 @@
-query GetUtmByProjectId($id: String!, $input: GroupLeadsInput!) {
+query GetUtmByProjectId($id: String!, $input:  GroupLeadsInput!) {
   getUtmByProject(id: $id) {
     campaign
     content
