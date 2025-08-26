@@ -55,6 +55,8 @@ const SpeakersComponent = () => {
       description: "",
       companyName: "",
       status: Status.Active,
+      seqNo: 0,
+      
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -82,6 +84,7 @@ const SpeakersComponent = () => {
         companyName: values.companyName,
         status: values.status,
         description: values.description,
+        // seqNo: values.seqNo
       };
 
       if (values.id) {
@@ -141,6 +144,7 @@ const SpeakersComponent = () => {
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
               { key: "designation", label: "Designation", type: "text" },
+              { key: "seqNo", label: "Seq No", type: "text" },
             ]}
           />
         </div>

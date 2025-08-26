@@ -57,6 +57,7 @@ const ExhibitorsComponent = () => {
       boothNumber: "",
       status: Status.Active,
       badge:"",
+      seqNo:0
 
 
     },
@@ -138,6 +139,7 @@ const ExhibitorsComponent = () => {
               { key: "createdAt", label: "Created At", type: "date" },
               { key: "boothNumber", label: "Booth Number", type: "text" },
               { key: "badge", label: "Badge", type: "text" },
+              { key: "seqNo", label: "Seq No", type: "text" },
 
 
 

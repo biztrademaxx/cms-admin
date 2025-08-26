@@ -62,7 +62,8 @@ const SponsorsComponent = () => {
       description:"",
       status: Status.Active,
       address: "",
-      hideFromParticipant: false
+      hideFromParticipant: false,
+      seqNo: 0,
     },
     validationSchema,
 
@@ -155,6 +156,7 @@ const SponsorsComponent = () => {
               // { key: "contactName", label: "Contact Name", type: "text" },
               // { key: "contactTitle", label: "Contact Title", type: "text" },
               { key: "contactEmail", label: "Contact Email", type: "text" },
+               { key: "seqNo", label: "Seq No", type: "text" },
             ]}
           />
         </div>
