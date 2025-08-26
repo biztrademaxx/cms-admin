@@ -263,7 +263,7 @@ export default function CreateProjectForm() {
                 options={statusOptions}
                 placeholder="Select an option"
                 defaultValue={formik.values.status}
-                onChange={(e) => handleSelectChange("status", e)}
+                onChange={(e) => formik.setFieldValue("status", e)}
                 className="dark:bg-dark-900"
               />
               <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
@@ -291,7 +291,7 @@ export default function CreateProjectForm() {
 
           {/* Start Date */}
           <div>
-            <Label>Start Date *</Label>
+            <Label>Start Date</Label>
             <div>
               <DatePicker
                 id="start-time-date-picker"
@@ -333,13 +333,13 @@ export default function CreateProjectForm() {
 
           {/* Currency */}
           <div>
-            <Label>Currency</Label>
+            <Label>Currency *</Label>
             <div className="relative">
               <Select
                 options={options}
                 placeholder="Select an option"
                 defaultValue={formik.values.currency}
-                onChange={(e) => handleSelectChange("currency", e)}
+                onChange={(e) => formik.setFieldValue("currency", e)}
                 className="dark:bg-dark-900"
               />
               <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
