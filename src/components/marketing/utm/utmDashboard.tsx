@@ -39,11 +39,12 @@ export default function UTMDashboard({
     variables: {
       id: projectId,
       input: {
-        groupBy: [LeadScalarFieldEnum.UtmSource, LeadScalarFieldEnum.UtmMedium],
+        groupBy: [LeadScalarFieldEnum.UtmSource],
         projectId,
       },
     },
   });
+
   const handleCopy = async (entry: UTMEntry | any) => {
     const { source, medium, campaign, term, content, url } = entry;
     const text = generateUTM({
@@ -62,28 +63,47 @@ export default function UTMDashboard({
     openModal();
     setSelectedEntry(entry);
   };
+
   let uniqueClicks = 0;
   let visits = 0;
+
+  // 🔹 Lookup map for quick table access
+  let utmStats: Record<string, { visits: number; uniqueClicks: number }> = {};
+
   if (utmData?.getLeadsGroupedByField) {
-    const unknown = utmData?.getLeadsGroupedByField.find(
-      (item: any) => item.group === "Unknown"
+    const utmSourceData = utmData.getLeadsGroupedByField.find(
+      (f: any) => f.field === "utmSource"
     );
-    if (unknown) {
-      utmData.getLeadsGroupedByField.splice(
-        utmData.getLeadsGroupedByField.indexOf(unknown),
-        1
+
+    if (utmSourceData) {
+      const groups = utmSourceData.groups.filter(
+        (g: any) => g.group !== "Unknown"
       );
+
+      // Total visits = sum of counts
+      visits = groups.reduce((acc: number, group: any) => acc + group.count, 0);
+
+      // Collect all emails across groups for global unique clicks
+      const allEmails = groups.flatMap(
+        (g: any) => g.leads?.map((lead: any) => lead.email?.toLowerCase()) || []
+      );
+      const uniqueEmails = new Set(allEmails.filter(Boolean));
+      uniqueClicks = uniqueEmails.size;
+
+      // Build stats per group for table rows
+      groups.forEach((g: any) => {
+        const emails =
+          g.leads?.map((lead: any) => lead.email?.toLowerCase()) || [];
+        const uniqueEmailsInGroup = new Set(emails.filter(Boolean));
+
+        utmStats[g.group] = {
+          visits: g.count,
+          uniqueClicks: uniqueEmailsInGroup.size, // ✅ correct per-campaign unique emails
+        };
+      });
     }
-    visits = utmData?.getLeadsGroupedByField.reduce(
-      (acc: number, item: any) => acc + item.count,
-      0
-    );
-    uniqueClicks = utmData?.getLeadsGroupedByField.length;
-    visits = utmData?.getLeadsGroupedByField.reduce(
-      (acc: number, item: any) => acc + item.count,
-      0
-    );
   }
+
   const utmMetrics = [
     {
       title: "Total Visits",
@@ -156,77 +176,77 @@ export default function UTMDashboard({
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {utmData?.getUtmByProject?.map((entry) => (
-                  <TableRow key={entry.id}>
-                    <TableCell className="px-5 py-4 text-start">
-                      <div>
-                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {entry.campaign}
+                {utmData?.getUtmByProject?.map((entry) => {
+                  const stats = utmStats[entry.source] || {
+                    visits: 0,
+                    uniqueClicks: 0,
+                  };
+
+                  return (
+                    <TableRow key={entry.id}>
+                      <TableCell className="px-5 py-4 text-start">
+                        <div>
+                          <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                            {entry.campaign}
+                          </span>
+                          <span className="block text-theme-xs text-gray-500 dark:text-gray-400 truncate max-w-[240px]">
+                            {entry.url}
+                          </span>
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
+                        <span className="block">{entry.source}</span>
+                        <span className="block text-theme-xs text-gray-400 dark:text-gray-500">
+                          {entry.medium}
                         </span>
-                        <span className="block text-theme-xs text-gray-500 dark:text-gray-400 truncate max-w-[240px]">
-                          {entry.url}
-                        </span>
-                      </div>
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      <span className="block">{entry.source}</span>
-                      <span className="block text-theme-xs text-gray-400 dark:text-gray-500">
-                        {entry.medium}
-                      </span>
-                    </TableCell>
+                      {/* ✅ Visits */}
+                      <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
+                        {stats.visits}
+                      </TableCell>
 
-                    <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      {"-"}
-                    </TableCell>
+                      {/* ✅ Unique Clicks */}
+                      <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
+                        {stats.uniqueClicks}
+                      </TableCell>
 
-                    <TableCell className="px-4 py-4 text-gray-600 text-theme-sm dark:text-gray-400">
-                      {"-"}
-                    </TableCell>
+                      <TableCell className="px-4 py-4 text-theme-sm text-gray-600 dark:text-gray-400">
+                        <Badge size="sm" color="success">
+                          Active
+                        </Badge>
+                      </TableCell>
 
-                    <TableCell className="px-4 py-4 text-theme-sm text-gray-600 dark:text-gray-400">
-                      <Badge
-                        size="sm"
-                        color={
-                          // entry?.status === "Active"
-                          //   ? "success"
-                          //   : entry?.status === "Paused"
-                          //   ? "warning"
-                          //   : "error"
-                          "success"
-                        }
-                      >
-                        {"Active"}
-                      </Badge>
-                    </TableCell>
-
-                    <TableCell className="px-4 py-4 gap-2 flex">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-theme-xs"
-                        onClick={() => handleCopy(entry)}
-                      >
-                        <ClipboardCopy className="h-4 w-4 mr-1" />
-                        Copy
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-theme-xs"
-                        onClick={() => handleEdit(entry)}
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        Preview
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell className="px-4 py-4 gap-2 flex">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-theme-xs"
+                          onClick={() => handleCopy(entry)}
+                        >
+                          <ClipboardCopy className="h-4 w-4 mr-1" />
+                          Copy
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-theme-xs"
+                          onClick={() => handleEdit(entry)}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          Preview
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
         </div>
       </div>
+
       <UtmModal
         modal={modal}
         editingItem={selectedEntry}

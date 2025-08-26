@@ -153,6 +153,7 @@ const MediaPartnersComponent = () => {
 
               { key: "website", label: "Website", type: "link" },
               { key: "linkedinUrl", label: "Linkedin", type: "link" },
+             { key: "boothNumber", label: "Booth Number", type: "text" },
             ]}
           />
         </div>
