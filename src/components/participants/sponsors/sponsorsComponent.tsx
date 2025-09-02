@@ -142,7 +142,7 @@ const SponsorsComponent = () => {
                 type: "avatar",
                 subTextKey: "website",
               },
-              { key: "boothNumber", label: "Booth", type: "text" },
+             
               { key:"linkedinUrl",label:"Linkedin",type:"link"},
               { key: "type", label: "Type", type: "text" },
               { key: "address", label: "Address", type: "text" },
@@ -157,6 +157,7 @@ const SponsorsComponent = () => {
               // { key: "contactTitle", label: "Contact Title", type: "text" },
               { key: "contactEmail", label: "Contact Email", type: "text" },
                { key: "seqNo", label: "Seq No", type: "text" },
+               { key: "boothNumber", label: "Booth", type: "text" },
             ]}
           />
         </div>
