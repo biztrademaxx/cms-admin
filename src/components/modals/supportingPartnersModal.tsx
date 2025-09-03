@@ -256,19 +256,19 @@ const SupportingPartnersModal = ({
               />
             </div>
 
-            {/* <div>
-              <Label>Hide From Participants</Label>
+            <div>
+              <Label>Badge</Label>
               <Input
-                type="text"
-                name="hideFromParticipants"
-                placeholder="Hide From Participants"
-                value={formik.values. hideFromParticipant}
+                type="badge"
+                name="badge"
+                placeholder="Supporting Partner"
+                value={formik.values. badge}
                 onChange={formik.handleChange}
-                hint={formik.touched. hideFromParticipant ? formik.errors.  hideFromParticipant : ""}
-                error={formik.touched.  hideFromParticipant && formik.errors.  hideFromParticipant}
+                hint={formik.touched. badge ? formik.errors.  badge : ""}
+                error={formik.touched.  badge && formik.errors.  badge}
                 onBlur={formik.handleBlur}
               />
-            </div> */}
+            </div>
           </div>
 
           <div className="mt-6">

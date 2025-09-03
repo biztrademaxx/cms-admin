@@ -61,6 +61,7 @@ const MediaPartnersComponent = () => {
       linkedinUrl: "",
       partnerType: PartnerType.Media,
       status: Status.Active,
+      badge: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -85,6 +86,8 @@ const MediaPartnersComponent = () => {
         boothNumber: values.boothNumber,
         hideFromParticipant: values.hideFromParticipant || false,
         linkedinUrl: values.linkedinUrl,
+        badge: values.badge,
+        
       };
 
       if (values.id) {
@@ -153,6 +156,7 @@ const MediaPartnersComponent = () => {
 
               { key: "website", label: "Website", type: "link" },
               { key: "linkedinUrl", label: "Linkedin", type: "link" },
+              { key: "badge", label: "Badge", type: "text" },
              { key: "boothNumber", label: "Booth Number", type: "text" },
             ]}
           />

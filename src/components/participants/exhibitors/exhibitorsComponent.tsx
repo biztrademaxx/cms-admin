@@ -56,6 +56,8 @@ const ExhibitorsComponent = () => {
       contactTitle: "",
       boothNumber: "",
       status: Status.Active,
+      badge:"",
+      seqNo:0
 
 
     },
@@ -79,6 +81,7 @@ const ExhibitorsComponent = () => {
         contactTitle: values.contactTitle,
         boothNumber: values.boothNumber,
         status: values.status,
+        badge: values.badge,
 
       };
 
@@ -135,7 +138,9 @@ const ExhibitorsComponent = () => {
               { key: "status", label: "Status", type: "badge" },
               { key: "createdAt", label: "Created At", type: "date" },
               { key: "boothNumber", label: "Booth Number", type: "text" },
-              // { key: "website", label: "Website", type: "link" },
+              { key: "badge", label: "Badge", type: "text" },
+              { key: "seqNo", label: "Seq No", type: "text" },
+
 
 
 
