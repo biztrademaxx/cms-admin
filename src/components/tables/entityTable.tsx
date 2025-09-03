@@ -348,29 +348,38 @@ export default function EntityTable({
             Reset
           </Button>
         </div>
-        {updateOrderMutation && (
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => setReOrder((prev) => !prev)}
-              variant="outline"
-              size="sm"
-            >
-              {reOrder ? "Cancel" : "ReOrder"}
-            </Button>
-            {reOrder && updateOrderMutation && (
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Showing {filteredData.length} of {tableData.length} {title}
+          </span>
+
+          {updateOrderMutation && (
+            <div className="flex items-center gap-2">
               <Button
+                onClick={() => setReOrder((prev) => !prev)}
+                variant="outline"
                 size="sm"
-                onClick={async () => {
-                  const payload = items.map(({ id, seqNo }) => ({ id, seqNo }));
-                  updateEnitityOrder({ variables: { inputs: payload } });
-                  setReOrder(false);
-                }}
               >
-                Save
+                {reOrder ? "Cancel" : "ReOrder"}
               </Button>
-            )}
-          </div>
-        )}
+              {reOrder && updateOrderMutation && (
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    const payload = items.map(({ id, seqNo }) => ({
+                      id,
+                      seqNo,
+                    }));
+                    updateEnitityOrder({ variables: { inputs: payload } });
+                    setReOrder(false);
+                  }}
+                >
+                  Save
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {!filteredData?.length ? (
