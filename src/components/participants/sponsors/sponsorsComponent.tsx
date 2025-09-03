@@ -7,6 +7,7 @@ import { useMutation } from "@apollo/client";
 import {
   CreateSponsorDocument,
   CreateSponsorInput,
+
   DeleteExhibitorDocument,
   GetSponsorByProjectDocument,
   SponsorType,
@@ -88,7 +89,7 @@ const SponsorsComponent = () => {
         contactName: values.contactName,
         contactTitle: values.contactTitle,
         hideFromParticipant: values.hideFromParticipant,
-
+        featured: false,
       };
 
       if (values.id) {

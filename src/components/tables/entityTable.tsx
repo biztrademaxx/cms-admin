@@ -1,28 +1,38 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
-  TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
 import { useMutation, useQuery, DocumentNode } from "@apollo/client";
+import {
+  UpdateExhibitorOrderDocument,
+  UpdateSponsorOrderDocument,
+} from "@/gql_generated/graphql";
 import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
+import Button from "../ui/button/Button";
 
-type ColumnType =
-  | "avatar"
-  | "text"
-  | "link"
-  | "badge"
-  | "date"
-  | "email"
-  | "id";
+// Row wrapper (always <tr>)
+export interface TableRowProps
+  extends React.HTMLAttributes<HTMLTableRowElement> {
+  children: React.ReactNode;
+}
+
+export function TableRow({ children, ...props }: TableRowProps) {
+  return <tr {...props}>{children}</tr>;
+}
+
+// Column config types
+type ColumnType = "avatar" | "text" | "link" | "badge" | "date" | "email" | "id";
 
 interface ColumnConfig {
   key: string;
@@ -40,7 +50,7 @@ interface EntityTableProps {
   ModalComponent: React.ComponentType<any>;
   dataKey: string;
   columns: ColumnConfig[];
-  actionSection?: Boolean;
+  actionSection?: boolean;
   queryVariables?: Record<string, any>;
 }
 
@@ -54,22 +64,34 @@ export default function EntityTable({
   dataKey,
   actionSection = true,
   columns,
-  queryVariables
+  queryVariables,
 }: EntityTableProps) {
   const { openModal } = modal;
   const router = useRouter();
   const projectId = useSelector((state: any) => state.project.projectId);
 
-  const [filters, setFilters] = useState({
-    search: "",
-    status: "",
-  });
+  const [filters, setFilters] = useState({ search: "", status: "" });
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [items, setItems] = useState<any[]>([]);
+  const [reOrder, setReOrder] = useState<boolean>(false);
 
   const [deleteEntity] = useMutation(deleteMutation, {
     onCompleted: () => setDeleteModalOpen(false),
     refetchQueries: [{ query, variables: { projectId } }],
+  });
+
+  const [updateExhibitorOrder] = useMutation(UpdateExhibitorOrderDocument, {
+    refetchQueries: [
+      { query, variables: queryVariables ? queryVariables : { projectId } },
+    ],
+  });
+
+  const [updateSponsorOrder] = useMutation(UpdateSponsorOrderDocument, {
+    refetchQueries: [
+      { query, variables: queryVariables ? queryVariables : { projectId } },
+    ],
   });
 
   const { data, loading, error } = useQuery(query, {
@@ -80,7 +102,7 @@ export default function EntityTable({
   const tableData = data?.[dataKey] || [];
 
   function isURL(str: string) {
-    const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
+    const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/i;
     return pattern.test(str);
   }
 
@@ -94,23 +116,48 @@ export default function EntityTable({
     await deleteEntity({ variables: { id: item.id } });
   };
 
-  type BadgeColor=
-    | "error"
-    | "success"
-    | "warning"
-    | "info"
-    
-const badgeColor: Record<
-  "ACTIVE" | "PENDING" | "SPONSOR" | "EXHIBITOR" | "DELEGATE" | "INACTIVE",
-  BadgeColor
-> = {
-  ACTIVE: "success",
-  PENDING: "warning",
-  SPONSOR: "success",
-  EXHIBITOR: "info",
-  DELEGATE: "error",
-  INACTIVE: "error",
-};
+  type BadgeColor = "error" | "success" | "warning" | "info";
+
+  const badgeColor: Record<
+    "ACTIVE" | "PENDING" | "SPONSOR" | "EXHIBITOR" | "DELEGATE" | "INACTIVE",
+    BadgeColor
+  > = {
+    ACTIVE: "success",
+    PENDING: "warning",
+    SPONSOR: "success",
+    EXHIBITOR: "info",
+    DELEGATE: "error",
+    INACTIVE: "error",
+  };
+
+  useEffect(() => {
+    if (tableData) {
+      const sorted = [...tableData].sort(
+        (a, b) => (a.seqNo || 0) - (b.seqNo || 0)
+      );
+      setItems(sorted);
+    }
+  }, [tableData]);
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDrop = (index: number) => {
+    if (draggedIndex === null) return;
+    const updated = [...items];
+    const [moved] = updated.splice(draggedIndex, 1);
+    updated.splice(index, 0, moved);
+
+    // resequence by index
+    const resequenced = updated.map((item, i) => ({
+      ...item,
+      seqNo: i + 1,
+    }));
+
+    setItems(resequenced);
+    setDraggedIndex(null);
+  };
 
   const renderCell = (item: any, col: ColumnConfig) => {
     const value = item[col.key];
@@ -129,7 +176,7 @@ const badgeColor: Record<
                   />
                 </div>
               ) : (
-                (value || "").slice(0, 2).toUpperCase()
+                String(value || "").slice(0, 2).toUpperCase()
               )}
             </div>
             <div>
@@ -212,7 +259,7 @@ const badgeColor: Record<
       </p>
     );
 
-  const filteredData = tableData.filter((item: any) => {
+  const filteredData = items.filter((item: any) => {
     const matchesSearch = filters.search
       ? Object.values(item).some((val) =>
           String(val).toLowerCase().includes(filters.search.toLowerCase())
@@ -255,12 +302,48 @@ const badgeColor: Record<
         </select>
 
         {/* Clear button */}
-        <button
+        <Button
           onClick={() => setFilters({ search: "", status: "" })}
-          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.05]"
+          variant="outline"
+          size="sm"
         >
           Reset
-        </button>
+        </Button>
+        <Button
+          onClick={() => setReOrder((prev) => !prev)}
+          variant="outline"
+          size="sm"
+        >
+          {reOrder ? "Cancel" : "ReOrder"}
+        </Button>
+{reOrder && (
+        <Button
+          size="sm"
+          onClick={async () => {
+            const payload = items.map(({ id, seqNo }) => ({ id, seqNo }));
+
+            const mutationFn = () =>
+              dataKey.toLowerCase().includes("sponsor")
+                ? updateSponsorOrder({ variables: { inputs: payload } })
+                : updateExhibitorOrder({ variables: { inputs: payload } });
+
+            toast.promise(
+              mutationFn() as Promise<any>,
+              {
+                loading: "Updating order...",
+                success: "Order updated successfully ✅",
+                error: "Failed to update order ❌",
+              },
+              { style: { minWidth: "250px" } }
+            );
+
+            setReOrder(false);
+          }}
+          className="px-3 py-2 rounded-lg border border-gray-300 bg-blue-500 text-white text-sm hover:bg-blue-700"
+        >
+          Save
+        </Button>
+)}
       </div>
 
       {!filteredData?.length ? (
@@ -294,8 +377,25 @@ const badgeColor: Record<
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {filteredData.map((item: any, index: number) => (
-                  <TableRow key={index}>
+                {items.map((item: any, index: number) => (
+                  <TableRow
+                    key={item.id}
+                    draggable={reOrder}
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add("bg-gray-100", "dark:bg-gray-800");
+                    }}
+                    onDragEnd={() => setDraggedIndex(null)}
+                    onDragLeave={(e) =>
+                      e.currentTarget.classList.remove(
+                        "bg-gray-100",
+                        "dark:bg-gray-800"
+                      )
+                    }
+                    onDrop={() => handleDrop(index)}
+                    className={`${reOrder ? "cursor-move" : ""} transition-colors`}
+                  >
                     {columns.map((col) => (
                       <TableCell
                         key={col.key}
@@ -330,11 +430,6 @@ const badgeColor: Record<
               </TableBody>
             </Table>
           </div>
-          {/* <Pagination
-            currentPage={1}
-            totalPages={2}
-            onPageChange={() => {}}
-          /> */}
         </div>
       )}
       <ModalComponent
