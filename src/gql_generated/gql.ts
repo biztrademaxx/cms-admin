@@ -23,6 +23,8 @@ type Documents = {
     "mutation DeleteExhibitor($id: String!) {\n  deleteExhibitor(id: $id) {\n    id\n    companyName\n  }\n}": typeof types.DeleteExhibitorDocument,
     "mutation DeletePartner($id: String!) {\n  deletePartner(id: $id) {\n    id\n    name\n  }\n}": typeof types.DeletePartnerDocument,
     "mutation DeleteSpeaker($id: String!) {\n  deleteSpeaker(id: $id) {\n    id\n    name\n  }\n}": typeof types.DeleteSpeakerDocument,
+    "mutation UpdateExhibitorOrder($inputs: [UpdateExhibitorSeqInput!]!) {\n  updateExhibitorOrder(inputs: $inputs) {\n    id\n    companyName\n    seqNo\n  }\n}": typeof types.UpdateExhibitorOrderDocument,
+    "mutation UpdateSponsorOrder($inputs: [UpdateSponsorSeqInput!]!) {\n  updateSponsorOrder(inputs: $inputs) {\n    id\n    seqNo\n  }\n}": typeof types.UpdateSponsorOrderDocument,
     "query GetAllProjects {\n  getAllProjects {\n    bannerUrl\n    createdAt\n    currency\n    description\n    endDate\n    id\n    location\n    logoUrl\n    name\n    slug\n    startDate\n    status\n    website\n    year\n  }\n}": typeof types.GetAllProjectsDocument,
     "query GetExhibitorsByProject($projectId: String!) {\n  getExhibitorsByProject(projectId: $projectId) {\n    address\n    boothNumber\n    badge\n    companyName\n    contactEmail\n    contactName\n    contactTitle\n    createdAt\n    description\n    hideFromParticipant\n    id\n    linkedinUrl\n    logoUrl\n    projectId\n    seqNo\n    status\n    updatedAt\n    website\n  }\n}": typeof types.GetExhibitorsByProjectDocument,
     "query GetLeadsByProjectId($projectId: String!) {\n  getLeadsByProjectId(projectId: $projectId) {\n    id\n    awardCategory\n    companyName\n    createdAt\n    email\n    industry\n    jobTitle\n    leadType\n    message\n    name\n    phone\n    price\n    projectId\n    quantity\n    status\n    utmId\n  }\n}": typeof types.GetLeadsByProjectIdDocument,
@@ -44,6 +46,8 @@ const documents: Documents = {
     "mutation DeleteExhibitor($id: String!) {\n  deleteExhibitor(id: $id) {\n    id\n    companyName\n  }\n}": types.DeleteExhibitorDocument,
     "mutation DeletePartner($id: String!) {\n  deletePartner(id: $id) {\n    id\n    name\n  }\n}": types.DeletePartnerDocument,
     "mutation DeleteSpeaker($id: String!) {\n  deleteSpeaker(id: $id) {\n    id\n    name\n  }\n}": types.DeleteSpeakerDocument,
+    "mutation UpdateExhibitorOrder($inputs: [UpdateExhibitorSeqInput!]!) {\n  updateExhibitorOrder(inputs: $inputs) {\n    id\n    companyName\n    seqNo\n  }\n}": types.UpdateExhibitorOrderDocument,
+    "mutation UpdateSponsorOrder($inputs: [UpdateSponsorSeqInput!]!) {\n  updateSponsorOrder(inputs: $inputs) {\n    id\n    seqNo\n  }\n}": types.UpdateSponsorOrderDocument,
     "query GetAllProjects {\n  getAllProjects {\n    bannerUrl\n    createdAt\n    currency\n    description\n    endDate\n    id\n    location\n    logoUrl\n    name\n    slug\n    startDate\n    status\n    website\n    year\n  }\n}": types.GetAllProjectsDocument,
     "query GetExhibitorsByProject($projectId: String!) {\n  getExhibitorsByProject(projectId: $projectId) {\n    address\n    boothNumber\n    badge\n    companyName\n    contactEmail\n    contactName\n    contactTitle\n    createdAt\n    description\n    hideFromParticipant\n    id\n    linkedinUrl\n    logoUrl\n    projectId\n    seqNo\n    status\n    updatedAt\n    website\n  }\n}": types.GetExhibitorsByProjectDocument,
     "query GetLeadsByProjectId($projectId: String!) {\n  getLeadsByProjectId(projectId: $projectId) {\n    id\n    awardCategory\n    companyName\n    createdAt\n    email\n    industry\n    jobTitle\n    leadType\n    message\n    name\n    phone\n    price\n    projectId\n    quantity\n    status\n    utmId\n  }\n}": types.GetLeadsByProjectIdDocument,
@@ -106,6 +110,14 @@ export function gql(source: "mutation DeletePartner($id: String!) {\n  deletePar
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "mutation DeleteSpeaker($id: String!) {\n  deleteSpeaker(id: $id) {\n    id\n    name\n  }\n}"): (typeof documents)["mutation DeleteSpeaker($id: String!) {\n  deleteSpeaker(id: $id) {\n    id\n    name\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation UpdateExhibitorOrder($inputs: [UpdateExhibitorSeqInput!]!) {\n  updateExhibitorOrder(inputs: $inputs) {\n    id\n    companyName\n    seqNo\n  }\n}"): (typeof documents)["mutation UpdateExhibitorOrder($inputs: [UpdateExhibitorSeqInput!]!) {\n  updateExhibitorOrder(inputs: $inputs) {\n    id\n    companyName\n    seqNo\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation UpdateSponsorOrder($inputs: [UpdateSponsorSeqInput!]!) {\n  updateSponsorOrder(inputs: $inputs) {\n    id\n    seqNo\n  }\n}"): (typeof documents)["mutation UpdateSponsorOrder($inputs: [UpdateSponsorSeqInput!]!) {\n  updateSponsorOrder(inputs: $inputs) {\n    id\n    seqNo\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

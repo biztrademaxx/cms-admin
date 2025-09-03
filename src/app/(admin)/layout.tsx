@@ -34,6 +34,8 @@ export default function AdminLayout({
           </div>
         </div>
       </div>
+
+
     </Providers>
   );
 }

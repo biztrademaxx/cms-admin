@@ -9,6 +9,7 @@ import {
   DeleteExhibitorDocument,
   GetExhibitorsByProjectDocument,
   Status,
+  UpdateExhibitorOrderDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import { base64ToFile, isBase64, uploadImageToCloud } from "@/utils/imageUtils";
@@ -127,6 +128,7 @@ const ExhibitorsComponent = () => {
             title="Exhibitors"
             query={GetExhibitorsByProjectDocument}
             deleteMutation={DeleteExhibitorDocument}
+            updateOrderMutation={UpdateExhibitorOrderDocument}
             formik={formik}
             modal={modal}
             ModalComponent={ExhibitorsModal}
@@ -134,15 +136,13 @@ const ExhibitorsComponent = () => {
             columns={[
               { key: "companyName", label: "Details", type: "avatar",subTextKey: "website", },
               { key: "description", label: "Description", type: "text" },
+                  { key: "seqNo", label: "Seq No", type: "text" },
               { key: "linkedinUrl", label: "LinkedIn", type: "link" },
               { key: "status", label: "Status", type: "badge" },
-              { key: "createdAt", label: "Created At", type: "date" },
               { key: "boothNumber", label: "Booth Number", type: "text" },
               { key: "badge", label: "Badge", type: "text" },
-              { key: "seqNo", label: "Seq No", type: "text" },
-
-
-
+          
+              { key: "createdAt", label: "Created At", type: "date" },
 
             ]}
           />

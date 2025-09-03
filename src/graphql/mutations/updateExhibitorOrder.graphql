@@ -1,0 +1,7 @@
+mutation UpdateExhibitorOrder($inputs: [UpdateExhibitorSeqInput!]!) {
+  updateExhibitorOrder(inputs: $inputs) {
+    id
+    companyName
+    seqNo
+  }
+}

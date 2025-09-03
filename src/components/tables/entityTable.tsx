@@ -1,12 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
+
+import React, { useEffect, useState } from "react";
+import { Table, TableBody, TableCell, TableHeader } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
 import { useMutation, useQuery, DocumentNode } from "@apollo/client";
@@ -14,6 +9,20 @@ import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
+import { Status } from "@/gql_generated/graphql";
+import DatePicker from "../form/date-picker";
+import Button from "../ui/button/Button";
+import Select from "../form/Select";
+import { ChevronDownIcon } from "lucide-react";
+
+export interface TableRowProps
+  extends React.HTMLAttributes<HTMLTableRowElement> {
+  children: React.ReactNode;
+}
+
+export function TableRow({ children, ...props }: TableRowProps) {
+  return <tr {...props}>{children}</tr>;
+}
 
 type ColumnType =
   | "avatar"
@@ -35,26 +44,48 @@ interface EntityTableProps {
   title: string;
   query: DocumentNode;
   deleteMutation: DocumentNode;
+  updateOrderMutation?: DocumentNode;
   formik: any;
   modal: any;
   ModalComponent: React.ComponentType<any>;
   dataKey: string;
   columns: ColumnConfig[];
-  actionSection?: Boolean;
+  actionSection?: boolean;
   queryVariables?: Record<string, any>;
+  statusConfig?: {
+    label: string;
+    value: any;
+  }[];
 }
+
+const normalStatusConfig = [
+  {
+    label: "Active",
+    value: Status.Active,
+  },
+  {
+    label: "Pending",
+    value: Status.Pending,
+  },
+  {
+    label: "Inactive",
+    value: Status.Inactive,
+  },
+];
 
 export default function EntityTable({
   title,
   query,
   deleteMutation,
+  updateOrderMutation,
   formik,
   modal,
   ModalComponent,
   dataKey,
   actionSection = true,
   columns,
-  queryVariables
+  statusConfig = normalStatusConfig,
+  queryVariables,
 }: EntityTableProps) {
   const { openModal } = modal;
   const router = useRouter();
@@ -63,14 +94,26 @@ export default function EntityTable({
   const [filters, setFilters] = useState({
     search: "",
     status: "",
+    dateRange: [] as Date[],
   });
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [items, setItems] = useState<any[]>([]);
+  const [reOrder, setReOrder] = useState<boolean>(false);
 
   const [deleteEntity] = useMutation(deleteMutation, {
     onCompleted: () => setDeleteModalOpen(false),
     refetchQueries: [{ query, variables: { projectId } }],
   });
+
+  const [updateEnitityOrder] = updateOrderMutation
+    ? useMutation(updateOrderMutation, {
+        refetchQueries: [
+          { query, variables: queryVariables ? queryVariables : { projectId } },
+        ],
+      })
+    : [() => Promise.resolve()];
 
   const { data, loading, error } = useQuery(query, {
     variables: queryVariables ? queryVariables : { projectId },
@@ -80,7 +123,7 @@ export default function EntityTable({
   const tableData = data?.[dataKey] || [];
 
   function isURL(str: string) {
-    const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
+    const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/i;
     return pattern.test(str);
   }
 
@@ -94,23 +137,48 @@ export default function EntityTable({
     await deleteEntity({ variables: { id: item.id } });
   };
 
-  type BadgeColor=
-    | "error"
-    | "success"
-    | "warning"
-    | "info"
-    
-const badgeColor: Record<
-  "ACTIVE" | "PENDING" | "SPONSOR" | "EXHIBITOR" | "DELEGATE" | "INACTIVE",
-  BadgeColor
-> = {
-  ACTIVE: "success",
-  PENDING: "warning",
-  SPONSOR: "success",
-  EXHIBITOR: "info",
-  DELEGATE: "error",
-  INACTIVE: "error",
-};
+  type BadgeColor = "error" | "success" | "warning" | "info";
+
+  const badgeColor: Record<
+    "ACTIVE" | "PENDING" | "SPONSOR" | "EXHIBITOR" | "DELEGATE" | "INACTIVE",
+    BadgeColor
+  > = {
+    ACTIVE: "success",
+    PENDING: "warning",
+    SPONSOR: "success",
+    EXHIBITOR: "info",
+    DELEGATE: "error",
+    INACTIVE: "error",
+  };
+
+  useEffect(() => {
+    if (tableData) {
+      const sorted = [...tableData].sort(
+        (a, b) => (a.seqNo || 0) - (b.seqNo || 0)
+      );
+      setItems(sorted);
+    }
+  }, [tableData]);
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDrop = (index: number) => {
+    if (draggedIndex === null) return;
+    const updated = [...items];
+    const [moved] = updated.splice(draggedIndex, 1);
+    updated.splice(index, 0, moved);
+
+    // resequence by index
+    const resequenced = updated.map((item, i) => ({
+      ...item,
+      seqNo: i + 1,
+    }));
+
+    setItems(resequenced);
+    setDraggedIndex(null);
+  };
 
   const renderCell = (item: any, col: ColumnConfig) => {
     const value = item[col.key];
@@ -122,14 +190,16 @@ const badgeColor: Record<
               {item?.logoUrl || item?.image ? (
                 <div className="relative w-10 h-10">
                   <Image
-                    src={item.logoUrl ?? item.image}
+                    src={item.logoUrl ?? item.image ?? ""}
                     alt={value}
                     fill
                     className="object-contain p-1"
                   />
                 </div>
               ) : (
-                (value || "").slice(0, 2).toUpperCase()
+                String(value || "")
+                  .slice(0, 2)
+                  .toUpperCase()
               )}
             </div>
             <div>
@@ -191,7 +261,7 @@ const badgeColor: Record<
       case "text":
         return (
           <span className="text-start text-theme-sm dark:text-white/90 max-w-3xs truncate">
-            {value ?? "—"}
+            {value || "—"}
           </span>
         );
       default:
@@ -212,7 +282,7 @@ const badgeColor: Record<
       </p>
     );
 
-  const filteredData = tableData.filter((item: any) => {
+  const filteredData = items.filter((item: any) => {
     const matchesSearch = filters.search
       ? Object.values(item).some((val) =>
           String(val).toLowerCase().includes(filters.search.toLowerCase())
@@ -223,44 +293,93 @@ const badgeColor: Record<
       ? String(item.status).toUpperCase() === filters.status.toUpperCase()
       : true;
 
-    return matchesSearch && matchesStatus;
+    const itemDate = item.createdAt ? new Date(item.createdAt) : null;
+    const [start, end] = filters.dateRange;
+
+    const matchesDate =
+      !start || !end || (itemDate && itemDate >= start && itemDate <= end);
+
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="flex flex-wrap items-center gap-3 p-4 border-b border-gray-200 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
+    <div className=" rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+      <div className="flex flex-wrap items-center justify-between border-b border-gray-200 p-4 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
         {/* Search box */}
-        <input
-          type="text"
-          placeholder="Search..."
-          value={filters.search}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, search: e.target.value }))
-          }
-          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
+            className="h-11 px-3  rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <div className="relative max-w-sm">
+            {/* Status dropdown */}
+            <Select
+              options={statusConfig || []}
+              onChange={(e) => setFilters((prev) => ({ ...prev, status: e }))}
+              defaultValue={filters.status}
+            />
+            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+              <ChevronDownIcon />
+            </span>
+          </div>
+          <div className="relative w-3xs">
+            <DatePicker
+              id="commonDateRange"
+              mode="range"
+              placeholder="Select date range"
+              onChange={(selectedDates: Date[]) =>
+                setFilters((prev) => ({ ...prev, dateRange: selectedDates }))
+              }
+            />
+          </div>
+          {/* Clear button */}
+          <Button
+            onClick={() =>
+              setFilters({ search: "", status: "", dateRange: [] })
+            }
+            variant="outline"
+            size="sm"
+          >
+            Reset
+          </Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Showing {filteredData.length} of {tableData.length} {title}
+          </span>
 
-        {/* Status dropdown */}
-        <select
-          value={filters.status}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, status: e.target.value }))
-          }
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          <option value="">All Status</option>
-          <option value="ACTIVE">Active</option>
-          <option value="PENDING">Pending</option>
-          <option value="INACTIVE">Inactive</option>
-        </select>
-
-        {/* Clear button */}
-        <button
-          onClick={() => setFilters({ search: "", status: "" })}
-          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.05]"
-        >
-          Reset
-        </button>
+          {updateOrderMutation && (
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setReOrder((prev) => !prev)}
+                variant="outline"
+                size="sm"
+              >
+                {reOrder ? "Cancel" : "ReOrder"}
+              </Button>
+              {reOrder && updateOrderMutation && (
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    const payload = items.map(({ id, seqNo }) => ({
+                      id,
+                      seqNo,
+                    }));
+                    updateEnitityOrder({ variables: { inputs: payload } });
+                    setReOrder(false);
+                  }}
+                >
+                  Save
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {!filteredData?.length ? (
@@ -294,8 +413,30 @@ const badgeColor: Record<
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {filteredData.map((item: any, index: number) => (
-                  <TableRow key={index}>
+                {items.map((item: any, index: number) => (
+                  <TableRow
+                    key={item.id}
+                    draggable={reOrder}
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add(
+                        "bg-gray-100",
+                        "dark:bg-gray-800"
+                      );
+                    }}
+                    onDragEnd={() => setDraggedIndex(null)}
+                    onDragLeave={(e) =>
+                      e.currentTarget.classList.remove(
+                        "bg-gray-100",
+                        "dark:bg-gray-800"
+                      )
+                    }
+                    onDrop={() => handleDrop(index)}
+                    className={`${
+                      reOrder ? "cursor-move" : ""
+                    } transition-colors`}
+                  >
                     {columns.map((col) => (
                       <TableCell
                         key={col.key}
@@ -330,11 +471,6 @@ const badgeColor: Record<
               </TableBody>
             </Table>
           </div>
-          {/* <Pagination
-            currentPage={1}
-            totalPages={2}
-            onPageChange={() => {}}
-          /> */}
         </div>
       )}
       <ModalComponent

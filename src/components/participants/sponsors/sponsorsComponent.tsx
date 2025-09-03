@@ -7,10 +7,12 @@ import { useMutation } from "@apollo/client";
 import {
   CreateSponsorDocument,
   CreateSponsorInput,
+
   DeleteExhibitorDocument,
   GetSponsorByProjectDocument,
   SponsorType,
   Status,
+  UpdateSponsorOrderDocument,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -88,7 +90,7 @@ const SponsorsComponent = () => {
         contactName: values.contactName,
         contactTitle: values.contactTitle,
         hideFromParticipant: values.hideFromParticipant,
-
+        featured: false,
       };
 
       if (values.id) {
@@ -134,6 +136,7 @@ const SponsorsComponent = () => {
             formik={formik}
             modal={modal}
             ModalComponent={SponsorsModal}
+            updateOrderMutation={UpdateSponsorOrderDocument}
             dataKey="getSponsorsByProject"
             columns={[
               {
@@ -147,7 +150,6 @@ const SponsorsComponent = () => {
               { key: "type", label: "Type", type: "text" },
               { key: "address", label: "Address", type: "text" },
               { key: "status", label: "Status", type: "badge" },
-              { key: "createdAt", label: "Created At", type: "date" },
           
            
   
@@ -158,6 +160,8 @@ const SponsorsComponent = () => {
               { key: "contactEmail", label: "Contact Email", type: "text" },
                { key: "seqNo", label: "Seq No", type: "text" },
                { key: "boothNumber", label: "Booth", type: "text" },
+              { key: "createdAt", label: "Created At", type: "date" },
+
             ]}
           />
         </div>

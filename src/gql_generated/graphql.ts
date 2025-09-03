@@ -352,7 +352,12 @@ export type Mutation = {
   deleteProject: Project;
   deleteSpeaker: Speaker;
   deleteSponsor: Sponsor;
+  updateExhibitor: Exhibitor;
+  updateExhibitorOrder: Array<Exhibitor>;
   updatePartnerPriority: Array<Partner>;
+  updateSpeaker: Speaker;
+  updateSponsor: Sponsor;
+  updateSponsorOrder: Array<Sponsor>;
 };
 
 
@@ -426,8 +431,33 @@ export type MutationDeleteSponsorArgs = {
 };
 
 
+export type MutationUpdateExhibitorArgs = {
+  input: UpdateExhibitorInput;
+};
+
+
+export type MutationUpdateExhibitorOrderArgs = {
+  inputs: Array<UpdateExhibitorSeqInput>;
+};
+
+
 export type MutationUpdatePartnerPriorityArgs = {
   input: UpdatePartnerPriorityInput;
+};
+
+
+export type MutationUpdateSpeakerArgs = {
+  input: UpdateSpeakerInput;
+};
+
+
+export type MutationUpdateSponsorArgs = {
+  input: UpdateSponsorInput;
+};
+
+
+export type MutationUpdateSponsorOrderArgs = {
+  inputs: Array<UpdateSponsorSeqInput>;
 };
 
 export type Partner = {
@@ -657,12 +687,76 @@ export enum Status {
   Pending = 'PENDING'
 }
 
+export type UpdateExhibitorInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  badge?: InputMaybe<Scalars['String']['input']>;
+  boothNumber?: InputMaybe<Scalars['String']['input']>;
+  companyName?: InputMaybe<Scalars['String']['input']>;
+  contactEmail?: InputMaybe<Scalars['String']['input']>;
+  contactName?: InputMaybe<Scalars['String']['input']>;
+  contactTitle?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  linkedinUrl?: InputMaybe<Scalars['String']['input']>;
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
+  projectId?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Status>;
+  website?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateExhibitorSeqInput = {
+  id: Scalars['ID']['input'];
+  seqNo: Scalars['Int']['input'];
+};
+
 export type UpdatePartnerPriorityInput = {
   data: Array<UpdatePartnerPriorityItem>;
 };
 
 export type UpdatePartnerPriorityItem = {
   id: Scalars['String']['input'];
+  seqNo: Scalars['Int']['input'];
+};
+
+export type UpdateSpeakerInput = {
+  companyLogo?: InputMaybe<Scalars['String']['input']>;
+  companyName?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  designation?: InputMaybe<Scalars['String']['input']>;
+  facebookUrl?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  image?: InputMaybe<Scalars['String']['input']>;
+  instagramUrl?: InputMaybe<Scalars['String']['input']>;
+  linkedinUrl?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  projectId?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Status>;
+  website?: InputMaybe<Scalars['String']['input']>;
+  xUrl?: InputMaybe<Scalars['String']['input']>;
+  youtubeUrl?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateSponsorInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  boothNumber?: InputMaybe<Scalars['String']['input']>;
+  contactEmail?: InputMaybe<Scalars['String']['input']>;
+  contactName?: InputMaybe<Scalars['String']['input']>;
+  contactTitle?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  hideFromParticipant?: InputMaybe<Scalars['Boolean']['input']>;
+  id: Scalars['ID']['input'];
+  linkedinUrl?: InputMaybe<Scalars['String']['input']>;
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  projectId?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Status>;
+  type?: InputMaybe<SponsorType>;
+  website?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateSponsorSeqInput = {
+  id: Scalars['ID']['input'];
   seqNo: Scalars['Int']['input'];
 };
 
@@ -743,6 +837,20 @@ export type DeleteSpeakerMutationVariables = Exact<{
 
 export type DeleteSpeakerMutation = { __typename?: 'Mutation', deleteSpeaker: { __typename?: 'Speaker', id: string, name: string } };
 
+export type UpdateExhibitorOrderMutationVariables = Exact<{
+  inputs: Array<UpdateExhibitorSeqInput> | UpdateExhibitorSeqInput;
+}>;
+
+
+export type UpdateExhibitorOrderMutation = { __typename?: 'Mutation', updateExhibitorOrder: Array<{ __typename?: 'Exhibitor', id: string, companyName: string, seqNo: number }> };
+
+export type UpdateSponsorOrderMutationVariables = Exact<{
+  inputs: Array<UpdateSponsorSeqInput> | UpdateSponsorSeqInput;
+}>;
+
+
+export type UpdateSponsorOrderMutation = { __typename?: 'Mutation', updateSponsorOrder: Array<{ __typename?: 'Sponsor', id: string, seqNo: number }> };
+
 export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -822,6 +930,8 @@ export const CreateUtmDocument = {"kind":"Document","definitions":[{"kind":"Oper
 export const DeleteExhibitorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteExhibitor"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteExhibitor"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"companyName"}}]}}]}}]} as unknown as DocumentNode<DeleteExhibitorMutation, DeleteExhibitorMutationVariables>;
 export const DeletePartnerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeletePartner"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deletePartner"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DeletePartnerMutation, DeletePartnerMutationVariables>;
 export const DeleteSpeakerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSpeaker"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSpeaker"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DeleteSpeakerMutation, DeleteSpeakerMutationVariables>;
+export const UpdateExhibitorOrderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateExhibitorOrder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateExhibitorSeqInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateExhibitorOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"companyName"}},{"kind":"Field","name":{"kind":"Name","value":"seqNo"}}]}}]}}]} as unknown as DocumentNode<UpdateExhibitorOrderMutation, UpdateExhibitorOrderMutationVariables>;
+export const UpdateSponsorOrderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSponsorOrder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateSponsorSeqInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSponsorOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"seqNo"}}]}}]}}]} as unknown as DocumentNode<UpdateSponsorOrderMutation, UpdateSponsorOrderMutationVariables>;
 export const GetAllProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bannerUrl"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"year"}}]}}]}}]} as unknown as DocumentNode<GetAllProjectsQuery, GetAllProjectsQueryVariables>;
 export const GetExhibitorsByProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExhibitorsByProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExhibitorsByProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"boothNumber"}},{"kind":"Field","name":{"kind":"Name","value":"badge"}},{"kind":"Field","name":{"kind":"Name","value":"companyName"}},{"kind":"Field","name":{"kind":"Name","value":"contactEmail"}},{"kind":"Field","name":{"kind":"Name","value":"contactName"}},{"kind":"Field","name":{"kind":"Name","value":"contactTitle"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"hideFromParticipant"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedinUrl"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"projectId"}},{"kind":"Field","name":{"kind":"Name","value":"seqNo"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"website"}}]}}]}}]} as unknown as DocumentNode<GetExhibitorsByProjectQuery, GetExhibitorsByProjectQueryVariables>;
 export const GetLeadsByProjectIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeadsByProjectId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLeadsByProjectId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"awardCategory"}},{"kind":"Field","name":{"kind":"Name","value":"companyName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"industry"}},{"kind":"Field","name":{"kind":"Name","value":"jobTitle"}},{"kind":"Field","name":{"kind":"Name","value":"leadType"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"projectId"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"utmId"}}]}}]}}]} as unknown as DocumentNode<GetLeadsByProjectIdQuery, GetLeadsByProjectIdQueryVariables>;
