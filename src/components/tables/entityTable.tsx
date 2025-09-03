@@ -99,7 +99,7 @@ export default function EntityTable({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [items, setItems] = useState<any[]>([]);
+  const [sortedData, setSortedData] = useState<any[]>([]);
   const [reOrder, setReOrder] = useState<boolean>(false);
 
   const [deleteEntity] = useMutation(deleteMutation, {
@@ -156,7 +156,7 @@ export default function EntityTable({
       const sorted = [...tableData].sort(
         (a, b) => (a.seqNo || 0) - (b.seqNo || 0)
       );
-      setItems(sorted);
+      setSortedData(sorted);
     }
   }, [tableData]);
 
@@ -166,7 +166,7 @@ export default function EntityTable({
 
   const handleDrop = (index: number) => {
     if (draggedIndex === null) return;
-    const updated = [...items];
+    const updated = [...sortedData];
     const [moved] = updated.splice(draggedIndex, 1);
     updated.splice(index, 0, moved);
 
@@ -176,7 +176,7 @@ export default function EntityTable({
       seqNo: i + 1,
     }));
 
-    setItems(resequenced);
+    setSortedData(resequenced);
     setDraggedIndex(null);
   };
 
@@ -282,7 +282,7 @@ export default function EntityTable({
       </p>
     );
 
-  const filteredData = items.filter((item: any) => {
+  const filteredData = sortedData.filter((item: any) => {
     const matchesSearch = filters.search
       ? Object.values(item).some((val) =>
           String(val).toLowerCase().includes(filters.search.toLowerCase())
@@ -366,7 +366,7 @@ export default function EntityTable({
                 <Button
                   size="sm"
                   onClick={async () => {
-                    const payload = items.map(({ id, seqNo }) => ({
+                    const payload = sortedData.map(({ id, seqNo }) => ({
                       id,
                       seqNo,
                     }));
@@ -413,7 +413,7 @@ export default function EntityTable({
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {items.map((item: any, index: number) => (
+                {filteredData.map((item: any, index: number) => (
                   <TableRow
                     key={item.id}
                     draggable={reOrder}
