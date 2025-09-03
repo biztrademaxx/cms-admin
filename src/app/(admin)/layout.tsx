@@ -6,7 +6,6 @@ import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import React from "react";
 import Providers from "./provider";
-import { Toaster } from "react-hot-toast";
 export default function AdminLayout({
   children,
 }: {
@@ -35,25 +34,6 @@ export default function AdminLayout({
           </div>
         </div>
       </div>
-
-       {/* Toast Notifications */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          success: {
-            style: {
-              background: "#4CAF50",
-              color: "#fff",
-            },
-          },
-          error: {
-            style: {
-              background: "#F44336",
-              color: "#fff",
-            },
-          },
-        }}
-      />
 
 
     </Providers>

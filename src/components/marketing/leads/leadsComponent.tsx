@@ -1,14 +1,10 @@
 "use client";
 import * as Yup from "yup";
 import React from "react";
-import { useModal } from "@/hooks/useModal";
-
-import { useFormik } from "formik";
-import { useMutation } from "@apollo/client";
 import {
-  // CreateExhibitorDocument,
   DeleteExhibitorDocument,
   GetLeadsByProjectIdDocument,
+  LeadStatus,
 } from "@/gql_generated/graphql";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -30,6 +26,15 @@ const validationSchema = Yup.object().shape({
     .required("Website is required")
     .url("Enter a valid URL"),
 });
+
+const leadsStatusConfig = [
+  { label: "New", value: LeadStatus.New },
+  { label: "Contacted", value: LeadStatus.Contacted },
+  { label: "Hot", value: LeadStatus.Hot },
+  { label: "Cold", value: LeadStatus.Cold },
+  { label: "Sold", value: LeadStatus.Sold },
+];
+
 const LeadsComponent = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
 
@@ -67,6 +72,7 @@ const LeadsComponent = () => {
             ModalComponent={() => null}
             dataKey="getLeadsByProjectId"
             actionSection={false}
+            statusConfig={leadsStatusConfig}
             columns={[
               { key: "id", label: "Order ID", type: "id", subTextKey: "leads" },
               {
@@ -75,13 +81,16 @@ const LeadsComponent = () => {
                 type: "avatar",
                 subTextKey: "jobTitle",
               },
-              { key: "companyName", label: "Company", type: "text" },
               { key: "leadType", label: "Lead Type", type: "badge" },
-              { key: "phone", label: "Phone", type: "text" },
-              { key: "message", label: "Message", type: "text" },
-              { key: "status", label: "Status", type: "badge" },
               { key: "email", label: "Email", type: "email" },
+              { key: "companyName", label: "Company", type: "text" },
+              { key: "phone", label: "Phone", type: "text" },
+              { key: "status", label: "Status", type: "badge" },
+
+              { key: "message", label: "Message", type: "text" },
               { key: "quantity", label: "Quantity", type: "text" },
+
+              { key: "industry", label: "Industry", type: "text" },
               { key: "createdAt", label: "Created At", type: "date" },
             ]}
           />

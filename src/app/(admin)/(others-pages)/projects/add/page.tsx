@@ -297,6 +297,7 @@ export default function CreateProjectForm() {
                 id="start-time-date-picker"
                 defaultDate={formik.values.startDate}
                 placeholder="Select start date"
+                enableTime={true}
                 onChange={(dates, currentDateString) => {
                   formik.setFieldTouched("startDate", true);
                   formik.setFieldValue("startDate", currentDateString);
@@ -318,6 +319,7 @@ export default function CreateProjectForm() {
                 id="end-time-date-picker"
                 defaultDate={formik.values.endDate}
                 placeholder="Select end date"
+                enableTime={true}
                 onChange={(dates, currentDateString) => {
                   formik.setFieldTouched("endDate", true);
                   formik.setFieldValue("endDate", currentDateString);

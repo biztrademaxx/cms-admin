@@ -1,27 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-} from "../ui/table";
+import { Table, TableBody, TableCell, TableHeader } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
 import { useMutation, useQuery, DocumentNode } from "@apollo/client";
-import {
-  UpdateExhibitorOrderDocument,
-  UpdateSponsorOrderDocument,
-} from "@/gql_generated/graphql";
 import { useRouter } from "next/navigation";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import WarningModal from "../modals/warningModal";
 import { useSelector } from "react-redux";
+import { Status } from "@/gql_generated/graphql";
+import DatePicker from "../form/date-picker";
 import Button from "../ui/button/Button";
+import Select from "../form/Select";
+import { ChevronDownIcon } from "lucide-react";
 
-// Row wrapper (always <tr>)
 export interface TableRowProps
   extends React.HTMLAttributes<HTMLTableRowElement> {
   children: React.ReactNode;
@@ -31,8 +24,14 @@ export function TableRow({ children, ...props }: TableRowProps) {
   return <tr {...props}>{children}</tr>;
 }
 
-// Column config types
-type ColumnType = "avatar" | "text" | "link" | "badge" | "date" | "email" | "id";
+type ColumnType =
+  | "avatar"
+  | "text"
+  | "link"
+  | "badge"
+  | "date"
+  | "email"
+  | "id";
 
 interface ColumnConfig {
   key: string;
@@ -45,6 +44,7 @@ interface EntityTableProps {
   title: string;
   query: DocumentNode;
   deleteMutation: DocumentNode;
+  updateOrderMutation?: DocumentNode;
   formik: any;
   modal: any;
   ModalComponent: React.ComponentType<any>;
@@ -52,25 +52,50 @@ interface EntityTableProps {
   columns: ColumnConfig[];
   actionSection?: boolean;
   queryVariables?: Record<string, any>;
+  statusConfig?: {
+    label: string;
+    value: any;
+  }[];
 }
+
+const normalStatusConfig = [
+  {
+    label: "Active",
+    value: Status.Active,
+  },
+  {
+    label: "Pending",
+    value: Status.Pending,
+  },
+  {
+    label: "Inactive",
+    value: Status.Inactive,
+  },
+];
 
 export default function EntityTable({
   title,
   query,
   deleteMutation,
+  updateOrderMutation,
   formik,
   modal,
   ModalComponent,
   dataKey,
   actionSection = true,
   columns,
+  statusConfig = normalStatusConfig,
   queryVariables,
 }: EntityTableProps) {
   const { openModal } = modal;
   const router = useRouter();
   const projectId = useSelector((state: any) => state.project.projectId);
 
-  const [filters, setFilters] = useState({ search: "", status: "" });
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+    dateRange: [] as Date[],
+  });
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -82,17 +107,13 @@ export default function EntityTable({
     refetchQueries: [{ query, variables: { projectId } }],
   });
 
-  const [updateExhibitorOrder] = useMutation(UpdateExhibitorOrderDocument, {
-    refetchQueries: [
-      { query, variables: queryVariables ? queryVariables : { projectId } },
-    ],
-  });
-
-  const [updateSponsorOrder] = useMutation(UpdateSponsorOrderDocument, {
-    refetchQueries: [
-      { query, variables: queryVariables ? queryVariables : { projectId } },
-    ],
-  });
+  const [updateEnitityOrder] = updateOrderMutation
+    ? useMutation(updateOrderMutation, {
+        refetchQueries: [
+          { query, variables: queryVariables ? queryVariables : { projectId } },
+        ],
+      })
+    : [() => Promise.resolve()];
 
   const { data, loading, error } = useQuery(query, {
     variables: queryVariables ? queryVariables : { projectId },
@@ -169,14 +190,16 @@ export default function EntityTable({
               {item?.logoUrl || item?.image ? (
                 <div className="relative w-10 h-10">
                   <Image
-                    src={item.logoUrl ?? item.image}
+                    src={item.logoUrl ?? item.image ?? ""}
                     alt={value}
                     fill
                     className="object-contain p-1"
                   />
                 </div>
               ) : (
-                String(value || "").slice(0, 2).toUpperCase()
+                String(value || "")
+                  .slice(0, 2)
+                  .toUpperCase()
               )}
             </div>
             <div>
@@ -238,7 +261,7 @@ export default function EntityTable({
       case "text":
         return (
           <span className="text-start text-theme-sm dark:text-white/90 max-w-3xs truncate">
-            {value ?? "—"}
+            {value || "—"}
           </span>
         );
       default:
@@ -270,80 +293,84 @@ export default function EntityTable({
       ? String(item.status).toUpperCase() === filters.status.toUpperCase()
       : true;
 
-    return matchesSearch && matchesStatus;
+    const itemDate = item.createdAt ? new Date(item.createdAt) : null;
+    const [start, end] = filters.dateRange;
+
+    const matchesDate =
+      !start || !end || (itemDate && itemDate >= start && itemDate <= end);
+
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="flex flex-wrap items-center gap-3 p-4 border-b border-gray-200 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
+    <div className=" rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+      <div className="flex flex-wrap items-center justify-between border-b border-gray-200 p-4 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
         {/* Search box */}
-        <input
-          type="text"
-          placeholder="Search..."
-          value={filters.search}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, search: e.target.value }))
-          }
-          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-
-        {/* Status dropdown */}
-        <select
-          value={filters.status}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, status: e.target.value }))
-          }
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          <option value="">All Status</option>
-          <option value="ACTIVE">Active</option>
-          <option value="PENDING">Pending</option>
-          <option value="INACTIVE">Inactive</option>
-        </select>
-
-        {/* Clear button */}
-        <Button
-          onClick={() => setFilters({ search: "", status: "" })}
-          variant="outline"
-          size="sm"
-        >
-          Reset
-        </Button>
-        <Button
-          onClick={() => setReOrder((prev) => !prev)}
-          variant="outline"
-          size="sm"
-        >
-          {reOrder ? "Cancel" : "ReOrder"}
-        </Button>
-{reOrder && (
-        <Button
-          size="sm"
-          onClick={async () => {
-            const payload = items.map(({ id, seqNo }) => ({ id, seqNo }));
-
-            const mutationFn = () =>
-              dataKey.toLowerCase().includes("sponsor")
-                ? updateSponsorOrder({ variables: { inputs: payload } })
-                : updateExhibitorOrder({ variables: { inputs: payload } });
-
-            toast.promise(
-              mutationFn() as Promise<any>,
-              {
-                loading: "Updating order...",
-                success: "Order updated successfully ✅",
-                error: "Failed to update order ❌",
-              },
-              { style: { minWidth: "250px" } }
-            );
-
-            setReOrder(false);
-          }}
-          className="px-3 py-2 rounded-lg border border-gray-300 bg-blue-500 text-white text-sm hover:bg-blue-700"
-        >
-          Save
-        </Button>
-)}
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
+            className="h-11 px-3  rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <div className="relative max-w-sm">
+            {/* Status dropdown */}
+            <Select
+              options={statusConfig || []}
+              onChange={(e) => setFilters((prev) => ({ ...prev, status: e }))}
+              defaultValue={filters.status}
+            />
+            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+              <ChevronDownIcon />
+            </span>
+          </div>
+          <div className="relative w-3xs">
+            <DatePicker
+              id="commonDateRange"
+              mode="range"
+              placeholder="Select date range"
+              onChange={(selectedDates: Date[]) =>
+                setFilters((prev) => ({ ...prev, dateRange: selectedDates }))
+              }
+            />
+          </div>
+          {/* Clear button */}
+          <Button
+            onClick={() =>
+              setFilters({ search: "", status: "", dateRange: [] })
+            }
+            variant="outline"
+            size="sm"
+          >
+            Reset
+          </Button>
+        </div>
+        {updateOrderMutation && (
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setReOrder((prev) => !prev)}
+              variant="outline"
+              size="sm"
+            >
+              {reOrder ? "Cancel" : "ReOrder"}
+            </Button>
+            {reOrder && updateOrderMutation && (
+              <Button
+                size="sm"
+                onClick={async () => {
+                  const payload = items.map(({ id, seqNo }) => ({ id, seqNo }));
+                  updateEnitityOrder({ variables: { inputs: payload } });
+                  setReOrder(false);
+                }}
+              >
+                Save
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {!filteredData?.length ? (
@@ -384,7 +411,10 @@ export default function EntityTable({
                     onDragStart={() => handleDragStart(index)}
                     onDragOver={(e) => {
                       e.preventDefault();
-                      e.currentTarget.classList.add("bg-gray-100", "dark:bg-gray-800");
+                      e.currentTarget.classList.add(
+                        "bg-gray-100",
+                        "dark:bg-gray-800"
+                      );
                     }}
                     onDragEnd={() => setDraggedIndex(null)}
                     onDragLeave={(e) =>
@@ -394,7 +424,9 @@ export default function EntityTable({
                       )
                     }
                     onDrop={() => handleDrop(index)}
-                    className={`${reOrder ? "cursor-move" : ""} transition-colors`}
+                    className={`${
+                      reOrder ? "cursor-move" : ""
+                    } transition-colors`}
                   >
                     {columns.map((col) => (
                       <TableCell
