@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Table, TableBody, TableCell, TableHeader } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
@@ -14,24 +14,10 @@ import DatePicker from "../form/date-picker";
 import Button from "../ui/button/Button";
 import Select from "../form/Select";
 import { ChevronDownIcon } from "lucide-react";
+import Pagination from "./Pagination";
 
-export interface TableRowProps
-  extends React.HTMLAttributes<HTMLTableRowElement> {
-  children: React.ReactNode;
-}
-
-export function TableRow({ children, ...props }: TableRowProps) {
-  return <tr {...props}>{children}</tr>;
-}
-
-type ColumnType =
-  | "avatar"
-  | "text"
-  | "link"
-  | "badge"
-  | "date"
-  | "email"
-  | "id";
+/* ---------------------------------- Types --------------------------------- */
+type ColumnType = "avatar" | "text" | "link" | "badge" | "date" | "email" | "id";
 
 interface ColumnConfig {
   key: string;
@@ -52,27 +38,169 @@ interface EntityTableProps {
   columns: ColumnConfig[];
   actionSection?: boolean;
   queryVariables?: Record<string, any>;
-  statusConfig?: {
-    label: string;
-    value: any;
-  }[];
+  statusConfig?: { label: string; value: any }[];
 }
 
-const normalStatusConfig = [
-  {
-    label: "Active",
-    value: Status.Active,
-  },
-  {
-    label: "Pending",
-    value: Status.Pending,
-  },
-  {
-    label: "Inactive",
-    value: Status.Inactive,
-  },
+type BadgeColor = "error" | "success" | "warning" | "info";
+
+/* ---------------------------- Config -------------------------------------- */
+const defaultStatusConfig = [
+  { label: "Active", value: Status.Active },
+  { label: "Pending", value: Status.Pending },
+  { label: "Inactive", value: Status.Inactive },
 ];
 
+const badgeColor: Record<string, BadgeColor> = {
+  ACTIVE: "success",
+  PENDING: "warning",
+  SPONSOR: "success",
+  EXHIBITOR: "info",
+  DELEGATE: "error",
+  INACTIVE: "error",
+};
+
+/* --------------------------- Utility Functions ---------------------------- */
+const isURL = (str: string) =>
+  /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/i.test(
+    str
+  );
+
+/* --------------------------- Hooks ---------------------------------------- */
+function useEntityData(
+  query: DocumentNode,
+  deleteMutation: DocumentNode,
+  updateOrderMutation: DocumentNode | undefined,
+  dataKey: string,
+  queryVariables: Record<string, any> | undefined,
+  projectId: string
+) {
+  const { data, loading, error } = useQuery(query, {
+    variables: queryVariables ?? { projectId },
+    skip: !projectId,
+  });
+
+  const [deleteEntity] = useMutation(deleteMutation, {
+    refetchQueries: [{ query, variables: { projectId } }],
+  });
+
+  const [updateEntityOrder] = updateOrderMutation
+    ? useMutation(updateOrderMutation, {
+        refetchQueries: [
+          { query, variables: queryVariables ?? { projectId } },
+        ],
+      })
+    : [() => Promise.resolve()];
+
+  return {
+    data: data?.[dataKey] || [],
+    loading,
+    error,
+    deleteEntity,
+    updateEntityOrder,
+  };
+}
+
+/* --------------------------- Cell Renderer ------------------------------- */
+function renderCell(
+  item: any,
+  col: ColumnConfig,
+  router: ReturnType<typeof useRouter>
+) {
+  const value = item[col.key];
+
+  switch (col.type) {
+    case "avatar":
+      return (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 overflow-hidden">
+            {item?.logoUrl || item?.image ? (
+              <div className="relative w-10 h-10">
+                <Image
+                  src={item.logoUrl ?? item.image ?? ""}
+                  alt={value}
+                  fill
+                  className="object-contain p-1"
+                />
+              </div>
+            ) : (
+              String(value || "").slice(0, 2).toUpperCase()
+            )}
+          </div>
+          <div>
+            <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+              {value || "N/A"}
+            </span>
+            {col.subTextKey && (
+              <span
+                className="block text-gray-500 text-theme-xs dark:text-gray-400 cursor-pointer truncate max-w-3xs"
+                onClick={() =>
+                  isURL(item[col.subTextKey || ""])
+                    ? router.push(item[col.subTextKey || ""])
+                    : undefined
+                }
+              >
+                {item[col.subTextKey] || "N/A"}
+              </span>
+            )}
+          </div>
+        </div>
+      );
+
+    case "link":
+      return (
+        <span
+          onClick={() => router.push(value)}
+          className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-sm truncate cursor-pointer"
+        >
+          {col.label || "—"}
+        </span>
+      );
+
+    case "id":
+      return (
+        <span
+          onClick={() =>
+            router.push(`${col.subTextKey}/${item.id}` || String(value))
+          }
+          className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-xs truncate cursor-pointer"
+        >
+          {value || "—"}
+        </span>
+      );
+
+    case "email":
+      return (
+        <a href={`mailto:${value}`} target="_blank">
+          <span className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-sm truncate cursor-pointer">
+            {col.label || "—"}
+          </span>
+        </a>
+      );
+
+    case "badge":
+      return (
+        <Badge
+          size="sm"
+          color={badgeColor[value?.toUpperCase() as keyof typeof badgeColor]}
+        >
+          {value ?? "_"}
+        </Badge>
+      );
+
+    case "date":
+      return convertISOtoNormal(value)?.toUpperCase() || "—";
+
+    case "text":
+    default:
+      return (
+        <span className="text-start text-theme-sm dark:text-white/90 max-w-3xs truncate">
+          {value || "—"}
+        </span>
+      );
+  }
+}
+
+/* ----------------------------- Main Component ----------------------------- */
 export default function EntityTable({
   title,
   query,
@@ -82,14 +210,24 @@ export default function EntityTable({
   modal,
   ModalComponent,
   dataKey,
-  actionSection = true,
   columns,
-  statusConfig = normalStatusConfig,
+  actionSection = true,
+  statusConfig = defaultStatusConfig,
   queryVariables,
 }: EntityTableProps) {
   const { openModal } = modal;
   const router = useRouter();
   const projectId = useSelector((state: any) => state.project.projectId);
+
+  const { data, loading, error, deleteEntity, updateEntityOrder } =
+    useEntityData(
+      query,
+      deleteMutation,
+      updateOrderMutation,
+      dataKey,
+      queryVariables,
+      projectId
+    );
 
   const [filters, setFilters] = useState({
     search: "",
@@ -99,33 +237,17 @@ export default function EntityTable({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [reOrder, setReOrder] = useState(false);
   const [sortedData, setSortedData] = useState<any[]>([]);
-  const [reOrder, setReOrder] = useState<boolean>(false);
 
-  const [deleteEntity] = useMutation(deleteMutation, {
-    onCompleted: () => setDeleteModalOpen(false),
-    refetchQueries: [{ query, variables: { projectId } }],
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10; // you can make this configurable
 
-  const [updateEnitityOrder] = updateOrderMutation
-    ? useMutation(updateOrderMutation, {
-        refetchQueries: [
-          { query, variables: queryVariables ? queryVariables : { projectId } },
-        ],
-      })
-    : [() => Promise.resolve()];
-
-  const { data, loading, error } = useQuery(query, {
-    variables: queryVariables ? queryVariables : { projectId },
-    skip: !projectId,
-  });
-
-  const tableData = data?.[dataKey] || [];
-
-  function isURL(str: string) {
-    const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/i;
-    return pattern.test(str);
-  }
+  React.useEffect(() => {
+    if (data?.length) {
+      setSortedData([...data].sort((a, b) => (a.seqNo || 0) - (b.seqNo || 0)));
+    }
+  }, [data]);
 
   const handleEdit = (item: any) => {
     setEditingItem(item);
@@ -135,33 +257,7 @@ export default function EntityTable({
 
   const handleDelete = async (item: any) => {
     await deleteEntity({ variables: { id: item.id } });
-  };
-
-  type BadgeColor = "error" | "success" | "warning" | "info";
-
-  const badgeColor: Record<
-    "ACTIVE" | "PENDING" | "SPONSOR" | "EXHIBITOR" | "DELEGATE" | "INACTIVE",
-    BadgeColor
-  > = {
-    ACTIVE: "success",
-    PENDING: "warning",
-    SPONSOR: "success",
-    EXHIBITOR: "info",
-    DELEGATE: "error",
-    INACTIVE: "error",
-  };
-
-  useEffect(() => {
-    if (tableData) {
-      const sorted = [...tableData].sort(
-        (a, b) => (a.seqNo || 0) - (b.seqNo || 0)
-      );
-      setSortedData(sorted);
-    }
-  }, [tableData]);
-
-  const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
+    setDeleteModalOpen(false);
   };
 
   const handleDrop = (index: number) => {
@@ -170,105 +266,51 @@ export default function EntityTable({
     const [moved] = updated.splice(draggedIndex, 1);
     updated.splice(index, 0, moved);
 
-    // resequence by index
-    const resequenced = updated.map((item, i) => ({
-      ...item,
-      seqNo: i + 1,
-    }));
-
-    setSortedData(resequenced);
+    setSortedData(
+      updated.map((item, i) => ({
+        ...item,
+        seqNo: i + 1,
+      }))
+    );
     setDraggedIndex(null);
   };
 
-  const renderCell = (item: any, col: ColumnConfig) => {
-    const value = item[col.key];
-    switch (col.type) {
-      case "avatar":
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 overflow-hidden">
-              {item?.logoUrl || item?.image ? (
-                <div className="relative w-10 h-10">
-                  <Image
-                    src={item.logoUrl ?? item.image ?? ""}
-                    alt={value}
-                    fill
-                    className="object-contain p-1"
-                  />
-                </div>
-              ) : (
-                String(value || "")
-                  .slice(0, 2)
-                  .toUpperCase()
-              )}
-            </div>
-            <div>
-              <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                {value || "N/A"}
-              </span>
-              {col.subTextKey && (
-                <span
-                  className="block text-gray-500 text-theme-xs dark:text-gray-400 cursor-pointer truncate max-w-3xs"
-                  onClick={() =>
-                    isURL(item[col.subTextKey || ""])
-                      ? router.push(item[col.subTextKey || ""])
-                      : ""
-                  }
-                >
-                  {item[col.subTextKey] || "N/A"}
-                </span>
-              )}
-            </div>
-          </div>
-        );
-      case "link":
-        return (
-          <span
-            onClick={() => router.push(value)}
-            className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-sm truncate cursor-pointer"
-          >
-            {col.label || "—"}
-          </span>
-        );
-      case "id":
-        return (
-          <span
-            onClick={() => router.push(`${col.subTextKey}/${item.id}` || value)}
-            className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-xs truncate cursor-pointer"
-          >
-            {value || "—"}
-          </span>
-        );
-      case "email":
-        return (
-          <a href={`mailto:${value}`} target="_blank">
-            <span className="text-blue-500 text-start text-theme-sm dark:text-blue-400 max-w-sm truncate cursor-pointer">
-              {col.label || "—"}
-            </span>
-          </a>
-        );
-      case "badge":
-        return (
-          <Badge
-            size="sm"
-            color={badgeColor[value?.toUpperCase() as keyof typeof badgeColor]}
-          >
-            {value ?? "_"}
-          </Badge>
-        );
-      case "date":
-        return convertISOtoNormal(value)?.toUpperCase() || "—";
-      case "text":
-        return (
-          <span className="text-start text-theme-sm dark:text-white/90 max-w-3xs truncate">
-            {value || "—"}
-          </span>
-        );
-      default:
-        return value || "—";
-    }
+  const handleSaveOrder = () => {
+    const payload = sortedData.map(({ id, seqNo }) => ({ id, seqNo }));
+    updateEntityOrder({ variables: { inputs: payload } });
+    setReOrder(false);
   };
 
+  const resetFilters = () =>
+    setFilters({ search: "", status: "", dateRange: [] });
+
+const filteredData = sortedData.filter((item: any) => {
+  const matchesSearch = filters.search
+    ? Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(filters.search.toLowerCase())
+      )
+    : true;
+
+  const matchesStatus = filters.status
+    ? String(item.status).toUpperCase() === filters.status.toUpperCase()
+    : true;
+
+  const itemDate = item.createdAt ? new Date(item.createdAt) : null;
+  const [start, end] = filters.dateRange;
+
+  const matchesDate =
+    !start || !end || (itemDate && itemDate >= start && itemDate <= end);
+
+  return matchesSearch && matchesStatus && matchesDate;
+});
+
+const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+const paginatedData = filteredData.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
+
+  /* ------------------------------- Render -------------------------------- */
   if (loading)
     return (
       <p className="p-4 text-sm text-gray-500 text-center dark:text-white">
@@ -282,30 +324,10 @@ export default function EntityTable({
       </p>
     );
 
-  const filteredData = sortedData.filter((item: any) => {
-    const matchesSearch = filters.search
-      ? Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(filters.search.toLowerCase())
-        )
-      : true;
-
-    const matchesStatus = filters.status
-      ? String(item.status).toUpperCase() === filters.status.toUpperCase()
-      : true;
-
-    const itemDate = item.createdAt ? new Date(item.createdAt) : null;
-    const [start, end] = filters.dateRange;
-
-    const matchesDate =
-      !start || !end || (itemDate && itemDate >= start && itemDate <= end);
-
-    return matchesSearch && matchesStatus && matchesDate;
-  });
-
   return (
-    <div className=" rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+      {/* ---------------------- Header Filters Section ---------------------- */}
       <div className="flex flex-wrap items-center justify-between border-b border-gray-200 p-4 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
-        {/* Search box */}
         <div className="flex items-center gap-3">
           <input
             type="text"
@@ -314,12 +336,12 @@ export default function EntityTable({
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
-            className="h-11 px-3  rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="h-11 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+
           <div className="relative max-w-sm">
-            {/* Status dropdown */}
             <Select
-              options={statusConfig || []}
+              options={statusConfig}
               onChange={(e) => setFilters((prev) => ({ ...prev, status: e }))}
               defaultValue={filters.status}
             />
@@ -327,6 +349,7 @@ export default function EntityTable({
               <ChevronDownIcon />
             </span>
           </div>
+
           <div className="relative w-3xs">
             <DatePicker
               id="commonDateRange"
@@ -337,20 +360,15 @@ export default function EntityTable({
               }
             />
           </div>
-          {/* Clear button */}
-          <Button
-            onClick={() =>
-              setFilters({ search: "", status: "", dateRange: [] })
-            }
-            variant="outline"
-            size="sm"
-          >
+
+          <Button onClick={resetFilters} variant="outline" size="sm">
             Reset
           </Button>
         </div>
+
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-600 dark:text-gray-300">
-            Showing {filteredData.length} of {tableData.length} {title}
+            Showing {filteredData.length} of {data.length} {title}
           </span>
 
           {updateOrderMutation && (
@@ -362,18 +380,8 @@ export default function EntityTable({
               >
                 {reOrder ? "Cancel" : "ReOrder"}
               </Button>
-              {reOrder && updateOrderMutation && (
-                <Button
-                  size="sm"
-                  onClick={async () => {
-                    const payload = sortedData.map(({ id, seqNo }) => ({
-                      id,
-                      seqNo,
-                    }));
-                    updateEnitityOrder({ variables: { inputs: payload } });
-                    setReOrder(false);
-                  }}
-                >
+              {reOrder && (
+                <Button size="sm" onClick={handleSaveOrder}>
                   Save
                 </Button>
               )}
@@ -382,7 +390,8 @@ export default function EntityTable({
         </div>
       </div>
 
-      {!filteredData?.length ? (
+      {/* -------------------------- Table Section --------------------------- */}
+      {!filteredData.length ? (
         <p className="p-4 text-sm text-gray-500 text-center dark:text-white">
           No {title.toLowerCase()} found.
         </p>
@@ -391,7 +400,7 @@ export default function EntityTable({
           <div className="min-w-[1102px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
+                <tr>
                   {columns.map((col) => (
                     <TableCell
                       key={col.key}
@@ -409,15 +418,15 @@ export default function EntityTable({
                       Actions
                     </TableCell>
                   )}
-                </TableRow>
+                </tr>
               </TableHeader>
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {filteredData.map((item: any, index: number) => (
-                  <TableRow
+                {paginatedData.map((item, index) => (
+                  <tr
                     key={item.id}
                     draggable={reOrder}
-                    onDragStart={() => handleDragStart(index)}
+                    onDragStart={() => setDraggedIndex(index)}
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.currentTarget.classList.add(
@@ -433,20 +442,19 @@ export default function EntityTable({
                       )
                     }
                     onDrop={() => handleDrop(index)}
-                    className={`${
-                      reOrder ? "cursor-move" : ""
-                    } transition-colors`}
+                    className={`${reOrder ? "cursor-move" : ""} transition-colors`}
                   >
                     {columns.map((col) => (
                       <TableCell
                         key={col.key}
                         className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400 text-start max-w-md truncate"
                       >
-                        {renderCell(item, col)}
+                        {renderCell(item, col, router)}
                       </TableCell>
                     ))}
+
                     {actionSection && (
-                      <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      <TableCell className="px-4 py-3">
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleEdit(item)}
@@ -466,13 +474,27 @@ export default function EntityTable({
                         </div>
                       </TableCell>
                     )}
-                  </TableRow>
+                  </tr>
                 ))}
               </TableBody>
             </Table>
+        
           </div>
+           
         </div>
+        
       )}
+         {totalPages > 1 && (
+  <div className="flex justify-end p-4 border-t border-gray-200 dark:border-white/[0.05]">
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={(page) => setCurrentPage(page)}
+    />
+  </div>
+)}
+
+      {/* ----------------------------- Modals ------------------------------- */}
       <ModalComponent
         modal={modal}
         formik={formik}
