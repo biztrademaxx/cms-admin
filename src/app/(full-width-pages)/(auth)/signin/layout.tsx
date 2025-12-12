@@ -1,4 +1,4 @@
-export default function FullWidthPagesLayout({
+export default function SignInLayout({
   children,
 }: {
   children: React.ReactNode;

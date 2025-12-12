@@ -15,10 +15,11 @@ export const uploadImageToCloud = async (file: File) => {
   if (!file) return;
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "maxpo_cms_preset");
+  formData.append("upload_preset", "bus_cms");     //	business_cms
 
   const res = await fetch(
-    "https://api.cloudinary.com/v1_1/drymzsktn/image/upload",
+    // "https://api.cloudinary.com/v1_1/drymzsktn/image/upload",
+    "https://res.cloudinary.com/dlkuk7rok/image/upload",
     {
       method: "POST",
       body: formData,

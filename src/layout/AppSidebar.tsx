@@ -8,7 +8,7 @@ import {
   CalenderIcon,
   ChevronDownIcon,
   GridIcon,
-  HorizontaLDots,
+  HorizontalDotsIcon,
   ListIcon,
   PageIcon,
   // PieChartIcon,
@@ -398,7 +398,7 @@ const AppSidebar: React.FC = () => {
                 {isExpanded || isHovered || isMobileOpen ? (
                   "Menu"
                 ) : (
-                  <HorizontaLDots />
+                  <HorizontalDotsIcon />
                 )}
               </h2>
               {renderMenuItems(navItems, "main")}
@@ -415,7 +415,7 @@ const AppSidebar: React.FC = () => {
                 {isExpanded || isHovered || isMobileOpen ? (
                   "Others"
                 ) : (
-                  <HorizontaLDots />
+                  <HorizontalDotsIcon />
                 )}
               </h2>
               {renderMenuItems(othersItems, "others")}
