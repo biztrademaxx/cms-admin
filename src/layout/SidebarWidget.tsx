@@ -8,11 +8,11 @@ export default function SidebarWidget() {
         mx-auto mb-10 w-full max-w-60 rounded-2xl bg-gray-50 px-4 py-5 text-center dark:bg-white/[0.03]`}
     >
       <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">
-      MAXPO CMS
+        Business CMS
       </h3>
       <p className="mb-4 text-gray-500 text-theme-sm dark:text-gray-400">
-        Maxpo CMS is a powerful content management system designed to help you
-        manage your projects and content efficiently. With Maxpo CMS, you can
+        Business CMS is a powerful content management system designed to help you
+        manage your projects and content efficiently. With Business CMS, you can
         easily create, manage, and publish your projects and content.
       </p>
       <Link

@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Sponsors | Maxpo CMS ",
+  title: "Sponsors | Business CMS ",
   description: "",
 };
 

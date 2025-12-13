@@ -5,9 +5,9 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Next.js Error 404 | Maxpo CMS - Next.js Projects Template",
+  title: "Next.js Error 404 | Business CMS - Next.js Projects Template",
   description:
-    "This is Next.js Error 404 page for Maxpo CMS - Next.js Tailwind CSS Admin Projects Template",
+    "This is Next.js Error 404 page for Business CMS - Next.js Tailwind CSS Admin Projects Template",
 };
 
 export default function Error404() {
@@ -47,7 +47,7 @@ export default function Error404() {
       </div>
       {/* <!-- Footer --> */}
       <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
-        &copy; {new Date().getFullYear()} - Maxpo CMS
+        &copy; {new Date().getFullYear()} - Business CMS
       </p>
     </div>
   );

@@ -2,7 +2,7 @@ import AgendaComponent from "@/components/agenda/agendaComponent";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Agenda | Maxpo CMS",
+  title: "Agenda | Business CMS",
   description: "",
 };
 

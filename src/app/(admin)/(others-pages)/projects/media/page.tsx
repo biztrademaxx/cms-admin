@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Media Partners | Maxpo CMS ",
+  title: "Media Partners | Business CMS ",
   description: "",
 };
 

@@ -41,7 +41,7 @@ const othersItems: NavItem[] = [
   {
     icon: <BoxCubeIcon />,
     name: "CRM",
-    path: "https://crm.maxpo.ae",
+    path: "https://crm.sandeep.ae",
   },
   // {
   //   icon: <PlugInIcon />,
