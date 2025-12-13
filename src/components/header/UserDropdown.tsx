@@ -70,10 +70,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Abdul Mazood
+            Avala Sandeep
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            abdulmazood@maxpo.ae
+            sandeepavala2@gmail.com
           </span>
         </div>
 
