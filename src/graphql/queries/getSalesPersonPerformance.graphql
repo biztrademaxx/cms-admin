@@ -1,0 +1,18 @@
+query GetSalesPersonPerformance($salesPersonId: String!) {
+  getSalesPersonPerformance(salesPersonId: $salesPersonId) {
+    salesPersonId
+    name
+    email
+    totalLeads
+    newLeads
+    inProgress
+    interested
+    converted
+    notInterested
+    conversionRate
+    statusBreakdown {
+      status
+      count
+    }
+  }
+}

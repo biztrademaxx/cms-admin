@@ -1,0 +1,15 @@
+mutation CreateSalesPerson($input: CreateSalesPersonInput!) {
+  createSalesPerson(input: $input) {
+    id
+    name
+    email
+    phone
+    isActive
+    cities {
+      id
+      city
+      state
+    }
+  }
+}
+

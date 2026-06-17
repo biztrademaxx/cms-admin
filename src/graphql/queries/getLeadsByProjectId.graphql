@@ -15,6 +15,22 @@ query GetLeadsByProjectId($projectId: String!) {
     projectId
     quantity
     status
+    source
+    city
+    state
+    country
+    notes
+    assignedToId
     utmId
+    assignedTo {
+      id
+      name
+      email
+    }
+    utm {
+      source
+      medium
+      campaign
+    }
   }
 }

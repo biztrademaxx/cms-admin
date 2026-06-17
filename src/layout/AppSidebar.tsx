@@ -131,6 +131,16 @@ const AppSidebar: React.FC = () => {
           path: `/projects/marketing/leads`,
         },
         {
+          name: "Sales Team",
+          path: `/projects/marketing/sales-team`,
+          new: true,
+        },
+        {
+          name: "Sales Performance",
+          path: `/projects/marketing/sales-performance`,
+          new: true,
+        },
+        {
           name: "UTM Builder",
           path: `/projects/marketing/utm`,
         },
@@ -352,26 +362,26 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex  ${
+        className={`py-2 flex shrink-0 ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
+        <Link href="/" className="block leading-none">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <Image
-                className="dark:hidden"
+                className="dark:hidden block h-auto"
                 src={Logo}
                 alt="Logo"
-                width={150}
-                height={40}
+                width={120}
+                height={32}
               />
               <Image
-                className="hidden dark:block"
+                className="hidden dark:block h-auto"
                 src={LogoDark}
                 alt="Logo"
-                width={150}
-                height={40}
+                width={120}
+                height={32}
               />
             </>
           ) : (

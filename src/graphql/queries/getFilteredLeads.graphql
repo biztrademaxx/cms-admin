@@ -1,0 +1,42 @@
+query GetFilteredLeads($input: LeadFilterInput!) {
+  getFilteredLeads(input: $input) {
+    total
+    page
+    limit
+    totalPages
+    leads {
+      id
+      name
+      email
+      phone
+      companyName
+      jobTitle
+      city
+      state
+      country
+      status
+      source
+      leadType
+      industry
+      message
+      notes
+      assignedToId
+      callbackDate
+      followUpDate
+      createdAt
+      updatedAt
+      assignedTo {
+        id
+        name
+        email
+        phone
+      }
+      utm {
+        id
+        source
+        medium
+        campaign
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+mutation DeleteSalesPerson($id: String!) {
+  deleteSalesPerson(id: $id) {
+    id
+  }
+}

@@ -38,7 +38,7 @@ export default function SignInForm() {
         setTimeout(() => {
           setIsLoading(false);
           setIsChecked(false);
-          window.location.href = "/";
+          window.location.href = data.role === "SALES" ? "/sales" : "/";
         }, 300);
       } else {
         if (data.error === "Invalid credentials") {

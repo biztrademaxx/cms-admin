@@ -1,0 +1,11 @@
+mutation UpdateLeadStatus($input: UpdateLeadStatusInput!) {
+  updateLeadStatus(input: $input) {
+    id
+    status
+    notes
+    callbackDate
+    followUpDate
+    updatedAt
+  }
+}
+

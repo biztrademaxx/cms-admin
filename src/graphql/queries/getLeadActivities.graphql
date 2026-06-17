@@ -1,0 +1,12 @@
+query GetLeadActivities($leadId: String!) {
+  getLeadActivities(leadId: $leadId) {
+    id
+    leadId
+    status
+    previousStatus
+    notes
+    changedById
+    changedByName
+    createdAt
+  }
+}

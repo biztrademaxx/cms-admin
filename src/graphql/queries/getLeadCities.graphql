@@ -1,0 +1,3 @@
+query GetLeadCities($projectId: String!, $state: String) {
+  getLeadCities(projectId: $projectId, state: $state)
+}

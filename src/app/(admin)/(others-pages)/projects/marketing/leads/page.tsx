@@ -1,12 +1,5 @@
-import LeadsComponent from "@/components/marketing/leads/leadsComponent";
-import { Metadata } from "next";
-import React from "react";
+import LeadsOverview from "@/components/marketing/leads/leadsOverview";
 
-export const metadata: Metadata = {
-  title: "Leads | Business CMS ",
-  description: "",
-};
-
-export default function Exhibitors() {
-  return <LeadsComponent />;
+export default function LeadsPage() {
+  return <LeadsOverview />;
 }

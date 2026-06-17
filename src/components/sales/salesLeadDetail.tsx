@@ -1,0 +1,187 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { useRouter, useParams } from "next/navigation";
+import SalesLayoutShell from "./salesLayoutShell";
+import Button from "@/components/ui/button/Button";
+import Badge from "@/components/ui/badge/Badge";
+import StatusUpdateModal from "@/components/marketing/leads/statusUpdateModal";
+import LeadTimeline from "@/components/marketing/leads/leadTimeline";
+import { GetLeadByIdDocument, LeadStatus } from "@/gql_generated/graphql";
+import {
+  getStatusLabel,
+  getStatusColor,
+  getSourceLabel,
+} from "@/components/marketing/leads/leadStatusConfig";
+import { getPhaseForStatus } from "@/components/marketing/leads/leadPipeline";
+import { convertISOtoNormal } from "@/utils/dateUtils";
+import { Phone, Mail, ArrowLeft, Edit } from "lucide-react";
+
+interface Session {
+  name: string;
+  salesPersonId: string;
+  projectId: string;
+}
+
+const SalesLeadDetail = () => {
+  const params = useParams();
+  const router = useRouter();
+  const leadId = params.leadId as string;
+  const [session, setSession] = useState<Session | null>(null);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.role !== "SALES" || !data.salesPersonId) {
+          router.push("/signin");
+          return;
+        }
+        setSession({
+          name: data.name,
+          salesPersonId: data.salesPersonId,
+          projectId: data.projectId,
+        });
+      });
+  }, [router]);
+
+  const { data, loading } = useQuery(GetLeadByIdDocument, {
+    variables: { id: leadId },
+    skip: !leadId,
+  });
+
+  const lead = data?.getLeadById;
+
+  const handleLogout = async () => {
+    await fetch("/api/signout", { method: "POST" });
+    router.push("/signin");
+  };
+
+  if (!session || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!lead) {
+    return (
+      <SalesLayoutShell userName={session.name} onLogout={handleLogout}>
+        <p className="text-center text-gray-500 py-12">Lead not found</p>
+      </SalesLayoutShell>
+    );
+  }
+
+  const phase = getPhaseForStatus(lead.status);
+
+  const infoFields = [
+    { label: "Email", value: lead.email },
+    { label: "Phone", value: lead.phone },
+    { label: "Company", value: lead.companyName },
+    { label: "Job Title", value: lead.jobTitle },
+    { label: "City", value: lead.city },
+    { label: "State", value: lead.state },
+    { label: "Source", value: getSourceLabel(lead.source) },
+    { label: "Industry", value: lead.industry },
+    { label: "Created", value: convertISOtoNormal(lead.createdAt) },
+  ];
+
+  return (
+    <SalesLayoutShell userName={session.name} onLogout={handleLogout}>
+      <div className="space-y-6">
+        <div className="flex flex-wrap justify-between items-start gap-4">
+          <div className="flex items-start gap-3">
+            <button
+              onClick={() => router.push("/sales")}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 mt-1"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                {lead.name}
+              </h2>
+              <p className="text-sm text-gray-500">{lead.companyName || lead.email}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Badge size="sm" color={getStatusColor(lead.status)}>
+                  {getStatusLabel(lead.status)}
+                </Badge>
+                <span className={`text-xs px-2 py-0.5 rounded-full text-white ${phase.color}`}>
+                  {phase.label} Phase
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {lead.phone && (
+              <a href={`tel:${lead.phone}`}>
+                <Button size="sm" variant="outline" startIcon={<Phone className="w-4 h-4" />}>
+                  Call
+                </Button>
+              </a>
+            )}
+            {lead.email && (
+              <a href={`mailto:${lead.email}`}>
+                <Button size="sm" variant="outline" startIcon={<Mail className="w-4 h-4" />}>
+                  Email
+                </Button>
+              </a>
+            )}
+            <Button size="sm" onClick={() => setStatusModalOpen(true)} startIcon={<Edit className="w-4 h-4" />}>
+              Update Status
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5">
+            <h3 className="text-base font-semibold mb-4">Lead Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {infoFields.map(
+                (f) =>
+                  f.value && (
+                    <div key={f.label}>
+                      <p className="text-xs text-gray-500">{f.label}</p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-white">{f.value}</p>
+                    </div>
+                  )
+              )}
+            </div>
+            {lead.message && (
+              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <p className="text-xs text-gray-500">Message</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">{lead.message}</p>
+              </div>
+            )}
+            {lead.notes && (
+              <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800">
+                <p className="text-xs font-medium text-amber-700">Latest Notes</p>
+                <p className="text-sm mt-1">{lead.notes}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5">
+            <LeadTimeline leadId={lead.id} currentStatus={lead.status} />
+          </div>
+        </div>
+      </div>
+
+      <StatusUpdateModal
+        isOpen={statusModalOpen}
+        onClose={() => setStatusModalOpen(false)}
+        leadId={lead.id}
+        leadName={lead.name}
+        currentStatus={lead.status}
+        projectId={session.projectId}
+        changedById={session.salesPersonId}
+        changedByName={session.name}
+      />
+    </SalesLayoutShell>
+  );
+};
+
+export default SalesLeadDetail;

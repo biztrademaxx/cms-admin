@@ -58,6 +58,7 @@ export const ProjectsMetrics = () => {
     const projectName = name + " " + year;
     dispatch(setProject({ projectId, projectName }));
     localStorage.setItem("projectId", projectId);
+    localStorage.setItem("projectName", projectName);
   };
 
   if (loading) {

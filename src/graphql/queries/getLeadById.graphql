@@ -1,0 +1,45 @@
+query GetLeadById($id: String!) {
+  getLeadById(id: $id) {
+    id
+    name
+    email
+    phone
+    companyName
+    jobTitle
+    city
+    state
+    country
+    industry
+    status
+    source
+    leadType
+    message
+    notes
+    quantity
+    price
+    assignedToId
+    callbackDate
+    followUpDate
+    createdAt
+    updatedAt
+    assignedTo {
+      id
+      name
+      email
+      phone
+      cities {
+        city
+        state
+      }
+    }
+    utm {
+      id
+      source
+      medium
+      campaign
+      term
+      content
+      url
+    }
+  }
+}

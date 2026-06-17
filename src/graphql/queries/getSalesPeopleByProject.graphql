@@ -1,0 +1,16 @@
+query GetSalesPeopleByProject($projectId: String!) {
+  getSalesPeopleByProject(projectId: $projectId) {
+    id
+    name
+    email
+    phone
+    isActive
+    projectId
+    cities {
+      id
+      city
+      state
+    }
+    createdAt
+  }
+}
