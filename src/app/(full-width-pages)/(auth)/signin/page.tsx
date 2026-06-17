@@ -1,7 +1,7 @@
 import SignInForm from "@/components/auth/SignInForm";
 import Image from "next/image";
 import Link from "next/link";
-import authLogo from "@/../public/images/logo/auth-logo.png";
+import authLogo from "@/../public/images/logo/logo.png";
 
 export const metadata = {
   title: "Sign In",
