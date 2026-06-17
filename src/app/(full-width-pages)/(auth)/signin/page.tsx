@@ -18,7 +18,7 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* Right side - Logo/Branding */}
+      {/* Right side - Logo/Branding signup */}
       <div className="hidden lg:flex lg:w-1/2 justify-center items-center bg-brand-950 dark:bg-white/5">
         <Link href="/" className="block p-8">
           <Image 
