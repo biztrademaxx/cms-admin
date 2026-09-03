@@ -12,6 +12,7 @@ import {
   GetFilteredLeadsDocument,
   GetLeadsByProjectIdDocument,
   LeadStatus,
+  LeadType,
 } from "@/gql_generated/graphql";
 import {
   getStatusLabel,
@@ -44,6 +45,7 @@ const SalesDashboard = () => {
     id: string;
     name: string;
     status: LeadStatus;
+    leadType: LeadType;
   } | null>(null);
 
   useEffect(() => {
@@ -212,7 +214,7 @@ const SalesDashboard = () => {
                       </td>
                       <td className="px-4 py-3 text-sm">{[lead.city, lead.state].filter(Boolean).join(", ") || "—"}</td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => setStatusModal({ id: lead.id, name: lead.name, status: lead.status })}>
+                        <button onClick={() => setStatusModal({ id: lead.id, name: lead.name, status: lead.status, leadType: lead.leadType })}>
                           <Badge size="sm" color={getStatusColor(lead.status)}>{getStatusLabel(lead.status)}</Badge>
                         </button>
                       </td>
@@ -253,6 +255,7 @@ const SalesDashboard = () => {
           leadId={statusModal.id}
           leadName={statusModal.name}
           currentStatus={statusModal.status}
+          currentLeadType={statusModal.leadType}
           projectId={session.projectId}
           changedById={session.salesPersonId}
           changedByName={session.name}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
@@ -8,9 +8,10 @@ import {
   GetLeadByIdDocument,
   GetFilteredLeadsDocument,
   LeadStatus,
+  LeadType,
   UpdateLeadStatusDocument,
 } from "@/gql_generated/graphql";
-import { LEAD_STATUS_CONFIG } from "./leadStatusConfig";
+import { LEAD_STATUS_CONFIG, LEAD_TYPE_OPTIONS } from "./leadStatusConfig";
 import DatePicker from "@/components/form/date-picker";
 
 interface StatusUpdateModalProps {
@@ -19,6 +20,7 @@ interface StatusUpdateModalProps {
   leadId: string;
   leadName: string;
   currentStatus: LeadStatus;
+  currentLeadType?: LeadType;
   projectId: string;
   changedById?: string;
   changedByName?: string;
@@ -30,14 +32,26 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
   leadId,
   leadName,
   currentStatus,
+  currentLeadType = LeadType.Enquiry,
   projectId,
   changedById,
   changedByName,
 }) => {
   const [status, setStatus] = useState(currentStatus);
+  const [leadType, setLeadType] = useState(currentLeadType);
   const [notes, setNotes] = useState("");
   const [callbackDate, setCallbackDate] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      setStatus(currentStatus);
+      setLeadType(currentLeadType);
+      setNotes("");
+      setCallbackDate("");
+      setFollowUpDate("");
+    }
+  }, [isOpen, currentStatus, currentLeadType]);
 
   const [updateStatus, { loading }] = useMutation(UpdateLeadStatusDocument, {
     refetchQueries: [
@@ -53,6 +67,7 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
         input: {
           id: leadId,
           status,
+          leadType,
           notes: notes || undefined,
           callbackDate: callbackDate || undefined,
           followUpDate: followUpDate || undefined,
@@ -74,6 +89,23 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
         </p>
 
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              Lead Type
+            </label>
+            <select
+              value={leadType}
+              onChange={(e) => setLeadType(e.target.value as LeadType)}
+              className="h-11 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+            >
+              {LEAD_TYPE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Status

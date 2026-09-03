@@ -2,6 +2,7 @@ mutation UpdateLeadStatus($input: UpdateLeadStatusInput!) {
   updateLeadStatus(input: $input) {
     id
     status
+    leadType
     notes
     callbackDate
     followUpDate

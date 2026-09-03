@@ -8,16 +8,19 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
 import StatusUpdateModal from "./statusUpdateModal";
+import AssignLeadModal from "./assignLeadModal";
+import ContactPersonSection from "./contactPersonSection";
 import LeadTimeline from "./leadTimeline";
-import { GetLeadByIdDocument, LeadStatus } from "@/gql_generated/graphql";
+import { GetLeadByIdDocument, LeadStatus, LeadType } from "@/gql_generated/graphql";
 import {
   getStatusLabel,
   getStatusColor,
   getSourceLabel,
+  getLeadTypeLabel,
 } from "./leadStatusConfig";
 import { getPhaseForStatus } from "./leadPipeline";
 import { convertISOtoNormal } from "@/utils/dateUtils";
-import { Phone, Mail, ArrowLeft, Edit } from "lucide-react";
+import { Phone, Mail, ArrowLeft, Edit, UserPlus } from "lucide-react";
 
 const LeadDetail = () => {
   const params = useParams();
@@ -25,6 +28,7 @@ const LeadDetail = () => {
   const leadId = params.leadId as string;
   const { projectName, projectId } = useSelector((state: any) => state.project);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
 
   const { data, loading } = useQuery(GetLeadByIdDocument, {
     variables: { id: leadId },
@@ -60,7 +64,7 @@ const LeadDetail = () => {
     { label: "State", value: lead.state },
     { label: "Country", value: lead.country },
     { label: "Industry", value: lead.industry },
-    { label: "Lead Type", value: lead.leadType },
+    { label: "Lead Type", value: getLeadTypeLabel(lead.leadType) },
     { label: "UTM Source", value: lead.utm?.source },
     { label: "UTM Campaign", value: lead.utm?.campaign },
     { label: "UTM Medium", value: lead.utm?.medium },
@@ -108,6 +112,14 @@ const LeadDetail = () => {
                 </Button>
               </a>
             )}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setAssignModalOpen(true)}
+              startIcon={<UserPlus className="w-4 h-4" />}
+            >
+              Assign Lead
+            </Button>
             <Button
               size="sm"
               onClick={() => setStatusModalOpen(true)}
@@ -175,6 +187,14 @@ const LeadDetail = () => {
               )}
             </div>
 
+            <ContactPersonSection
+              leadId={lead.id}
+              contactPersonName={lead.contactPersonName}
+              contactPersonPhone={lead.contactPersonPhone}
+              contactPersonDesignation={lead.contactPersonDesignation}
+              contactPersonEmail={lead.contactPersonEmail}
+            />
+
             {lead.message && (
               <div className="mt-6">
                 <span className="text-xs text-gray-500 dark:text-gray-400">Message</span>
@@ -202,12 +222,22 @@ const LeadDetail = () => {
         </div>
       </div>
 
+      <AssignLeadModal
+        isOpen={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        leadId={lead.id}
+        leadName={lead.name}
+        projectId={projectId}
+        currentAssignedToId={lead.assignedToId}
+      />
+
       <StatusUpdateModal
         isOpen={statusModalOpen}
         onClose={() => setStatusModalOpen(false)}
         leadId={lead.id}
         leadName={lead.name}
         currentStatus={lead.status}
+        currentLeadType={lead.leadType}
         projectId={projectId}
       />
     </div>

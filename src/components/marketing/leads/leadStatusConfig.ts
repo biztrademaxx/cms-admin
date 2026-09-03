@@ -1,4 +1,14 @@
-import { LeadSource, LeadStatus } from "@/gql_generated/graphql";
+import { LeadSource, LeadStatus, LeadType } from "@/gql_generated/graphql";
+
+export const LEAD_TYPE_OPTIONS = [
+  { label: "Visitor", value: LeadType.Visitor },
+  { label: "Exhibitor", value: LeadType.Exhibitor },
+  { label: "Sponsor", value: LeadType.Sponsor },
+  { label: "Speaker", value: LeadType.Speaker },
+];
+
+export const getLeadTypeLabel = (leadType: LeadType) =>
+  LEAD_TYPE_OPTIONS.find((t) => t.value === leadType)?.label ?? leadType;
 
 export const LEAD_STATUS_CONFIG = [
   { label: "New", value: LeadStatus.New, color: "info" as const },

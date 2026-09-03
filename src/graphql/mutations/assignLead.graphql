@@ -1,0 +1,13 @@
+mutation AssignLead($input: AssignLeadInput!) {
+  assignLead(input: $input) {
+    id
+    assignedToId
+    assignedTo {
+      id
+      name
+      email
+      phone
+    }
+    updatedAt
+  }
+}

@@ -6,6 +6,10 @@ query GetLeadById($id: String!) {
     phone
     companyName
     jobTitle
+    contactPersonName
+    contactPersonPhone
+    contactPersonDesignation
+    contactPersonEmail
     city
     state
     country

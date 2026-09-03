@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config: CodegenConfig = {
-  schema: "../../../cms-backend/cms-backend/src/schema.gql",
+  schema: "../cms-backend/src/schema.gql",
   documents: "src/graphql/**/*.graphql",
   generates: {
     "./src/gql_generated/": {

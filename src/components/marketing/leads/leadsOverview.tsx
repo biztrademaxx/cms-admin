@@ -16,6 +16,7 @@ import {
   GetLeadsByProjectIdDocument,
   LeadSource,
   LeadStatus,
+  LeadType,
 } from "@/gql_generated/graphql";
 import {
   LEAD_STATUS_CONFIG,
@@ -53,6 +54,7 @@ const LeadsOverview = () => {
     id: string;
     name: string;
     status: LeadStatus;
+    leadType: LeadType;
   } | null>(null);
 
   const filterInput = {
@@ -400,6 +402,7 @@ const LeadsOverview = () => {
                                 id: lead.id,
                                 name: lead.name,
                                 status: lead.status,
+                                leadType: lead.leadType,
                               });
                             }}
                           >
@@ -469,6 +472,7 @@ const LeadsOverview = () => {
           leadId={statusModal.id}
           leadName={statusModal.name}
           currentStatus={statusModal.status}
+          currentLeadType={statusModal.leadType}
           projectId={projectId}
         />
       )}

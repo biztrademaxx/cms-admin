@@ -7,6 +7,7 @@ import SalesLayoutShell from "./salesLayoutShell";
 import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
 import StatusUpdateModal from "@/components/marketing/leads/statusUpdateModal";
+import ContactPersonSection from "@/components/marketing/leads/contactPersonSection";
 import LeadTimeline from "@/components/marketing/leads/leadTimeline";
 import { GetLeadByIdDocument, LeadStatus } from "@/gql_generated/graphql";
 import {
@@ -162,6 +163,14 @@ const SalesLeadDetail = () => {
                 <p className="text-sm mt-1">{lead.notes}</p>
               </div>
             )}
+
+            <ContactPersonSection
+              leadId={lead.id}
+              contactPersonName={lead.contactPersonName}
+              contactPersonPhone={lead.contactPersonPhone}
+              contactPersonDesignation={lead.contactPersonDesignation}
+              contactPersonEmail={lead.contactPersonEmail}
+            />
           </div>
 
           <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5">
@@ -176,6 +185,7 @@ const SalesLeadDetail = () => {
         leadId={lead.id}
         leadName={lead.name}
         currentStatus={lead.status}
+        currentLeadType={lead.leadType}
         projectId={session.projectId}
         changedById={session.salesPersonId}
         changedByName={session.name}
