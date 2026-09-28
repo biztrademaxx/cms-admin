@@ -1,6 +1,8 @@
 query GetLeadById($id: String!) {
   getLeadById(id: $id) {
     id
+    projectId
+    assignedToId
     name
     email
     phone

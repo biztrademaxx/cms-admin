@@ -1,0 +1,12 @@
+query GetSalesPersonById($id: String!) {
+  getSalesPersonById(id: $id) {
+    id
+    name
+    email
+    projectId
+    project {
+      id
+      name
+    }
+  }
+}

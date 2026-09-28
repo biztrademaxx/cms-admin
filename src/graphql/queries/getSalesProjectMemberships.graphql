@@ -1,0 +1,12 @@
+query GetSalesProjectMemberships($salesPersonId: String!) {
+  getSalesProjectMemberships(salesPersonId: $salesPersonId) {
+    id
+    name
+    email
+    projectId
+    project {
+      id
+      name
+    }
+  }
+}

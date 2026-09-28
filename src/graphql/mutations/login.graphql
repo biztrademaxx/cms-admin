@@ -6,5 +6,12 @@ mutation Login($input: LoginInput!) {
     email
     salesPersonId
     projectId
+    projectName
+    requiresProjectSelection
+    projectOptions {
+      projectId
+      projectName
+      salesPersonId
+    }
   }
 }

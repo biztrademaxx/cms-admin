@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useRouter, useParams } from "next/navigation";
 import SalesLayoutShell from "./salesLayoutShell";
+import { useSalesSession } from "./useSalesSession";
 import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
 import StatusUpdateModal from "@/components/marketing/leads/statusUpdateModal";
@@ -19,34 +20,13 @@ import { getPhaseForStatus } from "@/components/marketing/leads/leadPipeline";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import { Phone, Mail, ArrowLeft, Edit } from "lucide-react";
 
-interface Session {
-  name: string;
-  salesPersonId: string;
-  projectId: string;
-}
-
 const SalesLeadDetail = () => {
   const params = useParams();
   const router = useRouter();
   const leadId = params.leadId as string;
-  const [session, setSession] = useState<Session | null>(null);
+  const { session, loadingSession, projectMemberships, openProjectPicker, handleLogout } =
+    useSalesSession();
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/session")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.role !== "SALES" || !data.salesPersonId) {
-          router.push("/signin");
-          return;
-        }
-        setSession({
-          name: data.name,
-          salesPersonId: data.salesPersonId,
-          projectId: data.projectId,
-        });
-      });
-  }, [router]);
 
   const { data, loading } = useQuery(GetLeadByIdDocument, {
     variables: { id: leadId },
@@ -55,12 +35,7 @@ const SalesLeadDetail = () => {
 
   const lead = data?.getLeadById;
 
-  const handleLogout = async () => {
-    await fetch("/api/signout", { method: "POST" });
-    router.push("/signin");
-  };
-
-  if (!session || loading) {
+  if (!session || loadingSession || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
         Loading...
@@ -68,10 +43,24 @@ const SalesLeadDetail = () => {
     );
   }
 
-  if (!lead) {
+  const canAccess =
+    lead &&
+    lead.projectId === session.projectId &&
+    lead.assignedToId === session.salesPersonId;
+
+  if (!lead || !canAccess) {
     return (
-      <SalesLayoutShell userName={session.name} onLogout={handleLogout}>
-        <p className="text-center text-gray-500 py-12">Lead not found</p>
+      <SalesLayoutShell
+        userName={session.name}
+        projectName={session.projectName}
+        projectId={session.projectId}
+        projectMemberships={projectMemberships}
+        onOpenProjectPicker={openProjectPicker}
+        onLogout={handleLogout}
+      >
+        <p className="text-center text-gray-500 py-12">
+          Lead not found or not assigned to you in this project
+        </p>
       </SalesLayoutShell>
     );
   }
@@ -91,7 +80,14 @@ const SalesLeadDetail = () => {
   ];
 
   return (
-    <SalesLayoutShell userName={session.name} onLogout={handleLogout}>
+    <SalesLayoutShell
+      userName={session.name}
+      projectName={session.projectName}
+      projectId={session.projectId}
+      projectMemberships={projectMemberships}
+      onOpenProjectPicker={openProjectPicker}
+      onLogout={handleLogout}
+    >
       <div className="space-y-6">
         <div className="flex flex-wrap justify-between items-start gap-4">
           <div className="flex items-start gap-3">

@@ -1,0 +1,15 @@
+mutation AddExistingSalesPersonToProject($input: AddExistingSalesPersonInput!) {
+  addExistingSalesPersonToProject(input: $input) {
+    id
+    name
+    email
+    phone
+    isActive
+    projectId
+    cities {
+      id
+      city
+      state
+    }
+  }
+}

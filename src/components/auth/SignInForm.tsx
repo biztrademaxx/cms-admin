@@ -30,25 +30,38 @@ export default function SignInForm() {
       const response = await fetch("/api/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
       });
 
       const data = await response.json();
       if (data.message === "Login successful") {
+        if (data.projectOptions?.length) {
+          sessionStorage.setItem(
+            "sales_project_options",
+            JSON.stringify(data.projectOptions)
+          );
+        } else {
+          sessionStorage.removeItem("sales_project_options");
+        }
         setTimeout(() => {
           setIsLoading(false);
           setIsChecked(false);
-          window.location.href = data.role === "SALES" ? "/sales" : "/";
+          window.location.href = data.redirect || "/";
         }, 300);
       } else {
-        if (data.error === "Invalid credentials") {
-          formik.setFieldError("email", `${" "}`);
-          formik.setFieldError("password", "Invalid email or password");
-        }
+        const message =
+          data.error === "Invalid credentials" || data.error === "Invalid email or password"
+            ? "Invalid email or password"
+            : data.detail || data.error || "Sign in failed";
+        formik.setFieldError("email", " ");
+        formik.setFieldError("password", message);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Login error:", error);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -75,7 +88,6 @@ export default function SignInForm() {
 
       <form onSubmit={formik.handleSubmit}>
         <div className="space-y-6">
-          {/* Email */}
           <div>
             <Label>
               Email <span className="text-error-500">*</span>
@@ -92,7 +104,6 @@ export default function SignInForm() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <Label>
               Password <span className="text-error-500">*</span>
@@ -121,7 +132,6 @@ export default function SignInForm() {
             </div>
           </div>
 
-          {/* Remember Me */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Checkbox checked={isChecked} onChange={setIsChecked} />
@@ -131,14 +141,8 @@ export default function SignInForm() {
             </div>
           </div>
 
-          {/* Submit */}
           <div>
-            <Button
-              className="w-full"
-              size="sm"
-              type="submit"
-              disabled={isLoading}
-            >
+            <Button className="w-full" size="sm" type="submit" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </div>

@@ -7,6 +7,9 @@ const AUTH_COOKIES = [
   "auth_token",
   "sales_person_id",
   "project_id",
+  "project_name",
+  "sales_bootstrap_id",
+  "sales_project_options",
 ];
 
 export async function POST() {

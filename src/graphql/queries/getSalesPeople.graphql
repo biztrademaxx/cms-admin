@@ -1,0 +1,15 @@
+query GetSalesPeople {
+  getSalesPeople {
+    id
+    name
+    email
+    phone
+    isActive
+    projectId
+    cities {
+      id
+      city
+      state
+    }
+  }
+}

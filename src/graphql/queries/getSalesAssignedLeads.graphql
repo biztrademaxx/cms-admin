@@ -1,0 +1,37 @@
+query GetSalesAssignedLeads($input: SalesAssignedLeadsInput!) {
+  getSalesAssignedLeads(input: $input) {
+    total
+    page
+    limit
+    totalPages
+    leads {
+      id
+      name
+      email
+      phone
+      companyName
+      jobTitle
+      city
+      state
+      country
+      status
+      source
+      leadType
+      industry
+      message
+      notes
+      assignedToId
+      projectId
+      callbackDate
+      followUpDate
+      createdAt
+      updatedAt
+      assignedTo {
+        id
+        name
+        email
+        phone
+      }
+    }
+  }
+}

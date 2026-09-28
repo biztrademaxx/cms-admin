@@ -7,16 +7,18 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
 import SalesPersonModal from "./salesPersonModal";
+import AddExistingSalesPersonModal from "./addExistingSalesPersonModal";
 import {
   CreateSalesPersonDocument,
   DeleteSalesPersonDocument,
   GetSalesPeopleByProjectDocument,
 } from "@/gql_generated/graphql";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, UserPlus } from "lucide-react";
 
 const SalesPeopleComponent = () => {
   const { projectId, projectName } = useActiveProject();
   const [modalOpen, setModalOpen] = useState(false);
+  const [existingModalOpen, setExistingModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<any>(null);
 
   const { data, loading } = useQuery(GetSalesPeopleByProjectDocument, {
@@ -73,16 +75,26 @@ const SalesPeopleComponent = () => {
       <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-5 lg:p-6">
         <div className="flex flex-wrap justify-between items-center mb-6">
           <PageBreadcrumb pageTitle="Sales Team" projectName={projectName} />
-          <Button
-            size="sm"
-            onClick={() => {
-              setEditingPerson(null);
-              setModalOpen(true);
-            }}
-            startIcon={<Plus className="w-4 h-4" />}
-          >
-            Add Sales Person
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setExistingModalOpen(true)}
+              startIcon={<UserPlus className="w-4 h-4" />}
+            >
+              Add Existing
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setEditingPerson(null);
+                setModalOpen(true);
+              }}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Sales Person
+            </Button>
+          </div>
         </div>
 
         {loading ? (
@@ -194,6 +206,12 @@ const SalesPeopleComponent = () => {
         onSubmit={handleSubmit}
         initialValues={editingPerson}
         loading={saving}
+      />
+
+      <AddExistingSalesPersonModal
+        isOpen={existingModalOpen}
+        onClose={() => setExistingModalOpen(false)}
+        projectId={projectId}
       />
     </div>
   );

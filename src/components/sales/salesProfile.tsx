@@ -1,63 +1,48 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@apollo/client";
-import { useRouter } from "next/navigation";
 import SalesLayoutShell from "./salesLayoutShell";
-import { GetLeadsByProjectIdDocument } from "@/gql_generated/graphql";
+import { useSalesSession } from "./useSalesSession";
+import { GetFilteredLeadsDocument } from "@/gql_generated/graphql";
 import { getStatusLabel, getStatusColor } from "@/components/marketing/leads/leadStatusConfig";
 import { computeSalesPersonPerformance } from "@/components/marketing/leads/salesPerformanceUtils";
 import Badge from "@/components/ui/badge/Badge";
 import { Trophy, Target, TrendingUp, Users, XCircle } from "lucide-react";
 
-interface Session {
-  name: string;
-  email?: string;
-  salesPersonId: string;
-  projectId: string;
-}
-
 const SalesProfile = () => {
-  const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
+  const { session, loadingSession, projectMemberships, openProjectPicker, handleLogout } =
+    useSalesSession();
 
-  useEffect(() => {
-    fetch("/api/session")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.role !== "SALES" || !data.salesPersonId) {
-          router.push("/signin");
-          return;
-        }
-        setSession({
-          name: data.name,
-          email: data.email,
-          salesPersonId: data.salesPersonId,
-          projectId: data.projectId,
-        });
-      });
-  }, [router]);
-
-  const { data: leadsData, loading } = useQuery(GetLeadsByProjectIdDocument, {
-    variables: { projectId: session?.projectId ?? "" },
-    skip: !session?.projectId,
+  const { data: leadsData, loading } = useQuery(GetFilteredLeadsDocument, {
+    variables: {
+      input: {
+        projectId: session?.projectId ?? "",
+        assignedToId: session?.salesPersonId ?? "",
+        page: 1,
+        limit: 500,
+      },
+    },
+    skip: !session?.projectId || !session?.salesPersonId,
+    fetchPolicy: "cache-and-network",
   });
+
+  const assignedLeads = leadsData?.getFilteredLeads?.leads ?? [];
 
   const perf = useMemo(() => {
     if (!session) return null;
     return computeSalesPersonPerformance(
-      { id: session.salesPersonId, name: session.name, email: session.email ?? "" },
-      leadsData?.getLeadsByProjectId ?? []
+      { id: session.salesPersonId, name: session.name, email: "" },
+      assignedLeads
     );
-  }, [session, leadsData]);
+  }, [session, assignedLeads]);
 
-  const handleLogout = async () => {
-    await fetch("/api/signout", { method: "POST" });
-    router.push("/signin");
-  };
-
-  if (!session) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>;
+  if (loadingSession || !session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Loading...
+      </div>
+    );
   }
 
   const statCards = perf
@@ -67,21 +52,36 @@ const SalesProfile = () => {
         { label: "Interested", value: perf.interested, icon: TrendingUp, color: "text-purple-600" },
         { label: "Converted", value: perf.converted, icon: Trophy, color: "text-green-600" },
         { label: "Not Interested", value: perf.notInterested, icon: XCircle, color: "text-red-500" },
-        { label: "Conversion Rate", value: `${perf.conversionRate}%`, icon: TrendingUp, color: "text-brand-600" },
+        {
+          label: "Conversion Rate",
+          value: `${perf.conversionRate}%`,
+          icon: TrendingUp,
+          color: "text-brand-600",
+        },
       ]
     : [];
 
   return (
-    <SalesLayoutShell userName={session.name} onLogout={handleLogout}>
+    <SalesLayoutShell
+      userName={session.name}
+      projectName={session.projectName}
+      projectId={session.projectId}
+      projectMemberships={projectMemberships}
+      onOpenProjectPicker={openProjectPicker}
+      onLogout={handleLogout}
+    >
       <div className="space-y-6">
         <div className="rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 p-6 text-white">
           <h2 className="text-xl font-bold">{perf?.name ?? session.name}</h2>
-          <p className="text-brand-100 text-sm mt-1">{perf?.email}</p>
+          <p className="text-brand-100 text-sm mt-1">
+            {session.projectName || "Current project"}
+          </p>
           <p className="text-3xl font-bold mt-4">
             {loading ? "..." : `${perf?.conversionRate ?? 0}%`} conversion rate
           </p>
           <p className="text-brand-100 text-sm">
-            {perf?.converted ?? 0} converted out of {perf?.totalLeads ?? 0} assigned leads
+            {perf?.converted ?? 0} converted out of {perf?.totalLeads ?? 0} assigned leads in this
+            project
           </p>
         </div>
 
@@ -97,7 +97,9 @@ const SalesProfile = () => {
                   <Icon className={`w-4 h-4 ${card.color}`} />
                   <p className="text-xs text-gray-500">{card.label}</p>
                 </div>
-                <p className={`text-2xl font-bold ${card.color}`}>{loading ? "—" : card.value}</p>
+                <p className={`text-2xl font-bold ${card.color}`}>
+                  {loading ? "—" : card.value}
+                </p>
               </div>
             );
           })}

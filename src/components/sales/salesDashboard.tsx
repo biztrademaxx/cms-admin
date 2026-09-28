@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import SalesLayoutShell from "./salesLayoutShell";
+import { useSalesSession } from "./useSalesSession";
 import LeadPipelineOverview from "@/components/marketing/leads/leadPipelineOverview";
 import StatusUpdateModal from "@/components/marketing/leads/statusUpdateModal";
 import Badge from "@/components/ui/badge/Badge";
 import Button from "@/components/ui/button/Button";
 import {
   GetFilteredLeadsDocument,
-  GetLeadsByProjectIdDocument,
   LeadStatus,
   LeadType,
 } from "@/gql_generated/graphql";
@@ -29,15 +29,10 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-interface Session {
-  name: string;
-  salesPersonId: string;
-  projectId: string;
-}
-
 const SalesDashboard = () => {
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
+  const { session, loadingSession, projectMemberships, openProjectPicker, handleLogout } =
+    useSalesSession();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -48,59 +43,38 @@ const SalesDashboard = () => {
     leadType: LeadType;
   } | null>(null);
 
-  useEffect(() => {
-    fetch("/api/session")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.role !== "SALES" || !data.salesPersonId) {
-          router.push("/signin");
-          return;
-        }
-        setSession({
-          name: data.name,
-          salesPersonId: data.salesPersonId,
-          projectId: data.projectId,
-        });
-      });
-  }, [router]);
-
-  const { data: allLeadsData } = useQuery(GetLeadsByProjectIdDocument, {
-    variables: { projectId: session?.projectId ?? "" },
-    skip: !session?.projectId,
-  });
-
-  const perf = useMemo(() => {
-    if (!session?.salesPersonId) return null;
-    return computeSalesPersonPerformance(
-      { id: session.salesPersonId, name: session.name, email: "" },
-      allLeadsData?.getLeadsByProjectId ?? []
-    );
-  }, [session, allLeadsData]);
+  const leadsInput = useMemo(
+    () =>
+      session
+        ? {
+            projectId: session.projectId,
+            assignedToId: session.salesPersonId,
+            page,
+            limit: 50,
+            ...(search && { search }),
+            ...(statusFilter && { status: statusFilter as LeadStatus }),
+          }
+        : null,
+    [session, page, search, statusFilter]
+  );
 
   const { data, loading } = useQuery(GetFilteredLeadsDocument, {
-    variables: {
-      input: {
-        projectId: session?.projectId ?? "",
-        assignedToId: session?.salesPersonId,
-        page,
-        limit: 50,
-        ...(search && { search }),
-        ...(statusFilter && { status: statusFilter as LeadStatus }),
-      },
-    },
-    skip: !session?.projectId,
+    variables: { input: leadsInput! },
+    skip: !leadsInput,
+    fetchPolicy: "cache-and-network",
   });
 
   const allLeadsQuery = useQuery(GetFilteredLeadsDocument, {
     variables: {
       input: {
         projectId: session?.projectId ?? "",
-        assignedToId: session?.salesPersonId,
+        assignedToId: session?.salesPersonId ?? "",
         page: 1,
         limit: 500,
       },
     },
-    skip: !session?.projectId,
+    skip: !session?.projectId || !session?.salesPersonId,
+    fetchPolicy: "cache-and-network",
   });
 
   const leads = data?.getFilteredLeads?.leads ?? [];
@@ -108,12 +82,15 @@ const SalesDashboard = () => {
   const total = data?.getFilteredLeads?.total ?? 0;
   const totalPages = data?.getFilteredLeads?.totalPages ?? 1;
 
-  const handleLogout = async () => {
-    await fetch("/api/signout", { method: "POST" });
-    router.push("/signin");
-  };
+  const perf = useMemo(() => {
+    if (!session) return null;
+    return computeSalesPersonPerformance(
+      { id: session.salesPersonId, name: session.name, email: "" },
+      allLeads
+    );
+  }, [session, allLeads]);
 
-  if (!session) {
+  if (loadingSession || !session) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
         Loading...
@@ -122,9 +99,23 @@ const SalesDashboard = () => {
   }
 
   return (
-    <SalesLayoutShell userName={session.name} onLogout={handleLogout}>
+    <SalesLayoutShell
+      userName={session.name}
+      projectName={session.projectName}
+      projectId={session.projectId}
+      projectMemberships={projectMemberships}
+      onOpenProjectPicker={openProjectPicker}
+      onLogout={handleLogout}
+    >
       <div className="space-y-6">
-        {/* Quick performance strip */}
+        <div className="rounded-xl bg-brand-50/80 dark:bg-brand-950/20 border border-brand-100 dark:border-brand-900/40 px-4 py-3">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            Showing leads assigned to you in{" "}
+            <span className="font-semibold">{session.projectName || "this project"}</span>
+            . Leads from other projects are not listed here.
+          </p>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-xl bg-white dark:bg-gray-900 border p-4">
             <p className="text-xs text-gray-500">Total Leads</p>
@@ -146,31 +137,37 @@ const SalesDashboard = () => {
 
         <LeadPipelineOverview leads={allLeads} />
 
-        {/* Filters */}
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               placeholder="Search leads..."
               className="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
             />
           </div>
           <select
             value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
             className="py-2.5 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
           >
             <option value="">All Statuses</option>
             {LEAD_STATUS_CONFIG.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
             ))}
           </select>
         </div>
 
-        {/* Leads table */}
         <div className="rounded-xl bg-white dark:bg-gray-900 border overflow-hidden">
           <div className="px-4 py-3 border-b">
             <h3 className="font-semibold text-gray-800 dark:text-white">My Leads</h3>
@@ -179,20 +176,42 @@ const SalesDashboard = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-800/50 border-b">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lead</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">City</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Lead
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Company
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Phone
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    City
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Created
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} className="px-4 py-12 text-center text-gray-500">Loading...</td></tr>
+                  <tr>
+                    <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
+                      Loading...
+                    </td>
+                  </tr>
                 ) : leads.length === 0 ? (
-                  <tr><td colSpan={7} className="px-4 py-12 text-center text-gray-500">No leads assigned yet</td></tr>
+                  <tr>
+                    <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
+                      No leads assigned to you in this project yet
+                    </td>
+                  </tr>
                 ) : (
                   leads.map((lead) => (
                     <tr
@@ -207,18 +226,39 @@ const SalesDashboard = () => {
                       <td className="px-4 py-3 text-sm">{lead.companyName || "—"}</td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         {lead.phone ? (
-                          <a href={`tel:${lead.phone}`} className="flex items-center gap-1 text-sm text-brand-500">
-                            <Phone className="w-3.5 h-3.5" />{lead.phone}
+                          <a
+                            href={`tel:${lead.phone}`}
+                            className="flex items-center gap-1 text-sm text-brand-500"
+                          >
+                            <Phone className="w-3.5 h-3.5" />
+                            {lead.phone}
                           </a>
-                        ) : "—"}
+                        ) : (
+                          "—"
+                        )}
                       </td>
-                      <td className="px-4 py-3 text-sm">{[lead.city, lead.state].filter(Boolean).join(", ") || "—"}</td>
+                      <td className="px-4 py-3 text-sm">
+                        {[lead.city, lead.state].filter(Boolean).join(", ") || "—"}
+                      </td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => setStatusModal({ id: lead.id, name: lead.name, status: lead.status, leadType: lead.leadType })}>
-                          <Badge size="sm" color={getStatusColor(lead.status)}>{getStatusLabel(lead.status)}</Badge>
+                        <button
+                          onClick={() =>
+                            setStatusModal({
+                              id: lead.id,
+                              name: lead.name,
+                              status: lead.status,
+                              leadType: lead.leadType,
+                            })
+                          }
+                        >
+                          <Badge size="sm" color={getStatusColor(lead.status)}>
+                            {getStatusLabel(lead.status)}
+                          </Badge>
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-500">{convertISOtoNormal(lead.createdAt)}</td>
+                      <td className="px-4 py-3 text-xs text-gray-500">
+                        {convertISOtoNormal(lead.createdAt)}
+                      </td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => router.push(`/sales/leads/${lead.id}`)}
@@ -236,11 +276,23 @@ const SalesDashboard = () => {
           <div className="flex items-center justify-between px-4 py-3 border-t">
             <span className="text-sm text-gray-500">Total: {total}</span>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <span className="text-sm">{page} / {totalPages}</span>
-              <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
+              <span className="text-sm">
+                {page} / {totalPages}
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>

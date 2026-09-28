@@ -8,5 +8,6 @@ export async function getAuthSession() {
     name: cookieStore.get("user_name")?.value ?? "",
     salesPersonId: cookieStore.get("sales_person_id")?.value ?? "",
     projectId: cookieStore.get("project_id")?.value ?? "",
+    projectName: cookieStore.get("project_name")?.value ?? "",
   };
 }

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
+import { hydrateSalesSession } from "@/lib/hydrateSalesSession";
 
 export async function GET() {
   const session = await getAuthSession();
-  return NextResponse.json(session);
+  const hydrated = await hydrateSalesSession(session);
+  return NextResponse.json(hydrated);
 }
