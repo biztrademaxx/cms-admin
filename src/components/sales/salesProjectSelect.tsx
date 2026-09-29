@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import SalesBrandLogo from "./SalesBrandLogo";
 import Button from "@/components/ui/button/Button";
 import {
   SALES_ANALYTICS_PERIODS,
@@ -61,7 +61,7 @@ function SummaryKpi({
     amber:
       "from-amber-500/15 to-amber-500/5 text-amber-600 dark:text-amber-400 ring-amber-500/20",
     violet:
-      "from-violet-500/15 to-violet-500/5 text-violet-600 dark:text-violet-400 ring-violet-500/20",
+      "from-brand-700/15 to-brand-700/5 text-brand-700 dark:text-brand-400 ring-brand-700/20",
   };
 
   return (
@@ -220,7 +220,7 @@ const SalesProjectSelect = () => {
     return (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-50 dark:bg-gray-950">
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(70,95,255,0.18),transparent)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(255,107,44,0.18),transparent)]"
           aria-hidden
         />
         <div className="relative flex flex-col items-center gap-4 text-center">
@@ -237,11 +237,11 @@ const SalesProjectSelect = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(70,95,255,0.22),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(70,95,255,0.12),transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(255,107,44,0.2),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(255,107,44,0.1),transparent)]"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute -right-32 top-40 h-96 w-96 rounded-full bg-violet-400/10 blur-3xl dark:bg-violet-600/10"
+        className="pointer-events-none absolute -right-32 top-40 h-96 w-96 rounded-full bg-brand-400/15 blur-3xl dark:bg-brand-600/10"
         aria-hidden
       />
       <div
@@ -251,27 +251,13 @@ const SalesProjectSelect = () => {
 
       <header className="sticky top-0 z-40 border-b border-gray-200/80 bg-white/80 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-900/80">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black shadow-md ring-1 ring-gray-900/10">
-              <Image
-                src="/images/logo/logo2.png"
-                alt="MAXX logo"
-                width={40}
-                height={40}
-                className="h-full w-full object-contain"
-                priority
-              />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-                MAXX Sales
-              </h1>
-              {userName ? (
-                <p className="text-sm text-gray-500">
-                  Hi, <span className="font-medium text-gray-700 dark:text-gray-300">{userName}</span>
-                </p>
-              ) : null}
-            </div>
+          <div className="flex items-center gap-4">
+            <SalesBrandLogo className="h-16 w-auto max-w-[260px] shrink-0 object-contain object-left" priority />
+            {userName ? (
+              <p className="text-sm text-gray-500">
+                Hi, <span className="font-medium text-gray-700 dark:text-gray-300">{userName}</span>
+              </p>
+            ) : null}
           </div>
           <Button
             size="sm"
@@ -412,7 +398,7 @@ const SalesProjectSelect = () => {
                     } ${selecting && !isOpening ? "opacity-60" : ""}`}
                   >
                     <div
-                      className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-500 via-violet-500 to-brand-500 opacity-0 transition group-hover:opacity-100"
+                      className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-500 via-brand-700 to-brand-500 opacity-0 transition group-hover:opacity-100"
                       aria-hidden
                     />
 

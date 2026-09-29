@@ -31,7 +31,7 @@ export default function MonthlyUtmChart({ data }: any) {
   const monthlyData = getMonthlyCounts(data);
   console.log("createdData", data);
   const options: ApexOptions = {
-    colors: ["#465fff"],
+    colors: ["#FF6B2C"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "bar",

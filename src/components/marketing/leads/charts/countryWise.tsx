@@ -24,7 +24,7 @@ export default function CountryWisePieChart({ data }: any) {
     },
     labels: countries,
     colors: [
-      "#465fff", // blue
+      "#FF6B2C",
       "#10b981", // green
       "#f59e0b", // amber
       "#ef4444", // red

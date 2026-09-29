@@ -27,6 +27,10 @@ import {
   ChevronRight,
   Search,
   ExternalLink,
+  Target,
+  TrendingUp,
+  Users,
+  CheckCircle2,
 } from "lucide-react";
 
 const SalesDashboard = () => {
@@ -92,8 +96,8 @@ const SalesDashboard = () => {
 
   if (loadingSession || !session) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
-        Loading...
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-gray-500 dark:bg-[#0C0C0C]">
+        Loading dashboard…
       </div>
     );
   }
@@ -108,38 +112,44 @@ const SalesDashboard = () => {
       onLogout={handleLogout}
     >
       <div className="space-y-6">
-        <div className="rounded-xl bg-brand-50/80 dark:bg-brand-950/20 border border-brand-100 dark:border-brand-900/40 px-4 py-3">
+        <div className="rounded-2xl border border-brand-200/60 bg-gradient-to-br from-brand-50 to-white p-5 dark:border-brand-900/40 dark:from-brand-950/40 dark:to-gray-950">
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            Showing leads assigned to you in{" "}
-            <span className="font-semibold">{session.projectName || "this project"}</span>
-            . Leads from other projects are not listed here.
+            Leads assigned to you in{" "}
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {session.projectName || "this project"}
+            </span>
+            . Other projects are hidden until you switch.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl bg-white dark:bg-gray-900 border p-4">
-            <p className="text-xs text-gray-500">Total Leads</p>
-            <p className="text-2xl font-bold">{perf?.totalLeads ?? 0}</p>
-          </div>
-          <div className="rounded-xl bg-white dark:bg-gray-900 border p-4">
-            <p className="text-xs text-gray-500">In Progress</p>
-            <p className="text-2xl font-bold text-amber-600">{perf?.inProgress ?? 0}</p>
-          </div>
-          <div className="rounded-xl bg-white dark:bg-gray-900 border p-4">
-            <p className="text-xs text-gray-500">Converted</p>
-            <p className="text-2xl font-bold text-green-600">{perf?.converted ?? 0}</p>
-          </div>
-          <div className="rounded-xl bg-white dark:bg-gray-900 border p-4">
-            <p className="text-xs text-gray-500">Conversion Rate</p>
-            <p className="text-2xl font-bold text-brand-600">{perf?.conversionRate ?? 0}%</p>
-          </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          {[
+            { label: "Total leads", value: perf?.totalLeads ?? 0, icon: Users, tone: "text-gray-900 dark:text-white" },
+            { label: "In progress", value: perf?.inProgress ?? 0, icon: Target, tone: "text-amber-600" },
+            { label: "Converted", value: perf?.converted ?? 0, icon: CheckCircle2, tone: "text-emerald-600" },
+            { label: "Conversion", value: `${perf?.conversionRate ?? 0}%`, icon: TrendingUp, tone: "text-brand-600" },
+          ].map((kpi) => {
+            const Icon = kpi.icon;
+            return (
+              <div
+                key={kpi.label}
+                className="rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{kpi.label}</p>
+                  <Icon className="h-4 w-4 text-brand-500/80" />
+                </div>
+                <p className={`text-2xl font-bold tabular-nums ${kpi.tone}`}>{kpi.value}</p>
+              </div>
+            );
+          })}
         </div>
 
         <LeadPipelineOverview leads={allLeads} />
 
-        <div className="flex flex-wrap gap-3">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="relative min-w-[200px] flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               value={search}
@@ -148,7 +158,7 @@ const SalesDashboard = () => {
                 setPage(1);
               }}
               placeholder="Search leads..."
-              className="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="h-11 w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
             />
           </div>
           <select
@@ -157,7 +167,7 @@ const SalesDashboard = () => {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="py-2.5 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+            className="h-11 rounded-xl border border-gray-200 bg-white px-3 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:min-w-[180px]"
           >
             <option value="">All Statuses</option>
             {LEAD_STATUS_CONFIG.map((s) => (
@@ -168,9 +178,10 @@ const SalesDashboard = () => {
           </select>
         </div>
 
-        <div className="rounded-xl bg-white dark:bg-gray-900 border overflow-hidden">
-          <div className="px-4 py-3 border-b">
-            <h3 className="font-semibold text-gray-800 dark:text-white">My Leads</h3>
+        <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+          <div className="border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+            <h3 className="font-semibold text-gray-900 dark:text-white">My leads</h3>
+            <p className="mt-0.5 text-xs text-gray-500">Click a row to open details</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">

@@ -24,7 +24,7 @@ export default function IndustryWisePieChart({ data }: any) {
     },
     labels: industries,
     colors: [
-      "#465fff", // TailAdmin blue
+      "#FF6B2C",
       "#10b981", // green
       "#f59e0b", // amber
       "#ef4444", // red

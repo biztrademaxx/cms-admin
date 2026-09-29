@@ -42,7 +42,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 /** Shared Apex chart options */
 const chartOptions: ApexOptions = {
   legend: { show: false, position: "top", horizontalAlign: "left" },
-  colors: ["#465FFF", "#9CB9FF", "#34D399", "#F59E0B", "#EF4444"],
+  colors: ["#FF6B2C", "#FFC9A8", "#34D399", "#F59E0B", "#EF4444"],
   chart: {
     fontFamily: "Outfit, sans-serif",
     height: 310,
