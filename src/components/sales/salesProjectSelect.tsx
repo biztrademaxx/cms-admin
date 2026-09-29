@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import SalesBrandLogo from "./SalesBrandLogo";
 import Button from "@/components/ui/button/Button";
+import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import {
   SALES_ANALYTICS_PERIODS,
   type AnalyticsPeriodId,
@@ -259,14 +260,17 @@ const SalesProjectSelect = () => {
               </p>
             ) : null}
           </div>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleLogout}
-            startIcon={<LogOut className="h-4 w-4" />}
-          >
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggleButton />
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleLogout}
+              startIcon={<LogOut className="h-4 w-4" />}
+            >
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 

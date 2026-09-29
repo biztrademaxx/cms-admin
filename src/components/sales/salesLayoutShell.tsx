@@ -5,6 +5,7 @@ import Link from "next/link";
 import SalesBrandLogo from "./SalesBrandLogo";
 import { usePathname } from "next/navigation";
 import Button from "@/components/ui/button/Button";
+import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import {
   LayoutDashboard,
   UserCircle,
@@ -232,6 +233,7 @@ const SalesLayoutShell: React.FC<SalesLayoutShellProps> = ({
               <p className="truncate text-xs text-gray-500">{projectName}</p>
             ) : null}
           </div>
+          <ThemeToggleButton />
         </header>
 
         <main className="flex-1 p-4 lg:p-8">

@@ -3,10 +3,8 @@ import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import SearchField from "@/components/form/input/SearchField";
 import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
-import Image from "next/image";
 import Link from "next/link";
-import Logo from "@/../public/images/logo/logo.png";
-import LogoDark from "@/../public/images/logo/logo-dark.png";
+import BrandLogo from "@/components/common/BrandLogo";
 import React, { useState ,useEffect,useRef} from "react";
 
 
@@ -87,20 +85,7 @@ const AppHeader: React.FC = () => {
           </button>
 
           <Link href="/" className="lg:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src={Logo}
-              alt="Logo"
-            />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src={LogoDark}
-              alt="Logo"
-            />
+            <BrandLogo className="h-9 w-auto max-w-[180px] object-contain object-left" priority />
           </Link>
 
           <button

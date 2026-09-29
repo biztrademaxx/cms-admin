@@ -16,11 +16,9 @@ import {
   // TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-import Logo from "@/../public/images/logo/logo.png";
-import LogoDark from "@/../public/images/logo/logo-dark.png";
 import SidebarWidget from "./SidebarWidget";
 import { PieChartIcon } from "lucide-react";
-import Image from "next/image";
+import BrandLogo from "@/components/common/BrandLogo";
 
 type NavItem = {
   name: string;
@@ -368,29 +366,9 @@ const AppSidebar: React.FC = () => {
       >
         <Link href="/" className="block leading-none">
           {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <Image
-                className="dark:hidden block h-auto"
-                src={Logo}
-                alt="Logo"
-                width={120}
-                height={32}
-              />
-              <Image
-                className="hidden dark:block h-auto"
-                src={LogoDark}
-                alt="Logo"
-                width={120}
-                height={32}
-              />
-            </>
+            <BrandLogo className="h-11 w-auto max-w-[200px] object-contain object-left" priority />
           ) : (
-            <Image
-              src="/images/logo/logo-icon.png"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <BrandLogo className="mx-auto h-9 w-auto max-w-[52px] object-contain" />
           )}
         </Link>
       </div>
