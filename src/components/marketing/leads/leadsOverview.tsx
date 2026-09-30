@@ -21,6 +21,7 @@ import {
 import {
   LEAD_STATUS_CONFIG,
   LEAD_SOURCE_CONFIG,
+  LEAD_TYPE_OPTIONS,
   getStatusLabel,
   getStatusColor,
   getSourceLabel,
@@ -47,6 +48,7 @@ const LeadsOverview = () => {
   const [cityFilter, setCityFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
+  const [leadTypeFilter, setLeadTypeFilter] = useState("");
   const [assignedFilter, setAssignedFilter] = useState("");
   const [showFilters, setShowFilters] = useState(true);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
@@ -66,10 +68,11 @@ const LeadsOverview = () => {
     ...(cityFilter && { city: cityFilter }),
     ...(statusFilter && { status: statusFilter as LeadStatus }),
     ...(sourceFilter && { source: sourceFilter as LeadSource }),
+    ...(leadTypeFilter && { leadType: leadTypeFilter as LeadType }),
     ...(assignedFilter && { assignedToId: assignedFilter }),
   };
 
-  const { data, loading } = useQuery(GetFilteredLeadsDocument, {
+  const { data, loading, error: leadsError } = useQuery(GetFilteredLeadsDocument, {
     variables: { input: filterInput },
     skip: !projectId,
   });
@@ -92,6 +95,7 @@ const LeadsOverview = () => {
     setCityFilter("");
     setStatusFilter("");
     setSourceFilter("");
+    setLeadTypeFilter("");
     setAssignedFilter("");
     setPage(1);
   };
@@ -253,6 +257,27 @@ const LeadsOverview = () => {
 
               <div>
                 <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+                  Lead Type
+                </label>
+                <select
+                  value={leadTypeFilter}
+                  onChange={(e) => {
+                    setLeadTypeFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full py-2 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                >
+                  <option value="">All Lead Types</option>
+                  {LEAD_TYPE_OPTIONS.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
                   Lead Owner
                 </label>
                 <select
@@ -276,6 +301,12 @@ const LeadsOverview = () => {
 
           {/* Main Table */}
           <div className="flex-1 min-w-0">
+            {leadsError ? (
+              <div className="mx-4 mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+                Could not load leads. Restart the API server (<code className="text-xs">cms-backend</code>
+                ), then try Lead Type again.
+              </div>
+            ) : null}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>

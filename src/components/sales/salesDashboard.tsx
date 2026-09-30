@@ -18,6 +18,7 @@ import {
   getStatusLabel,
   getStatusColor,
   LEAD_STATUS_CONFIG,
+  LEAD_TYPE_OPTIONS,
 } from "@/components/marketing/leads/leadStatusConfig";
 import { computeSalesPersonPerformance } from "@/components/marketing/leads/salesPerformanceUtils";
 import { convertISOtoNormal } from "@/utils/dateUtils";
@@ -40,6 +41,7 @@ const SalesDashboard = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [leadTypeFilter, setLeadTypeFilter] = useState("");
   const [statusModal, setStatusModal] = useState<{
     id: string;
     name: string;
@@ -57,12 +59,13 @@ const SalesDashboard = () => {
             limit: 50,
             ...(search && { search }),
             ...(statusFilter && { status: statusFilter as LeadStatus }),
+            ...(leadTypeFilter && { leadType: leadTypeFilter as LeadType }),
           }
         : null,
-    [session, page, search, statusFilter]
+    [session, page, search, statusFilter, leadTypeFilter]
   );
 
-  const { data, loading } = useQuery(GetFilteredLeadsDocument, {
+  const { data, loading, error: leadsError } = useQuery(GetFilteredLeadsDocument, {
     variables: { input: leadsInput! },
     skip: !leadsInput,
     fetchPolicy: "cache-and-network",
@@ -176,7 +179,31 @@ const SalesDashboard = () => {
               </option>
             ))}
           </select>
+          <select
+            value={leadTypeFilter}
+            onChange={(e) => {
+              setLeadTypeFilter(e.target.value);
+              setPage(1);
+            }}
+            className="h-11 rounded-xl border border-gray-200 bg-white px-3 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:min-w-[180px]"
+          >
+            <option value="">All Lead Types</option>
+            {LEAD_TYPE_OPTIONS.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
         </div>
+
+        {leadsError ? (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+            Could not load leads. Restart the API server after the latest update, then try again.
+            {process.env.NODE_ENV === "development" ? (
+              <span className="mt-1 block text-xs opacity-80">{leadsError.message}</span>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
           <div className="border-b border-gray-100 px-5 py-4 dark:border-gray-800">

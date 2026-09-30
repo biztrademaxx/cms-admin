@@ -5,6 +5,13 @@ export const LEAD_TYPE_OPTIONS = [
   { label: "Exhibitor", value: LeadType.Exhibitor },
   { label: "Sponsor", value: LeadType.Sponsor },
   { label: "Speaker", value: LeadType.Speaker },
+  { label: "Partner", value: LeadType.Partner },
+  { label: "Delegate", value: LeadType.Delegate },
+  { label: "Brochure", value: LeadType.Brochure },
+  { label: "Participant", value: LeadType.Participant },
+  { label: "Enquiry", value: LeadType.Enquiry },
+  { label: "Awards", value: LeadType.Awards },
+  { label: "Other", value: LeadType.Other },
 ];
 
 export const getLeadTypeLabel = (leadType: LeadType) =>

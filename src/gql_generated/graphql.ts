@@ -331,6 +331,9 @@ export type LeadActivity = {
 export type LeadFilterInput = {
   assignedToId?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
+  createdFrom?: InputMaybe<Scalars['DateTime']['input']>;
+  createdTo?: InputMaybe<Scalars['DateTime']['input']>;
+  leadType?: InputMaybe<LeadType>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   projectId: Scalars['String']['input'];
