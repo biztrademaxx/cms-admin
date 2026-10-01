@@ -3,6 +3,8 @@
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
+import { useListPage } from "@/hooks/useListPage";
+import AlphabetFilter, { letterEmptyMessage } from "@/components/marketing/leads/alphabetFilter";
 import SalesLayoutShell from "./salesLayoutShell";
 import { useSalesSession } from "./useSalesSession";
 import LeadPipelineOverview from "@/components/marketing/leads/leadPipelineOverview";
@@ -38,7 +40,7 @@ const SalesDashboard = () => {
   const router = useRouter();
   const { session, loadingSession, projectMemberships, openProjectPicker, handleLogout } =
     useSalesSession();
-  const [page, setPage] = useState(1);
+  const { page, setPage, letter, setLetter } = useListPage();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [leadTypeFilter, setLeadTypeFilter] = useState("");
@@ -60,9 +62,10 @@ const SalesDashboard = () => {
             ...(search && { search }),
             ...(statusFilter && { status: statusFilter as LeadStatus }),
             ...(leadTypeFilter && { leadType: leadTypeFilter as LeadType }),
+            ...(letter && { letter }),
           }
         : null,
-    [session, page, search, statusFilter, leadTypeFilter]
+    [session, page, search, statusFilter, leadTypeFilter, letter]
   );
 
   const { data, loading, error: leadsError } = useQuery(GetFilteredLeadsDocument, {
@@ -210,6 +213,7 @@ const SalesDashboard = () => {
             <h3 className="font-semibold text-gray-900 dark:text-white">My leads</h3>
             <p className="mt-0.5 text-xs text-gray-500">Click a row to open details</p>
           </div>
+          <AlphabetFilter value={letter} onChange={setLetter} />
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -247,7 +251,7 @@ const SalesDashboard = () => {
                 ) : leads.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
-                      No leads assigned to you in this project yet
+                      {letterEmptyMessage(letter, "No leads assigned to you in this project yet")}
                     </td>
                   </tr>
                 ) : (

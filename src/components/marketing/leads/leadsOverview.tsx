@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { useListPage } from "@/hooks/useListPage";
+import AlphabetFilter, { letterEmptyMessage } from "./alphabetFilter";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
@@ -43,7 +45,7 @@ const LeadsOverview = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
   const router = useRouter();
 
-  const [page, setPage] = useState(1);
+  const { page, setPage, letter, setLetter } = useListPage();
   const [search, setSearch] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
@@ -74,6 +76,7 @@ const LeadsOverview = () => {
     ...(sourceFilter && { source: sourceFilter as LeadSource }),
     ...(leadTypeFilter && { leadType: leadTypeFilter as LeadType }),
     ...(assignedFilter && { assignedToId: assignedFilter }),
+    ...(letter && { letter }),
   };
 
   const { data, loading, error: leadsError } = useQuery(GetFilteredLeadsDocument, {
@@ -127,7 +130,7 @@ const LeadsOverview = () => {
     setSourceFilter("");
     setLeadTypeFilter("");
     setAssignedFilter("");
-    setPage(1);
+    setLetter("");
   };
 
   return (
@@ -375,6 +378,7 @@ const LeadsOverview = () => {
                 </div>
               </div>
             ) : null}
+            <AlphabetFilter value={letter} onChange={setLetter} />
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -432,7 +436,7 @@ const LeadsOverview = () => {
                         colSpan={assignMode ? 9 : 8}
                         className="px-4 py-12 text-center text-gray-500"
                       >
-                        No leads found
+                        {letterEmptyMessage(letter, "No leads found")}
                       </td>
                     </tr>
                   ) : (

@@ -337,6 +337,7 @@ export type LeadFilterInput = {
   createdFrom?: InputMaybe<Scalars['DateTime']['input']>;
   createdTo?: InputMaybe<Scalars['DateTime']['input']>;
   leadType?: InputMaybe<LeadType>;
+  letter?: InputMaybe<Scalars['String']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   projectId: Scalars['String']['input'];
