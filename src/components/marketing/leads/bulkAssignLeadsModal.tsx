@@ -15,7 +15,6 @@ interface BulkAssignLeadsModalProps {
   onClose: () => void;
   leadIds: string[];
   projectId: string;
-  filterInput: Record<string, unknown>;
   onSuccess: () => void;
 }
 
@@ -24,7 +23,6 @@ const BulkAssignLeadsModal: React.FC<BulkAssignLeadsModalProps> = ({
   onClose,
   leadIds,
   projectId,
-  filterInput,
   onSuccess,
 }) => {
   const client = useApolloClient();
@@ -64,12 +62,7 @@ const BulkAssignLeadsModal: React.FC<BulkAssignLeadsModalProps> = ({
       );
       const failed = results.filter((r) => r.status === "rejected").length;
       await client.refetchQueries({
-        include: [
-          {
-            query: GetFilteredLeadsDocument,
-            variables: { input: filterInput },
-          },
-        ],
+        include: [GetFilteredLeadsDocument],
       });
       if (failed > 0) {
         setError(`${failed} of ${leadIds.length} assignments failed. Others may have succeeded.`);

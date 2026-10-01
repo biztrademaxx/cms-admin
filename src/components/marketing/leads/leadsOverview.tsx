@@ -605,7 +605,6 @@ const LeadsOverview = () => {
         onClose={() => setBulkAssignOpen(false)}
         leadIds={selectedLeadIds}
         projectId={projectId}
-        filterInput={filterInput}
         onSuccess={exitAssignMode}
       />
 

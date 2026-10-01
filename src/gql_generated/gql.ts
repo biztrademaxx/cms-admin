@@ -16,7 +16,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "mutation AddExistingSalesPersonToProject($input: AddExistingSalesPersonInput!) {\n  addExistingSalesPersonToProject(input: $input) {\n    id\n    name\n    email\n    phone\n    isActive\n    projectId\n    cities {\n      id\n      city\n      state\n    }\n  }\n}": typeof types.AddExistingSalesPersonToProjectDocument,
     "mutation AssignLead($input: AssignLeadInput!) {\n  assignLead(input: $input) {\n    id\n    assignedToId\n    assignedTo {\n      id\n      name\n      email\n      phone\n    }\n    updatedAt\n  }\n}": typeof types.AssignLeadDocument,
-    "mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    failed\n    errors\n  }\n}": typeof types.BulkCreateLeadsDocument,
+    "mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    skipped\n    failed\n    errors\n  }\n}": typeof types.BulkCreateLeadsDocument,
     "mutation createExhibitor($input: CreateExhibitorInput!) {\n  createExhibitor(input: $input) {\n    id\n  }\n}": typeof types.CreateExhibitorDocument,
     "mutation CreateProject($input: CreateProjectInput!) {\n  createProject(input: $input) {\n    id\n    slug\n    name\n    description\n  }\n}": typeof types.CreateProjectDocument,
     "mutation CreateSalesPerson($input: CreateSalesPersonInput!) {\n  createSalesPerson(input: $input) {\n    id\n    name\n    email\n    phone\n    isActive\n    cities {\n      id\n      city\n      state\n    }\n  }\n}": typeof types.CreateSalesPersonDocument,
@@ -59,7 +59,7 @@ type Documents = {
 const documents: Documents = {
     "mutation AddExistingSalesPersonToProject($input: AddExistingSalesPersonInput!) {\n  addExistingSalesPersonToProject(input: $input) {\n    id\n    name\n    email\n    phone\n    isActive\n    projectId\n    cities {\n      id\n      city\n      state\n    }\n  }\n}": types.AddExistingSalesPersonToProjectDocument,
     "mutation AssignLead($input: AssignLeadInput!) {\n  assignLead(input: $input) {\n    id\n    assignedToId\n    assignedTo {\n      id\n      name\n      email\n      phone\n    }\n    updatedAt\n  }\n}": types.AssignLeadDocument,
-    "mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    failed\n    errors\n  }\n}": types.BulkCreateLeadsDocument,
+    "mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    skipped\n    failed\n    errors\n  }\n}": types.BulkCreateLeadsDocument,
     "mutation createExhibitor($input: CreateExhibitorInput!) {\n  createExhibitor(input: $input) {\n    id\n  }\n}": types.CreateExhibitorDocument,
     "mutation CreateProject($input: CreateProjectInput!) {\n  createProject(input: $input) {\n    id\n    slug\n    name\n    description\n  }\n}": types.CreateProjectDocument,
     "mutation CreateSalesPerson($input: CreateSalesPersonInput!) {\n  createSalesPerson(input: $input) {\n    id\n    name\n    email\n    phone\n    isActive\n    cities {\n      id\n      city\n      state\n    }\n  }\n}": types.CreateSalesPersonDocument,
@@ -125,7 +125,7 @@ export function gql(source: "mutation AssignLead($input: AssignLeadInput!) {\n  
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    failed\n    errors\n  }\n}"): (typeof documents)["mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    failed\n    errors\n  }\n}"];
+export function gql(source: "mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    skipped\n    failed\n    errors\n  }\n}"): (typeof documents)["mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {\n  bulkCreateLeads(projectId: $projectId, leads: $leads) {\n    created\n    skipped\n    failed\n    errors\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

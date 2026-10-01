@@ -1,6 +1,7 @@
 mutation BulkCreateLeads($projectId: String!, $leads: [BulkLeadInput!]!) {
   bulkCreateLeads(projectId: $projectId, leads: $leads) {
     created
+    skipped
     failed
     errors
   }
