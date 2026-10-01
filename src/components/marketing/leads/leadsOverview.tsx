@@ -9,6 +9,7 @@ import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
 import ExportButton from "@/components/common/exportButton";
 import BulkUploadModal from "./bulkUploadModal";
+import BulkAssignLeadsModal from "./bulkAssignLeadsModal";
 import StatusUpdateModal from "./statusUpdateModal";
 import {
   GetFilteredLeadsDocument,
@@ -29,13 +30,13 @@ import {
 import { indianStates, getCitiesForState } from "./stateCityPicker";
 import { convertISOtoNormal } from "@/utils/dateUtils";
 import {
-  Plus,
   Upload,
   Phone,
   ChevronLeft,
   ChevronRight,
   Filter,
   Search,
+  UserCheck,
 } from "lucide-react";
 
 const LeadsOverview = () => {
@@ -52,6 +53,9 @@ const LeadsOverview = () => {
   const [assignedFilter, setAssignedFilter] = useState("");
   const [showFilters, setShowFilters] = useState(true);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [assignMode, setAssignMode] = useState(false);
+  const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
+  const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
   const [statusModal, setStatusModal] = useState<{
     id: string;
     name: string;
@@ -89,6 +93,32 @@ const LeadsOverview = () => {
   const totalPages = data?.getFilteredLeads?.totalPages ?? 1;
   const salesPeople = salesData?.getSalesPeopleByProject ?? [];
 
+  const exitAssignMode = () => {
+    setAssignMode(false);
+    setSelectedLeadIds([]);
+    setBulkAssignOpen(false);
+  };
+
+  const toggleLeadSelection = (leadId: string) => {
+    setSelectedLeadIds((prev) =>
+      prev.includes(leadId) ? prev.filter((id) => id !== leadId) : [...prev, leadId]
+    );
+  };
+
+  const allOnPageSelected =
+    leads.length > 0 && leads.every((l) => selectedLeadIds.includes(l.id));
+
+  const toggleSelectAllOnPage = () => {
+    if (allOnPageSelected) {
+      setSelectedLeadIds((prev) =>
+        prev.filter((id) => !leads.some((l) => l.id === id))
+      );
+    } else {
+      const pageIds = leads.map((l) => l.id);
+      setSelectedLeadIds((prev) => [...new Set([...prev, ...pageIds])]);
+    }
+  };
+
   const clearFilters = () => {
     setSearch("");
     setStateFilter("");
@@ -107,6 +137,20 @@ const LeadsOverview = () => {
         <div className="flex flex-wrap justify-between items-center p-5 lg:p-6 border-b border-gray-200 dark:border-gray-800">
           <PageBreadcrumb pageTitle="Leads" projectName={projectName} />
           <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              size="sm"
+              variant={assignMode ? "primary" : "outline"}
+              onClick={() => {
+                if (assignMode) {
+                  exitAssignMode();
+                } else {
+                  setAssignMode(true);
+                }
+              }}
+              startIcon={<UserCheck className="w-4 h-4" />}
+            >
+              {assignMode ? "Cancel assign" : "Assign leads"}
+            </Button>
             <Button
               size="sm"
               variant="outline"
@@ -307,10 +351,45 @@ const LeadsOverview = () => {
                 ), then try Lead Type again.
               </div>
             ) : null}
+            {assignMode ? (
+              <div className="mx-4 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50/80 px-4 py-3 dark:border-brand-900/40 dark:bg-brand-950/30">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  Select leads to assign
+                  {selectedLeadIds.length > 0 ? (
+                    <span className="ml-1 font-semibold text-brand-600 dark:text-brand-400">
+                      ({selectedLeadIds.length} selected)
+                    </span>
+                  ) : null}
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={exitAssignMode}>
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={selectedLeadIds.length === 0}
+                    onClick={() => setBulkAssignOpen(true)}
+                  >
+                    Assign selected
+                  </Button>
+                </div>
+              </div>
+            ) : null}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
+                    {assignMode ? (
+                      <th className="w-10 px-3 py-3">
+                        <input
+                          type="checkbox"
+                          checked={allOnPageSelected}
+                          onChange={toggleSelectAllOnPage}
+                          aria-label="Select all on this page"
+                          className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                        />
+                      </th>
+                    ) : null}
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Lead Name
                     </th>
@@ -340,13 +419,19 @@ const LeadsOverview = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
+                      <td
+                        colSpan={assignMode ? 9 : 8}
+                        className="px-4 py-12 text-center text-gray-500"
+                      >
                         Loading leads...
                       </td>
                     </tr>
                   ) : leads.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
+                      <td
+                        colSpan={assignMode ? 9 : 8}
+                        className="px-4 py-12 text-center text-gray-500"
+                      >
                         No leads found
                       </td>
                     </tr>
@@ -354,15 +439,34 @@ const LeadsOverview = () => {
                     leads.map((lead) => (
                       <tr
                         key={lead.id}
-                        className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/30 cursor-pointer"
+                        className={`border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/30 ${
+                          assignMode ? "" : "cursor-pointer"
+                        } ${
+                          selectedLeadIds.includes(lead.id)
+                            ? "bg-brand-50/50 dark:bg-brand-950/20"
+                            : ""
+                        }`}
                       >
+                        {assignMode ? (
+                          <td className="px-3 py-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedLeadIds.includes(lead.id)}
+                              onChange={() => toggleLeadSelection(lead.id)}
+                              aria-label={`Select ${lead.name}`}
+                              className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                            />
+                          </td>
+                        ) : null}
                         <td
                           className="px-4 py-3"
-                          onClick={() =>
-                            router.push(
-                              `/projects/marketing/leads/${lead.id}`
-                            )
-                          }
+                          onClick={() => {
+                            if (assignMode) {
+                              toggleLeadSelection(lead.id);
+                              return;
+                            }
+                            router.push(`/projects/marketing/leads/${lead.id}`);
+                          }}
                         >
                           <div className="font-medium text-sm text-gray-800 dark:text-white">
                             {lead.name}
@@ -371,11 +475,11 @@ const LeadsOverview = () => {
                         </td>
                         <td
                           className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"
-                          onClick={() =>
-                            router.push(
-                              `/projects/marketing/leads/${lead.id}`
-                            )
-                          }
+                          onClick={() => {
+                            if (!assignMode) {
+                              router.push(`/projects/marketing/leads/${lead.id}`);
+                            }
+                          }}
                         >
                           {lead.companyName || "—"}
                         </td>
@@ -395,21 +499,21 @@ const LeadsOverview = () => {
                         </td>
                         <td
                           className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"
-                          onClick={() =>
-                            router.push(
-                              `/projects/marketing/leads/${lead.id}`
-                            )
-                          }
+                          onClick={() => {
+                            if (!assignMode) {
+                              router.push(`/projects/marketing/leads/${lead.id}`);
+                            }
+                          }}
                         >
                           {[lead.city, lead.state].filter(Boolean).join(", ") || "—"}
                         </td>
                         <td
                           className="px-4 py-3"
-                          onClick={() =>
-                            router.push(
-                              `/projects/marketing/leads/${lead.id}`
-                            )
-                          }
+                          onClick={() => {
+                            if (!assignMode) {
+                              router.push(`/projects/marketing/leads/${lead.id}`);
+                            }
+                          }}
                         >
                           <Badge size="sm" color="info">
                             {getSourceLabel(lead.source)}
@@ -417,11 +521,11 @@ const LeadsOverview = () => {
                         </td>
                         <td
                           className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"
-                          onClick={() =>
-                            router.push(
-                              `/projects/marketing/leads/${lead.id}`
-                            )
-                          }
+                          onClick={() => {
+                            if (!assignMode) {
+                              router.push(`/projects/marketing/leads/${lead.id}`);
+                            }
+                          }}
                         >
                           {lead.assignedTo?.name || "Unassigned"}
                         </td>
@@ -444,11 +548,11 @@ const LeadsOverview = () => {
                         </td>
                         <td
                           className="px-4 py-3 text-xs text-gray-500"
-                          onClick={() =>
-                            router.push(
-                              `/projects/marketing/leads/${lead.id}`
-                            )
-                          }
+                          onClick={() => {
+                            if (!assignMode) {
+                              router.push(`/projects/marketing/leads/${lead.id}`);
+                            }
+                          }}
                         >
                           {convertISOtoNormal(lead.createdAt)}
                         </td>
@@ -494,6 +598,15 @@ const LeadsOverview = () => {
         isOpen={bulkModalOpen}
         onClose={() => setBulkModalOpen(false)}
         projectId={projectId}
+      />
+
+      <BulkAssignLeadsModal
+        isOpen={bulkAssignOpen}
+        onClose={() => setBulkAssignOpen(false)}
+        leadIds={selectedLeadIds}
+        projectId={projectId}
+        filterInput={filterInput}
+        onSuccess={exitAssignMode}
       />
 
       {statusModal && (
