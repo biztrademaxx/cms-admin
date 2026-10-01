@@ -13,7 +13,7 @@ const AlphabetFilter: React.FC<AlphabetFilterProps> = ({ value, onChange }) => {
   return (
     <div className="border-b border-gray-200 bg-gray-50/80 px-4 py-3 dark:border-gray-800 dark:bg-gray-900/40">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <p className="text-xs font-medium text-gray-500">Filter by name</p>
+        <p className="text-xs font-medium text-gray-500">Filter by company name</p>
         {value ? (
           <button
             type="button"
@@ -24,7 +24,7 @@ const AlphabetFilter: React.FC<AlphabetFilterProps> = ({ value, onChange }) => {
           </button>
         ) : null}
       </div>
-      <div className="flex flex-wrap items-center gap-1" role="toolbar" aria-label="Filter leads by name">
+      <div className="flex flex-wrap items-center gap-1" role="toolbar" aria-label="Filter leads by company name">
         <LetterButton active={value === ""} onClick={() => onChange("")} wide>
           All
         </LetterButton>
@@ -77,8 +77,8 @@ function LetterButton({
 
 export function letterEmptyMessage(letter: string, fallback: string) {
   if (!letter) return fallback;
-  if (letter === "#") return "No leads starting with a number or symbol";
-  return `No leads starting with “${letter}”`;
+  if (letter === "#") return "No leads for companies starting with a number or symbol";
+  return `No leads for companies starting with “${letter}”`;
 }
 
 export default AlphabetFilter;

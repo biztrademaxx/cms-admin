@@ -340,6 +340,7 @@ export type LeadFilterInput = {
   letter?: InputMaybe<Scalars['String']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
   projectId: Scalars['String']['input'];
   search?: InputMaybe<Scalars['String']['input']>;
   source?: InputMaybe<LeadSource>;

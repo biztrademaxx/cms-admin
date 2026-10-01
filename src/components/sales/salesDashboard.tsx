@@ -59,7 +59,7 @@ const SalesDashboard = () => {
             assignedToId: session.salesPersonId,
             page,
             limit: 50,
-            ...(search && { search }),
+            ...(search.trim() && { phone: search.trim() }),
             ...(statusFilter && { status: statusFilter as LeadStatus }),
             ...(leadTypeFilter && { leadType: leadTypeFilter as LeadType }),
             ...(letter && { letter }),
@@ -163,7 +163,7 @@ const SalesDashboard = () => {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Search leads..."
+              placeholder="Search by phone number"
               className="h-11 w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
             />
           </div>
