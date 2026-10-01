@@ -9,15 +9,14 @@ import Button from "@/components/ui/button/Button";
 import Badge from "@/components/ui/badge/Badge";
 import StatusUpdateModal from "@/components/marketing/leads/statusUpdateModal";
 import ContactPersonSection from "@/components/marketing/leads/contactPersonSection";
+import LeadInfoTable from "@/components/marketing/leads/leadInfoTable";
 import LeadTimeline from "@/components/marketing/leads/leadTimeline";
-import { GetLeadByIdDocument, LeadStatus } from "@/gql_generated/graphql";
+import { GetLeadByIdDocument } from "@/gql_generated/graphql";
 import {
   getStatusLabel,
   getStatusColor,
-  getSourceLabel,
 } from "@/components/marketing/leads/leadStatusConfig";
 import { getPhaseForStatus } from "@/components/marketing/leads/leadPipeline";
-import { convertISOtoNormal } from "@/utils/dateUtils";
 import { Phone, Mail, ArrowLeft, Edit } from "lucide-react";
 
 const SalesLeadDetail = () => {
@@ -66,18 +65,6 @@ const SalesLeadDetail = () => {
   }
 
   const phase = getPhaseForStatus(lead.status);
-
-  const infoFields = [
-    { label: "Email", value: lead.email },
-    { label: "Phone", value: lead.phone },
-    { label: "Company", value: lead.companyName },
-    { label: "Job Title", value: lead.jobTitle },
-    { label: "City", value: lead.city },
-    { label: "State", value: lead.state },
-    { label: "Source", value: getSourceLabel(lead.source) },
-    { label: "Industry", value: lead.industry },
-    { label: "Created", value: convertISOtoNormal(lead.createdAt) },
-  ];
 
   return (
     <SalesLayoutShell
@@ -135,30 +122,7 @@ const SalesLeadDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5">
-            <h3 className="text-base font-semibold mb-4">Lead Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {infoFields.map(
-                (f) =>
-                  f.value && (
-                    <div key={f.label}>
-                      <p className="text-xs text-gray-500">{f.label}</p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{f.value}</p>
-                    </div>
-                  )
-              )}
-            </div>
-            {lead.message && (
-              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                <p className="text-xs text-gray-500">Message</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{lead.message}</p>
-              </div>
-            )}
-            {lead.notes && (
-              <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800">
-                <p className="text-xs font-medium text-amber-700">Latest Notes</p>
-                <p className="text-sm mt-1">{lead.notes}</p>
-              </div>
-            )}
+            <LeadInfoTable mode="sales" lead={lead} />
 
             <ContactPersonSection
               leadId={lead.id}

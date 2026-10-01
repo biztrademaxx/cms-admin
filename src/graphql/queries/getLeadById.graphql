@@ -5,7 +5,9 @@ query GetLeadById($id: String!) {
     assignedToId
     name
     email
+    additionalEmails
     phone
+    additionalPhones
     companyName
     jobTitle
     contactPersonName

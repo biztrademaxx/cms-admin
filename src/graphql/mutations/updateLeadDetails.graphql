@@ -1,0 +1,19 @@
+mutation UpdateLeadDetails($input: UpdateLeadDetailsInput!) {
+  updateLeadDetails(input: $input) {
+    id
+    name
+    email
+    additionalEmails
+    phone
+    additionalPhones
+    jobTitle
+    companyName
+    city
+    state
+    country
+    industry
+    message
+    notes
+    updatedAt
+  }
+}

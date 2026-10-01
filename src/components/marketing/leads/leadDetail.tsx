@@ -10,16 +10,14 @@ import Badge from "@/components/ui/badge/Badge";
 import StatusUpdateModal from "./statusUpdateModal";
 import AssignLeadModal from "./assignLeadModal";
 import ContactPersonSection from "./contactPersonSection";
+import LeadInfoTable from "./leadInfoTable";
 import LeadTimeline from "./leadTimeline";
-import { GetLeadByIdDocument, LeadStatus, LeadType } from "@/gql_generated/graphql";
+import { GetLeadByIdDocument } from "@/gql_generated/graphql";
 import {
   getStatusLabel,
   getStatusColor,
-  getSourceLabel,
-  getLeadTypeLabel,
 } from "./leadStatusConfig";
 import { getPhaseForStatus } from "./leadPipeline";
-import { convertISOtoNormal } from "@/utils/dateUtils";
 import { Phone, Mail, ArrowLeft, Edit, UserPlus } from "lucide-react";
 
 const LeadDetail = () => {
@@ -50,27 +48,6 @@ const LeadDetail = () => {
   }
 
   const phase = getPhaseForStatus(lead.status);
-
-  const infoFields = [
-    { label: "Lead Owner", value: lead.assignedTo?.name || "Unassigned" },
-    { label: "Email", value: lead.email },
-    { label: "Phone", value: lead.phone },
-    { label: "Mobile", value: lead.phone },
-    { label: "Lead Status", value: getStatusLabel(lead.status) },
-    { label: "Lead Source", value: getSourceLabel(lead.source) },
-    { label: "Company", value: lead.companyName },
-    { label: "Job Title", value: lead.jobTitle },
-    { label: "City", value: lead.city },
-    { label: "State", value: lead.state },
-    { label: "Country", value: lead.country },
-    { label: "Industry", value: lead.industry },
-    { label: "Lead Type", value: getLeadTypeLabel(lead.leadType) },
-    { label: "UTM Source", value: lead.utm?.source },
-    { label: "UTM Campaign", value: lead.utm?.campaign },
-    { label: "UTM Medium", value: lead.utm?.medium },
-    { label: "Created", value: convertISOtoNormal(lead.createdAt) },
-    { label: "Last Updated", value: lead.updatedAt ? convertISOtoNormal(lead.updatedAt) : "—" },
-  ];
 
   return (
     <div>
@@ -168,24 +145,7 @@ const LeadDetail = () => {
         {/* Lead Information + Timeline */}
         <div className="p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4">
-              Lead Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-              {infoFields.map(
-                (field) =>
-                  field.value && (
-                    <div key={field.label} className="flex flex-col">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {field.label}
-                      </span>
-                      <span className="text-sm text-gray-800 dark:text-white mt-0.5">
-                        {field.value}
-                      </span>
-                    </div>
-                  )
-              )}
-            </div>
+            <LeadInfoTable mode="admin" lead={lead} />
 
             <ContactPersonSection
               leadId={lead.id}
@@ -194,26 +154,6 @@ const LeadDetail = () => {
               contactPersonDesignation={lead.contactPersonDesignation}
               contactPersonEmail={lead.contactPersonEmail}
             />
-
-            {lead.message && (
-              <div className="mt-6">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Message</span>
-                <p className="text-sm text-gray-800 dark:text-white mt-1">
-                  {lead.message}
-                </p>
-              </div>
-            )}
-
-            {lead.notes && (
-              <div className="mt-6 p-4 rounded-xl bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800">
-                <span className="text-xs font-medium text-yellow-700 dark:text-yellow-400">
-                  Notes
-                </span>
-                <p className="text-sm text-gray-800 dark:text-white mt-1">
-                  {lead.notes}
-                </p>
-              </div>
-            )}
           </div>
 
           <div className="border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-800 pt-6 lg:pt-0 lg:pl-6">
