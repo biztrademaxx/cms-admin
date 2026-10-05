@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
@@ -12,18 +12,26 @@ import AssignLeadModal from "./assignLeadModal";
 import ContactPersonSection from "./contactPersonSection";
 import LeadInfoTable from "./leadInfoTable";
 import LeadTimeline from "./leadTimeline";
-import { GetLeadByIdDocument } from "@/gql_generated/graphql";
+import { GetFilteredLeadsDocument, GetLeadByIdDocument, LeadSource, LeadStatus, LeadType } from "@/gql_generated/graphql";
+import {
+  ADMIN_LEAD_PAGE_SIZE,
+  adminLeadDetailPath,
+  adminLeadListPath,
+  readAdminLeadListQuery,
+} from "./leadListQuery";
 import {
   getStatusLabel,
   getStatusColor,
 } from "./leadStatusConfig";
 import { getPhaseForStatus } from "./leadPipeline";
-import { Phone, Mail, ArrowLeft, Edit, UserPlus } from "lucide-react";
+import { Phone, Mail, ArrowLeft, Edit, UserPlus, ChevronLeft, ChevronRight } from "lucide-react";
 
 const LeadDetail = () => {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const leadId = params.leadId as string;
+  const listQuery = readAdminLeadListQuery(searchParams);
   const { projectName, projectId } = useSelector((state: any) => state.project);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -33,7 +41,34 @@ const LeadDetail = () => {
     skip: !leadId,
   });
 
+  const { data: pageData } = useQuery(GetFilteredLeadsDocument, {
+    variables: {
+      input: {
+        projectId,
+        page: listQuery.page,
+        limit: ADMIN_LEAD_PAGE_SIZE,
+        ...(listQuery.search && { search: listQuery.search }),
+        ...(listQuery.state && { state: listQuery.state }),
+        ...(listQuery.city && { city: listQuery.city }),
+        ...(listQuery.status && { status: listQuery.status as LeadStatus }),
+        ...(listQuery.source && { source: listQuery.source as LeadSource }),
+        ...(listQuery.leadType && { leadType: listQuery.leadType as LeadType }),
+        ...(listQuery.assignedToId && { assignedToId: listQuery.assignedToId }),
+        ...(listQuery.letter && { letter: listQuery.letter }),
+      },
+    },
+    skip: !projectId,
+  });
+
   const lead = data?.getLeadById;
+  const pageLeads = pageData?.getFilteredLeads?.leads ?? [];
+  const leadIndex = pageLeads.findIndex((item) => item.id === leadId);
+  const previousLead = leadIndex > 0 ? pageLeads[leadIndex - 1] : null;
+  const nextLead = leadIndex >= 0 && leadIndex < pageLeads.length - 1 ? pageLeads[leadIndex + 1] : null;
+
+  const openListLead = (id: string) => {
+    router.push(adminLeadDetailPath(id, listQuery));
+  };
 
   if (loading) {
     return (
@@ -56,7 +91,8 @@ const LeadDetail = () => {
         <div className="flex flex-wrap justify-between items-center p-5 lg:p-6 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => router.push("/projects/marketing/leads")}
+              onClick={() => router.push(adminLeadListPath(listQuery))}
+              aria-label="Back to leads"
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -154,6 +190,32 @@ const LeadDetail = () => {
               contactPersonDesignation={lead.contactPersonDesignation}
               contactPersonEmail={lead.contactPersonEmail}
             />
+
+            {leadIndex >= 0 && (
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!previousLead}
+                  onClick={() => previousLead && openListLead(previousLead.id)}
+                  startIcon={<ChevronLeft className="w-4 h-4" />}
+                >
+                  Previous
+                </Button>
+                <span className="text-xs text-gray-500">
+                  {leadIndex + 1} of {pageLeads.length} on this page
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!nextLead}
+                  onClick={() => nextLead && openListLead(nextLead.id)}
+                  endIcon={<ChevronRight className="w-4 h-4" />}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-800 pt-6 lg:pt-0 lg:pl-6">

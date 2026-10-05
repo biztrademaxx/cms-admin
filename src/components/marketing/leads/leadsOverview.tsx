@@ -3,8 +3,13 @@
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useListPage } from "@/hooks/useListPage";
+import {
+  ADMIN_LEAD_PAGE_SIZE,
+  adminLeadDetailPath,
+  readAdminLeadListQuery,
+} from "./leadListQuery";
 import AlphabetFilter, { letterEmptyMessage } from "./alphabetFilter";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
@@ -44,15 +49,18 @@ import {
 const LeadsOverview = () => {
   const { projectId, projectName } = useSelector((state: any) => state.project);
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const initialList = readAdminLeadListQuery(searchParams);
 
   const { page, setPage, letter, setLetter } = useListPage();
-  const [search, setSearch] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [sourceFilter, setSourceFilter] = useState("");
-  const [leadTypeFilter, setLeadTypeFilter] = useState("");
-  const [assignedFilter, setAssignedFilter] = useState("");
+  const [search, setSearch] = useState(initialList.search);
+  const [stateFilter, setStateFilter] = useState(initialList.state);
+  const [cityFilter, setCityFilter] = useState(initialList.city);
+  const [statusFilter, setStatusFilter] = useState(initialList.status);
+  const [sourceFilter, setSourceFilter] = useState(initialList.source);
+  const [leadTypeFilter, setLeadTypeFilter] = useState(initialList.leadType);
+  const [assignedFilter, setAssignedFilter] = useState(initialList.assignedToId);
   const [showFilters, setShowFilters] = useState(true);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [assignMode, setAssignMode] = useState(false);
@@ -68,7 +76,7 @@ const LeadsOverview = () => {
   const filterInput = {
     projectId,
     page,
-    limit: 15,
+    limit: ADMIN_LEAD_PAGE_SIZE,
     ...(search && { search }),
     ...(stateFilter && { state: stateFilter }),
     ...(cityFilter && { city: cityFilter }),
@@ -122,6 +130,22 @@ const LeadsOverview = () => {
     }
   };
 
+  const listQuery = {
+    page,
+    letter,
+    search,
+    state: stateFilter,
+    city: cityFilter,
+    status: statusFilter,
+    source: sourceFilter,
+    leadType: leadTypeFilter,
+    assignedToId: assignedFilter,
+  };
+
+  const openLead = (id: string) => {
+    router.push(adminLeadDetailPath(id, listQuery));
+  };
+
   const clearFilters = () => {
     setSearch("");
     setStateFilter("");
@@ -130,7 +154,7 @@ const LeadsOverview = () => {
     setSourceFilter("");
     setLeadTypeFilter("");
     setAssignedFilter("");
-    setLetter("");
+    router.replace(pathname, { scroll: false });
   };
 
   return (
@@ -469,7 +493,7 @@ const LeadsOverview = () => {
                               toggleLeadSelection(lead.id);
                               return;
                             }
-                            router.push(`/projects/marketing/leads/${lead.id}`);
+                            openLead(lead.id);
                           }}
                         >
                           <div className="font-medium text-sm text-gray-800 dark:text-white">
@@ -481,7 +505,7 @@ const LeadsOverview = () => {
                           className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"
                           onClick={() => {
                             if (!assignMode) {
-                              router.push(`/projects/marketing/leads/${lead.id}`);
+                              openLead(lead.id);
                             }
                           }}
                         >
@@ -505,7 +529,7 @@ const LeadsOverview = () => {
                           className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"
                           onClick={() => {
                             if (!assignMode) {
-                              router.push(`/projects/marketing/leads/${lead.id}`);
+                              openLead(lead.id);
                             }
                           }}
                         >
@@ -515,7 +539,7 @@ const LeadsOverview = () => {
                           className="px-4 py-3"
                           onClick={() => {
                             if (!assignMode) {
-                              router.push(`/projects/marketing/leads/${lead.id}`);
+                              openLead(lead.id);
                             }
                           }}
                         >
@@ -527,7 +551,7 @@ const LeadsOverview = () => {
                           className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300"
                           onClick={() => {
                             if (!assignMode) {
-                              router.push(`/projects/marketing/leads/${lead.id}`);
+                              openLead(lead.id);
                             }
                           }}
                         >
@@ -554,7 +578,7 @@ const LeadsOverview = () => {
                           className="px-4 py-3 text-xs text-gray-500"
                           onClick={() => {
                             if (!assignMode) {
-                              router.push(`/projects/marketing/leads/${lead.id}`);
+                              openLead(lead.id);
                             }
                           }}
                         >
