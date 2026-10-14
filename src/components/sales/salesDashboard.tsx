@@ -21,6 +21,7 @@ import {
   getStatusColor,
   LEAD_STATUS_CONFIG,
   LEAD_TYPE_OPTIONS,
+  getLeadTypeLabel,
 } from "@/components/marketing/leads/leadStatusConfig";
 import { computeSalesPersonPerformance } from "@/components/marketing/leads/salesPerformanceUtils";
 import { convertISOtoNormal } from "@/utils/dateUtils";
@@ -228,7 +229,10 @@ const SalesDashboard = () => {
                     Phone
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    City
+                    City / State
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Lead Type
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Status
@@ -244,13 +248,13 @@ const SalesDashboard = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
+                    <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
                       Loading...
                     </td>
                   </tr>
                 ) : leads.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
+                    <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
                       {letterEmptyMessage(letter, "No leads assigned to you in this project yet")}
                     </td>
                   </tr>
@@ -281,6 +285,11 @@ const SalesDashboard = () => {
                       </td>
                       <td className="px-4 py-3 text-sm">
                         {[lead.city, lead.state].filter(Boolean).join(", ") || "—"}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <Badge size="sm" color="light">
+                          {getLeadTypeLabel(lead.leadType)}
+                        </Badge>
                       </td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <button

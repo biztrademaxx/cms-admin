@@ -33,6 +33,7 @@ import {
   getStatusLabel,
   getStatusColor,
   getSourceLabel,
+  getLeadTypeLabel,
 } from "./leadStatusConfig";
 import { indianStates, getCitiesForState } from "./stateCityPicker";
 import { convertISOtoNormal } from "@/utils/dateUtils";
@@ -431,6 +432,9 @@ const LeadsOverview = () => {
                       City / State
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Lead Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Source
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -448,7 +452,7 @@ const LeadsOverview = () => {
                   {loading ? (
                     <tr>
                       <td
-                        colSpan={assignMode ? 9 : 8}
+                        colSpan={assignMode ? 10 : 9}
                         className="px-4 py-12 text-center text-gray-500"
                       >
                         Loading leads...
@@ -457,7 +461,7 @@ const LeadsOverview = () => {
                   ) : leads.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={assignMode ? 9 : 8}
+                        colSpan={assignMode ? 10 : 9}
                         className="px-4 py-12 text-center text-gray-500"
                       >
                         {letterEmptyMessage(letter, "No leads found")}
@@ -534,6 +538,18 @@ const LeadsOverview = () => {
                           }}
                         >
                           {[lead.city, lead.state].filter(Boolean).join(", ") || "—"}
+                        </td>
+                        <td
+                          className="px-4 py-3 whitespace-nowrap"
+                          onClick={() => {
+                            if (!assignMode) {
+                              openLead(lead.id);
+                            }
+                          }}
+                        >
+                          <Badge size="sm" color="light">
+                            {getLeadTypeLabel(lead.leadType)}
+                          </Badge>
                         </td>
                         <td
                           className="px-4 py-3"

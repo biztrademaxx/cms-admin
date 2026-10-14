@@ -14,8 +14,8 @@ export const LEAD_TYPE_OPTIONS = [
   { label: "Other", value: LeadType.Other },
 ];
 
-export const getLeadTypeLabel = (leadType: LeadType) =>
-  LEAD_TYPE_OPTIONS.find((t) => t.value === leadType)?.label ?? leadType;
+export const getLeadTypeLabel = (leadType?: LeadType | null) =>
+  LEAD_TYPE_OPTIONS.find((t) => t.value === leadType)?.label ?? "Others";
 
 export const LEAD_STATUS_CONFIG = [
   { label: "New", value: LeadStatus.New, color: "info" as const },
