@@ -3,6 +3,9 @@ query GetSalesTeamPerformance($projectId: String!) {
     salesPersonId
     name
     email
+    callsToday
+    callsThisWeek
+    callsThisMonth
     totalLeads
     newLeads
     inProgress

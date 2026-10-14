@@ -1,0 +1,43 @@
+query GetSalesPersonCallAnalytics($input: SalesPersonCallAnalyticsInput!) {
+  getSalesPersonCallAnalytics(input: $input) {
+    performance {
+      salesPersonId
+      name
+      email
+      callsToday
+      callsThisWeek
+      callsThisMonth
+      totalLeads
+      newLeads
+      inProgress
+      interested
+      converted
+      notInterested
+      conversionRate
+      statusBreakdown { status count }
+    }
+    fromDate
+    toDate
+    timezone
+    totalCalls
+    uniqueLeads
+    activeDays
+    averageCallsPerDay
+    daily { startDate calls uniqueLeads }
+    weekly { startDate calls uniqueLeads }
+    monthly { startDate calls uniqueLeads }
+    callOutcomes { status count }
+    recentCalls {
+      id
+      leadId
+      leadName
+      companyName
+      status
+      previousStatus
+      notes
+      createdAt
+    }
+    activityPage
+    activityTotalPages
+  }
+}
