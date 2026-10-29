@@ -1,0 +1,3 @@
+mutation DeleteUtm($id: String!, $projectId: String!) {
+  deleteUtm(id: $id, projectId: $projectId)
+}

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
+import type { FormikProps } from "formik";
 import { Modal } from "../../ui/modal";
-import { UTMEntry } from "./utm.types";
+import type { UTMEntry, UTMFormValues } from "./utm.types";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -15,8 +16,7 @@ type UTMModalProps = {
     closeModal: () => void;
   };
   editingItem: UTMEntry | null;
-  formik: any;
-  setEditingItem: (item: UTMEntry | null) => void;
+  formik: FormikProps<UTMFormValues>;
 };
 
 type Option = { value: string; label: string };
@@ -92,33 +92,16 @@ export default function UtmModal({
   modal,
   formik,
   editingItem,
-  setEditingItem,
 }: UTMModalProps) {
   const { closeModal, isOpen } = modal;
 
-  const handleCopy = async () => {
-    const utm = generateUTM(formik.values);
-    if (utm) {
-      await navigator.clipboard.writeText(utm);
-      alert("Copied UTM URL to clipboard.");
-    }
-  };
-
-  const handleClose = () => {
-    formik.resetForm();
-    setEditingItem(null);
-    closeModal();
-  };
-
-  useEffect(() => {
-    if (editingItem) {
-      formik.setValues(editingItem);
-    } else {
-      formik.resetForm();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingItem]);
-
+  const handleClose = closeModal;
+  const sourceOptions = mediumOptions[formik.values.medium] ?? [];
+  // Preserve values from older campaigns even if they are not in today's presets.
+  const withCurrentValue = (options: Option[], value: string) =>
+    value && !options.some((option) => option.value === value)
+      ? [{ value, label: value }, ...options]
+      : options;
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] m-4">
@@ -156,10 +139,14 @@ export default function UtmModal({
   <Label>Medium *</Label>
   <div className="relative">
     <Select
-      options={medium}
+      options={withCurrentValue(medium, formik.values.medium)}
       placeholder="Select an option"
-      defaultValue={formik.values.medium}   // <-- pass string
-      onChange={(value) => formik.setFieldValue("medium", value)}
+      defaultValue={formik.values.medium}
+      onChange={(value) => {
+        if (value !== formik.values.medium) {
+          void formik.setValues({ ...formik.values, medium: value, source: "" });
+        }
+      }}
       className="dark:bg-dark-900"
     />
     <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
@@ -176,9 +163,9 @@ export default function UtmModal({
   <Label>Source *</Label>
   <div className="relative">
     <Select
-      options={mediumOptions[formik.values.medium ?? "other"]}
+      options={withCurrentValue(sourceOptions, formik.values.source)}
       placeholder="Select an option"
-      defaultValue={formik.values.source}   // <-- pass string
+      defaultValue={formik.values.source}
       onChange={(value) => formik.setFieldValue("source", value)}
       className="dark:bg-dark-900"
     />
@@ -245,17 +232,21 @@ export default function UtmModal({
           />
 
 
+          {formik.status && (
+            <p role="alert" className="mt-3 text-sm text-red-500">{formik.status}</p>
+          )}
           <div className="mt-3 flex justify-end gap-2">
             <Button
               size="sm"
               variant="outline"
               type="button"
               onClick={handleClose}
+              disabled={formik.isSubmitting}
             >
               Cancel
             </Button>
-            <Button size="sm" type="submit">
-              {editingItem ? "Update" : "Add"} UTM
+            <Button size="sm" type="submit" disabled={formik.isSubmitting}>
+              {formik.isSubmitting ? "Saving..." : `${editingItem ? "Update" : "Add"} UTM`}
             </Button>
           </div>
         </div>

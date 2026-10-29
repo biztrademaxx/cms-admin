@@ -4,6 +4,8 @@ query GetUtmByProjectId($id: String!, $input: GroupLeadsInput!) {
     content
     createdAt
     id
+    leadCount
+    uniqueLeadCount
     medium
     projectId
     source

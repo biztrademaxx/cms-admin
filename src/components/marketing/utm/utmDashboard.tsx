@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Eye, Link2, ClipboardCopy, BarChart3 } from "lucide-react";
+import { Eye, Link2, ClipboardCopy, BarChart3, Pencil, Trash2 } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -11,96 +11,79 @@ import {
 } from "@/components/ui/table";
 import Button from "../../ui/button/Button";
 import Badge from "../../ui/badge/Badge";
-import UtmModal from "./utmModal";
-import { useQuery } from "@apollo/client";
-import { UTMEntry } from "./utm.types";
+import { useMutation, useQuery } from "@apollo/client";
+import type { UTMEntry } from "./utm.types";
 import { generateUTM } from "./common";
 import { useSelector } from "react-redux";
 import UtmMetrics from "./utmMetrics";
 import {
+  DeleteUtmDocument,
   GetUtmByProjectIdDocument,
   LeadScalarFieldEnum,
 } from "@/gql_generated/graphql";
 
-export default function UTMDashboard({
-  modal,
-  formik,
-}: {
-  modal: any;
-  formik: any;
-}) {
-  const [selectedEntry, setSelectedEntry] = React.useState<UTMEntry | null>(
-    null
-  );
-  const projectId = useSelector((state: any) => state.project.projectId);
-  const { openModal } = modal;
-  const { data: utmData } = useQuery(GetUtmByProjectIdDocument, {
+export default function UTMDashboard({ onEdit }: { onEdit: (entry: UTMEntry) => void }) {
+  const [actionError, setActionError] = React.useState<string | null>(null);
+  const projectId = useSelector((state: { project: { projectId: string } }) => state.project.projectId);
+  const variables = {
+    id: projectId,
+    input: { groupBy: [LeadScalarFieldEnum.UtmSource], projectId },
+  };
+  const { data: utmData, loading, error } = useQuery(GetUtmByProjectIdDocument, {
     skip: !projectId,
-    variables: {
-      id: projectId,
-      input: {
-        groupBy: [LeadScalarFieldEnum.UtmSource],
-        projectId,
-      },
-    },
+    variables,
+    fetchPolicy: "cache-and-network",
+  });
+  const [deleteUTM, { loading: deleting }] = useMutation(DeleteUtmDocument, {
+    refetchQueries: [{ query: GetUtmByProjectIdDocument, variables }],
+    awaitRefetchQueries: true,
   });
 
-  const handleCopy = async (entry: UTMEntry | any) => {
-    const { source, medium, campaign, term, content, url } = entry;
-    const text = generateUTM({
-      url,
-      source,
-      medium,
-      campaign,
-      term,
-      content,
-    });
-    await navigator.clipboard.writeText(text);
-    alert("Copied to clipboard");
+  const handleCopy = async (entry: UTMEntry) => {
+    setActionError(null);
+    try {
+      const url = generateUTM(entry);
+      if (!url) throw new Error("This UTM has an invalid website URL. Edit it before copying.");
+      await navigator.clipboard.writeText(url);
+      alert("Copied to clipboard");
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Unable to copy the UTM link.");
+    }
   };
 
-  const handleEdit = (entry: UTMEntry | any) => {
-    openModal();
-    setSelectedEntry(entry);
+  const handleDelete = async (entry: UTMEntry) => {
+    if (entry.leadCount > 0 || !projectId || deleting) return;
+    if (!window.confirm(`Delete UTM campaign "${entry.campaign}"?`)) return;
+    setActionError(null);
+    try {
+      await deleteUTM({ variables: { id: entry.id, projectId } });
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Unable to delete UTM.");
+    }
   };
 
   let uniqueClicks = 0;
   let visits = 0;
 
-  // 🔹 Lookup map for quick table access
-  let utmStats: Record<string, { visits: number; uniqueClicks: number }> = {};
-
   if (utmData?.getLeadsGroupedByField) {
     const utmSourceData = utmData.getLeadsGroupedByField.find(
-      (f: any) => f.field === "utmSource"
+      (f) => f.field === "utmSource"
     );
 
     if (utmSourceData) {
       const groups = utmSourceData.groups.filter(
-        (g: any) => g.group !== "Unknown"
+        (g) => g.group !== "Unknown"
       );
 
       // Total visits = sum of counts
-      visits = groups.reduce((acc: number, group: any) => acc + group.count, 0);
+      visits = groups.reduce((acc, group) => acc + group.count, 0);
 
       // Collect all emails across groups for global unique clicks
       const allEmails = groups.flatMap(
-        (g: any) => g.leads?.map((lead: any) => lead.email?.toLowerCase()) || []
+        (g) => g.leads?.map((lead) => lead.email?.toLowerCase()) || []
       );
       const uniqueEmails = new Set(allEmails.filter(Boolean));
       uniqueClicks = uniqueEmails.size;
-
-      // Build stats per group for table rows
-      groups.forEach((g: any) => {
-        const emails =
-          g.leads?.map((lead: any) => lead.email?.toLowerCase()) || [];
-        const uniqueEmailsInGroup = new Set(emails.filter(Boolean));
-
-        utmStats[g.group] = {
-          visits: g.count,
-          uniqueClicks: uniqueEmailsInGroup.size, // ✅ correct per-campaign unique emails
-        };
-      });
     }
   }
 
@@ -129,6 +112,13 @@ export default function UTMDashboard({
         <UtmMetrics data={utmMetrics} />
       </div>
 
+      {(actionError || error) && (
+        <p role="alert" className="text-sm text-red-500">{actionError || error?.message}</p>
+      )}
+      {loading && <p className="text-sm text-gray-500">Loading campaigns...</p>}
+      {!loading && !error && !utmData?.getUtmByProject.length && (
+        <p className="text-sm text-gray-500">No UTM campaigns yet. Add a UTM to get started.</p>
+      )}
       {/* UTM Table */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
@@ -177,9 +167,9 @@ export default function UTMDashboard({
 
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {utmData?.getUtmByProject?.map((entry) => {
-                  const stats = utmStats[entry.source] || {
-                    visits: 0,
-                    uniqueClicks: 0,
+                  const stats = {
+                    visits: entry.leadCount,
+                    uniqueClicks: entry.uniqueLeadCount,
                   };
 
                   return (
@@ -232,11 +222,23 @@ export default function UTMDashboard({
                           size="sm"
                           variant="outline"
                           className="text-theme-xs"
-                          onClick={() => handleEdit(entry)}
+                          onClick={() => onEdit(entry)}
                         >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Preview
+                          <Pencil className="h-4 w-4 mr-1" />
+                          Edit
                         </Button>
+                        <span title={entry.leadCount > 0 ? "Campaigns with registration data cannot be deleted." : "Delete this empty campaign"}>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="text-theme-xs"
+                            onClick={() => handleDelete(entry)}
+                            disabled={entry.leadCount > 0 || deleting}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete
+                          </Button>
+                        </span>
                       </TableCell>
                     </TableRow>
                   );
@@ -246,13 +248,6 @@ export default function UTMDashboard({
           </div>
         </div>
       </div>
-
-      <UtmModal
-        modal={modal}
-        editingItem={selectedEntry}
-        setEditingItem={setSelectedEntry}
-        formik={formik}
-      />
     </div>
   );
 }
