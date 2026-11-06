@@ -1,5 +1,7 @@
 "use client";
 
+import VisitorPassSection from "./visitorPassSection";
+
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -39,6 +41,8 @@ const LeadDetail = () => {
   const { data, loading } = useQuery(GetLeadByIdDocument, {
     variables: { id: leadId },
     skip: !leadId,
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 30000,
   });
 
   const { data: pageData } = useQuery(GetFilteredLeadsDocument, {
@@ -155,7 +159,7 @@ const LeadDetail = () => {
             <div>
               <p className="text-xs text-gray-500 mb-1">Email</p>
               <p className="text-sm font-medium text-gray-800 dark:text-white">
-                {lead.email}
+                {lead.email || "Not provided"}
               </p>
             </div>
             <div>
@@ -182,6 +186,7 @@ const LeadDetail = () => {
         <div className="p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <LeadInfoTable mode="admin" lead={lead} />
+            <VisitorPassSection key={lead.visitorPass?.id} pass={lead.visitorPass} />
 
             <ContactPersonSection
               leadId={lead.id}

@@ -146,12 +146,13 @@ const LeadInfoTable: React.FC<LeadInfoTableProps> = ({ lead, mode }) => {
   const handleSave = () => {
     const cleanedEmails = emails.map((value) => value.trim()).filter(Boolean);
     const cleanedPhones = phones.map((value) => value.trim()).filter(Boolean);
-    const primaryEmail = isAdmin ? cleanedEmails[0] : lead.email;
+    const primaryEmail = (isAdmin ? cleanedEmails[0] : lead.email) || "";
     const extraEmails = cleanedEmails
-      .slice(1)
+      .slice(primaryEmail ? 1 : 0)
       .filter((value) => value.toLowerCase() !== primaryEmail.toLowerCase());
 
-    if (!primaryEmail || !emailPattern.test(primaryEmail)) {
+    const canUsePhoneOnly = lead.leadType === LeadType.Visitor && !lead.email && Boolean(cleanedPhones[0]);
+    if ((primaryEmail && !emailPattern.test(primaryEmail)) || (!primaryEmail && !canUsePhoneOnly)) {
       setError("Enter a valid email address.");
       return;
     }
@@ -171,7 +172,7 @@ const LeadInfoTable: React.FC<LeadInfoTableProps> = ({ lead, mode }) => {
           id: lead.id,
           salesOnly: !isAdmin,
           name: isAdmin ? name.trim() : undefined,
-          email: isAdmin ? primaryEmail : undefined,
+          email: isAdmin && primaryEmail ? primaryEmail : undefined,
           phone: cleanedPhones[0] || "",
           additionalPhones: cleanedPhones.slice(1),
           additionalEmails: [...new Set(extraEmails)],

@@ -1,5 +1,7 @@
 "use client";
 
+import VisitorPassSection from "@/components/marketing/leads/visitorPassSection";
+
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useRouter, useParams } from "next/navigation";
@@ -30,6 +32,8 @@ const SalesLeadDetail = () => {
   const { data, loading } = useQuery(GetLeadByIdDocument, {
     variables: { id: leadId },
     skip: !leadId,
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 30000,
   });
 
   const lead = data?.getLeadById;
@@ -123,6 +127,7 @@ const SalesLeadDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5">
             <LeadInfoTable mode="sales" lead={lead} />
+            <VisitorPassSection key={lead.visitorPass?.id} pass={lead.visitorPass} />
 
             <ContactPersonSection
               leadId={lead.id}

@@ -30,6 +30,35 @@ query GetLeadById($id: String!) {
     followUpDate
     createdAt
     updatedAt
+    visitorPass {
+      externalPassId
+      registrationNumber
+      publicCode
+      passUrl
+      badgeUrl
+      qrPayload
+      status
+      channel
+      countryCode
+      nationalNumber
+      area
+      pinCode
+      registrationSource
+      badgeDesign
+      sentVia
+      sentStatus
+      interests
+      eventName
+      eventDates
+      eventVenue
+      verifiedAt
+      issuedAt
+      sentAt
+      checkedInAt
+      sourceUpdatedAt
+      id
+      syncedAt
+    }
     assignedTo {
       id
       name
