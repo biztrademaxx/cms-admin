@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontalDotsIcon,
@@ -127,6 +126,10 @@ const AppSidebar: React.FC = () => {
         {
           name: "leads",
           path: `/projects/marketing/leads`,
+        },
+        {
+          name: "Pass Registrations",
+          path: "/projects/marketing/pass-registrations",
         },
         {
           name: "Sales Team",

@@ -1,0 +1,49 @@
+query GetPassRegistrations($input: LeadFilterInput!) {
+  getFilteredLeads(input: $input) {
+    total
+    page
+    limit
+    totalPages
+    leads {
+      id
+      name
+      email
+      phone
+      companyName
+      jobTitle
+      city
+      state
+      country
+      createdAt
+      visitorPass {
+        externalPassId
+        registrationNumber
+        publicCode
+        passUrl
+        badgeUrl
+        qrPayload
+        status
+        channel
+        countryCode
+        nationalNumber
+        area
+        pinCode
+        registrationSource
+        badgeDesign
+        sentVia
+        sentStatus
+        interests
+        eventName
+        eventDates
+        eventVenue
+        verifiedAt
+        issuedAt
+        sentAt
+        checkedInAt
+        sourceUpdatedAt
+        id
+        syncedAt
+      }
+    }
+  }
+}
